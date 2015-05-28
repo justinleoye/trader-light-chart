@@ -1,0 +1,27 @@
+doctype html
+html
+  head
+    title traderLightChart demo
+    link(rel='stylesheet', href='./assets/normalize.css')
+    link(rel='stylesheet', href='./assets/main.css')
+    style.
+      /* begin demo embedded styles */
+      /* end demo embedded styles */
+  body
+    h1 traderLightChart demo
+    // begin demo markup
+    // end demo markup
+    p
+      | See the 
+      a(href='http://justinleoye.github.io/traderLightChart') project homepage
+      | .
+    p
+      | Check out the 
+      a(href='https://github.com/justinleoye/traderLightChart') project repo
+      | .
+    #trader_light_chart_container(width="600",height="300")
+    p Copyright 2015 Justin Leo ye
+    script(src='./../bower_components/d3/d3.min.js')
+    script(src='./../bower_components/TechanJS/dist/techan.min.js')
+    script(src='./../dist/traderLightChart.js')
+    script(src='./demo.js')
