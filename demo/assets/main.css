@@ -54,6 +54,10 @@ path.ohlc.down {
     stroke: #FF0000;
 }
 
+.close.annotation.up path {
+    fill: #00AA00;
+}
+
 .ma-0 path.line {
     stroke: #1f77b4;
 }

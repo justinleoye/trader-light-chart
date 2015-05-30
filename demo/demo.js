@@ -16,7 +16,7 @@ d3.csv("data.csv", function(error, data) {
     };
   }).sort(function(a, b) { return d3.ascending(tlc.accessor.d(a), tlc.accessor.d(b)); });
 
-  var initData = feed.splice(0,80);
+  var initData = feed.splice(0,180);
   tlc.feedData(initData);
   tlc.draw();
 

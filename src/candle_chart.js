@@ -5,7 +5,7 @@ TraderLightChart.CandleChart = (function(){
     top: 20,
     bottom: 30,
     left: 50,
-    right: 20
+    right: 50
   };
 
   function CandleChart(options){
@@ -19,15 +19,25 @@ TraderLightChart.CandleChart = (function(){
   CandleChart.prototype.init = function(){
     console.log('init');
     this.data = [];
+    this.zoomAssociated = false;
 
     this.initContainer();
     this.initMainSvg();
+    this.createBehavior();
     this.createScale();
     this.createAxis();
     this.createMainPlot();
     this.createAxisAnnotation();
     this.createCrossHair()
     this.conbine();
+  };
+
+  CandleChart.prototype.createBehavior = function(){
+    var _this = this;
+    this.zoom = d3.behavior.zoom()
+      .on("zoom", function(){
+        _this.zoomed();
+      });
   };
 
   CandleChart.prototype.createScale = function(){
@@ -49,7 +59,7 @@ TraderLightChart.CandleChart = (function(){
       .orient("bottom");
     this.yAxis = d3.svg.axis()
       .scale(this.yScale)
-      .orient("left");
+      .orient("right");
     this.volumeAxis = d3.svg.axis()
       .scale(this.yScaleOfVolume)
       .orient("right")
@@ -76,11 +86,18 @@ TraderLightChart.CandleChart = (function(){
       .axis(this.xAxis)
       .format(d3.time.format('%Y-%m-%d'))
       .width(65)
-      .translate([0, this.containerHeight]);
+      .translate([0, this.containerHeight-margin.top-margin.bottom]);
 
     this.ohlcAnnotation = techan.plot.axisannotation()
       .axis(this.yAxis)
-      .format(d3.format(',.2fs'));
+      .format(d3.format(',.2fs'))
+      .translate([this.xScale(1), 0]);
+
+    this.closeAnnotation = techan.plot.axisannotation()
+      .axis(this.yAxis)
+      .accessor(this.accessor)
+      .format(d3.format(',.2fs'))
+      .translate([this.xScale(1), 0]);
 
     this.volumeAnnotation = techan.plot.axisannotation()
       .axis(this.volumeAxis)
@@ -148,18 +165,23 @@ TraderLightChart.CandleChart = (function(){
 
     this.mainSvg.append('g')
         .attr("class", "y axis")
-      .append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("y", 6)
-        .attr("dy", ".71em")
-        .style("text-anchor", "end")
-        .text("Price ($)");
+        .attr("transform", "translate(" + this.xScale(1) + ",0)")
 
     this.mainSvg.append("g")
-            .attr("class", "volume axis");
+        .attr("class", "close annotation up");
+
+      //.append("text")
+      //  .attr("transform", "rotate(-90)")
+      //  .attr("y", 6)
+      //  .attr("dy", ".71em")
+      //  .style("text-anchor", "end")
+      //  .text("Price ($)");
+
+    this.mainSvg.append("g")
+        .attr("class", "volume axis");
 
     this.mainSvg.append('g')
-            .attr("class", "crosshair ohlc");
+        .attr("class", "crosshair ohlc");
   };
 
   CandleChart.prototype.feedData = function(data){
@@ -171,28 +193,77 @@ TraderLightChart.CandleChart = (function(){
   CandleChart.prototype.bindData = function(){
     console.log('bindData');
     this.mainSvg.select("g.candlestick").datum(this.data);
+    var lastDatum = this.data[this.data.length-1];
+    console.log('lastDatum:', lastDatum);
+    this.mainSvg.select("g.close.annotation").datum([lastDatum]);
     this.mainSvg.select("g.volume").datum(this.data);
   };
 
   CandleChart.prototype.draw = function(){
     console.log('draw');
-    var barWidth = this.xScale.band()*this.data.length;
-    console.log('barWidth:', barWidth);
+    //var barWidth = this.xScale.band()*this.data.length;
+    //console.log('barWidth:', barWidth);
+    //console.log('domain:', this.xScale.domain());
+    //console.log('range:', this.xScale.range());
+    //console.log('padding:', this.xScale.padding());
+    //console.log('outerPadding:', this.xScale.outerPadding());
+    //this.xScale.outerPadding(400);
 
     this.bindData();
 
-    this.xScale.domain(this.data.map(this.accessor.d));
-    this.xScale.zoomable().domain([0, this.maxVisiableBars]);
-    this.yScale.domain(techan.scale.plot.ohlc(this.data.slice(this.data.length-this.maxVisiableBars, this.data.length)).domain());
-    this.yScaleOfVolume.domain(techan.scale.plot.volume(this.data.slice(this.data.length-this.maxVisiableBars, this.data.length)).domain());
+    //this.xScale.domain(this.data.map(this.accessor.d));
+    this.xScale.domain(techan.scale.plot.time(this.data).domain());
+    this.xScale.zoomable().domain(this.domainInVisiable());
+
+    // Update y scale min max, only on viewable zoomable.domain()
+    this.yScale.domain(techan.scale.plot.ohlc(this.dataInVisiable()).domain());
+    this.yScaleOfVolume.domain(techan.scale.plot.volume(this.dataInVisiable()).domain());
 
     this.mainSvg.select('g.x.axis').call(this.xAxis);
     this.mainSvg.select('g.y.axis').call(this.yAxis);
     this.mainSvg.select("g.volume.axis").call(this.volumeAxis);
 
     this.mainSvg.select("g.candlestick").call(this.mainPlot);
+    this.mainSvg.select("g.close.annotation").call(this.closeAnnotation);
     this.mainSvg.select("g.volume").call(this.volume);
-    this.mainSvg.select("g.crosshair.ohlc").call(this.crosshair);
+    this.mainSvg.select("g.crosshair.ohlc").call(this.crosshair).call(this.zoom);
+
+    // Associate the zoom with the scale after a domain has been applied
+    if(!this.zoomAssociated){
+      console.log('zoomAssociated');
+      console.log('zoomable:', this.xScale.zoomable());
+      console.log('zoomable:', this.xScale.zoomable());
+      this.zoom.x(this.xScale.zoomable()).y(this.yScale);
+      this.zoomAssociated = true;
+    }
+  };
+
+  CandleChart.prototype.dataInVisiable = function(){
+    var domain = this.domainInVisiable();
+    return this.data.slice(domain[0], domain[1]);
+  };
+
+  CandleChart.prototype.domainInVisiable = function(){
+    if(this.maxVisiableBars > this.data.length){
+      return [0,this.data.length];
+    }else{
+      return [this.data.length - this.maxVisiableBars,this.data.length];
+    }
+  };
+
+  CandleChart.prototype.zoomed = function(rect){
+    console.log('zoomed');
+    this.zoom.translate();
+    //this.zoom.scale();
+
+    this.mainSvg.select('g.x.axis').call(this.xAxis);
+    this.mainSvg.select('g.y.axis').call(this.yAxis);
+    this.mainSvg.select("g.volume.axis").call(this.volumeAxis);
+
+    this.mainSvg.select("g.candlestick").call(this.mainPlot.refresh);
+    this.mainSvg.select("g.close.annotation").call(this.closeAnnotation.refresh);
+    this.mainSvg.select("g.volume").call(this.volume.refresh);
+    this.mainSvg.select("g.crosshair.ohlc").call(this.crosshair.refresh);
   };
 
   return CandleChart;
