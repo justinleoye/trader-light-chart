@@ -307,16 +307,15 @@ TraderLightChart.CandleChart = (function(){
     this.mainSvg.append('g')
         .attr("class", "y axis")
         .attr("transform", "translate(" + this.xScale(1) + ",0)")
-
-    this.mainSvg.append("g")
-        .attr("class", "close annotation up");
-
       //.append("text")
       //  .attr("transform", "rotate(-90)")
       //  .attr("y", 6)
       //  .attr("dy", ".71em")
       //  .style("text-anchor", "end")
       //  .text("Price ($)");
+
+    this.mainSvg.append("g")
+        .attr("class", "close annotation up");
 
     this.mainSvg.append("g")
         .attr("class", "volume axis");
@@ -342,17 +341,10 @@ TraderLightChart.CandleChart = (function(){
 
   CandleChart.prototype.draw = function(){
     console.log('draw');
-    //var barWidth = this.xScale.band()*this.data.length;
-    //console.log('barWidth:', barWidth);
-    //console.log('domain:', this.xScale.domain());
-    //console.log('range:', this.xScale.range());
-    //console.log('padding:', this.xScale.padding());
-    //console.log('outerPadding:', this.xScale.outerPadding());
-    //this.xScale.outerPadding(400);
 
     this.bindData();
 
-    //this.xScale.domain(this.data.map(this.accessor.d));
+    //this.xScale.domain(this.data.map(this.accessor.d)); // same as the following line
     this.xScale.domain(techan.scale.plot.time(this.data).domain());
     this.xScale.zoomable().domain(this.domainInVisiable());
 
