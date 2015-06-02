@@ -11,6 +11,11 @@
 
 /* === layout === */
 
+
+div.chart-contrainer{
+    width: 600px;
+    height: 300px;
+}
 body {
     font: 10px sans-serif;
 }

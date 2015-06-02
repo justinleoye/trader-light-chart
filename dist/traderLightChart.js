@@ -42,14 +42,19 @@ TraderLightChart.BaseChart = (function(){
   Chart.prototype.createScale = function(){
     console.log('createScale');
     this.xScale = techan.scale.financetime()
-      .range([0, this.containerWidth - this.margin.left - this.margin.right])
       .outerPadding(0);
-    this.yScale = d3.scale.linear()
-      .range([this.containerHeight - this.margin.top - this.margin.bottom, 0]);
+    this.yScale = d3.scale.linear();
 
-    this.yScaleOfVolume = d3.scale.linear() 
-      .range([this.yScale(0), this.yScale(0.2)]);
+    this.yScaleOfVolume = d3.scale.linear();
+
+    this.setScales();
   };
+
+  Chart.prototype.setScales = function(){
+    this.xScale.range([0, this.containerWidth - this.margin.left - this.margin.right]);
+    this.yScale.range([this.containerHeight - this.margin.top - this.margin.bottom, 0]);
+    this.yScaleOfVolume.range([this.yScale(0), this.yScale(0.2)]);
+  }
 
   Chart.prototype.createAxis = function(){
     console.log('createAxis');
@@ -103,12 +108,24 @@ TraderLightChart.BaseChart = (function(){
 
   Chart.prototype.initContainer = function(){
     console.log('initContainer');
-    var containerElement = document.getElementById(this.options.container_id);
-    this.containerWidth = containerElement.getAttribute('width');
-    this.containerHeight = containerElement.getAttribute('height');;
+    
+    this.containerElement = document.getElementById(this.options.container_id);
+    this.setChartBasics();
+
+    var _this = this;
+    this.containerElement.onresize = function(){
+      _this.onChartContainerResize();
+    };
 
     this.containerSelector = d3.select("body div[id="+this.options.container_id+"]"); 
     this.maxVisiableBars = 120; // TODO: calculate it
+  };
+
+  Chart.prototype.setChartBasics = function(){
+    this.containerWidth = this.containerElement.offsetWidth;
+    this.containerHeight = this.containerElement.offsetHeight;
+
+    console.log('offsetWidth: ' + this.containerWidth + ' ,offsetHeight: ' + this.containerHeight);
   };
 
   Chart.prototype.initMainSvg = function(){
@@ -132,6 +149,10 @@ TraderLightChart.BaseChart = (function(){
 
   // should override
   Chart.prototype.conbine = function(){
+  };
+
+  // should override
+  Chart.prototype.setWidgetsSize = function(){
   };
 
   Chart.prototype.feedData = function(data){
@@ -174,6 +195,13 @@ TraderLightChart.BaseChart = (function(){
     datum.splice.apply(datum, [0, datum.length].concat(data));
     console.log('data len after bind:', datum.length);
   }
+
+  Chart.prototype.onChartContainerResize = function(){
+    this.setChartBasics();
+    this.setScales();
+    this.setWidgetsSize();
+    this.draw();
+  };
 
   return Chart;
 })();
@@ -240,12 +268,10 @@ TraderLightChart.LineChart = (function(){
       .attr("clip-path", "url(#ohlcClip)");
 
     this.mainSvg.append('g')
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + (this.containerHeight - this.margin.top - this.margin.bottom) + ")");
+        .attr("class", "x axis");
 
     this.mainSvg.append('g')
         .attr("class", "y axis")
-        .attr("transform", "translate(" + this.xScale(1) + ",0)")
       //.append("text")
       //  .attr("transform", "rotate(-90)")
       //  .attr("y", 6)
@@ -261,7 +287,16 @@ TraderLightChart.LineChart = (function(){
 
     this.mainSvg.append('g')
         .attr("class", "crosshair ohlc");
+
+    this.setWidgetsSize();
   };
+
+  Chart.prototype.setWidgetsSize = function(){
+    this.mainSvg.select('g.x.axis')
+        .attr("transform", "translate(0," + (this.containerHeight - this.margin.top - this.margin.bottom) + ")");
+    this.mainSvg.select('g.y.axis')
+        .attr("transform", "translate(" + this.xScale(1) + ",0)");
+  }; 
 
   Chart.prototype.bindData = function(){
     console.log('bindData');
@@ -384,12 +419,10 @@ TraderLightChart.CandleChart = (function(){
       .attr("clip-path", "url(#ohlcClip)");
 
     this.mainSvg.append('g')
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + (this.containerHeight - this.margin.top - this.margin.bottom) + ")");
+        .attr("class", "x axis");
 
     this.mainSvg.append('g')
         .attr("class", "y axis")
-        .attr("transform", "translate(" + this.xScale(1) + ",0)")
       //.append("text")
       //  .attr("transform", "rotate(-90)")
       //  .attr("y", 6)
@@ -405,7 +438,16 @@ TraderLightChart.CandleChart = (function(){
 
     this.mainSvg.append('g')
         .attr("class", "crosshair ohlc");
+
+    this.setWidgetsSize();
   };
+
+  CandleChart.prototype.setWidgetsSize = function(){
+    this.mainSvg.select('g.x.axis')
+        .attr("transform", "translate(0," + (this.containerHeight - this.margin.top - this.margin.bottom) + ")");
+    this.mainSvg.select('g.y.axis')
+        .attr("transform", "translate(" + this.xScale(1) + ",0)");
+  }; 
 
   CandleChart.prototype.bindData = function(){
     console.log('bindData');

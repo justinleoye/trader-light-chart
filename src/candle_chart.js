@@ -80,12 +80,10 @@ TraderLightChart.CandleChart = (function(){
       .attr("clip-path", "url(#ohlcClip)");
 
     this.mainSvg.append('g')
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + (this.containerHeight - this.margin.top - this.margin.bottom) + ")");
+        .attr("class", "x axis");
 
     this.mainSvg.append('g')
         .attr("class", "y axis")
-        .attr("transform", "translate(" + this.xScale(1) + ",0)")
       //.append("text")
       //  .attr("transform", "rotate(-90)")
       //  .attr("y", 6)
@@ -101,7 +99,16 @@ TraderLightChart.CandleChart = (function(){
 
     this.mainSvg.append('g')
         .attr("class", "crosshair ohlc");
+
+    this.setWidgetsSize();
   };
+
+  CandleChart.prototype.setWidgetsSize = function(){
+    this.mainSvg.select('g.x.axis')
+        .attr("transform", "translate(0," + (this.containerHeight - this.margin.top - this.margin.bottom) + ")");
+    this.mainSvg.select('g.y.axis')
+        .attr("transform", "translate(" + this.xScale(1) + ",0)");
+  }; 
 
   CandleChart.prototype.bindData = function(){
     console.log('bindData');
