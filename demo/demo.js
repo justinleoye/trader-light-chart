@@ -1,6 +1,6 @@
 
-//var tlc = new TraderLightChart.LineChart();
-var tlc = new TraderLightChart.CandleChart();
+var tlc = new TraderLightChart.LineChart();
+//var tlc = new TraderLightChart.CandleChart();
 
 d3.csv("data.csv", function(error, data) {
   var parseDate = d3.time.format("%d-%b-%y").parse;
