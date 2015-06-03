@@ -1,6 +1,10 @@
 
-var lc = new TraderLightChart.LineChart();
-var cc = new TraderLightChart.CandleChart();
+var lc = new TraderLightChart.LineChart({
+      container_id: 'trader_line_chart_container',
+    });
+var cc = new TraderLightChart.CandleChart({
+      container_id: 'trader_candle_chart_container',
+    });
 
 testChart(lc);
 testChart(cc);

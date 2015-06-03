@@ -4,9 +4,6 @@ TraderLightChart.LineChart = (function(){
 
   function Chart(options){
     Chart.superClass.constructor.call(this, options);
-    this.options = {
-      container_id: 'trader_line_chart_container',
-    };
 
     this.init();
   }

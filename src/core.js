@@ -24,13 +24,19 @@ TraderLightChart.core = TraderLightChart.core || {};
 
 TraderLightChart.BaseChart = (function(){
   function Chart(options){
-
     this.margin = {
       top: 20,
       bottom: 30,
       left: 50,
       right: 50
     };
+
+    this.options = {
+      container_id: 'trader_light_chart_container',
+      interval: 'D'
+    };
+
+    _.extend(this.options, options)
 
     this.data = [];
   }

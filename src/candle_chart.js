@@ -4,9 +4,6 @@ TraderLightChart.CandleChart = (function(){
 
   function CandleChart(options){
     CandleChart.superClass.constructor.call(this, options);
-    this.options = {
-      container_id: 'trader_candle_chart_container',
-    };
 
     this.init();
   }
