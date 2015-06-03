@@ -113,7 +113,8 @@ TraderLightChart.BaseChart = (function(){
     this.setChartBasics();
 
     var _this = this;
-    this.containerElement.onresize = function(){
+    //this.containerElement.onresize = function(){
+    window.onresize = function(){
       _this.onChartContainerResize();
     };
 
@@ -122,6 +123,11 @@ TraderLightChart.BaseChart = (function(){
   };
 
   Chart.prototype.setChartBasics = function(){
+    // for test
+    //var width = document.body.clientWidth * 0.9;
+    //var height = document.body.clientHeight * 0.5;
+    //this.containerElement.setAttribute("style","width:"+width+"px;"+"height:"+height+"px");
+
     this.containerWidth = this.containerElement.offsetWidth;
     this.containerHeight = this.containerElement.offsetHeight;
 
@@ -130,20 +136,28 @@ TraderLightChart.BaseChart = (function(){
 
   Chart.prototype.initMainSvg = function(){
     console.log('initMainSvg');
-    var svg = this.containerSelector.append("svg")
-      .attr("width", this.containerWidth)
-      .attr("height", this.containerHeight);
+    this.mainSvg = this.containerSelector.append("svg")
 
-    var defs = svg.append("defs");
-    defs.append("clipPath")
+    var defs = this.mainSvg.append("defs");
+    this.rect = defs.append("clipPath")
           .attr("id", "ohlcClip")
       .append("rect")
           .attr("x", 0)
-          .attr("y", 0)
-          .attr("width", this.containerWidth - this.margin.left - this.margin.right)
-          .attr("height", this.containerHeight - this.margin.top - this.margin.bottom);
+          .attr("y", 0);
 
-    this.mainSvg  = svg.append("g")
+    this.mainG  = this.mainSvg.append("g");
+    this.setMainSvgSize();
+  };
+
+  Chart.prototype.setMainSvgSize = function(){
+    this.mainSvg
+      .attr("width", this.containerWidth)
+      .attr("height", this.containerHeight);
+    //this.mainSvg.select("defs clipPath#ohlcClip rect")
+    this.rect
+      .attr("width", this.containerWidth - this.margin.left - this.margin.right)
+      .attr("height", this.containerHeight - this.margin.top - this.margin.bottom);
+    this.mainG
       .attr("transform", "translate("+this.margin.left+","+this.margin.top+")");
   };
 
@@ -151,9 +165,12 @@ TraderLightChart.BaseChart = (function(){
   Chart.prototype.conbine = function(){
   };
 
-  // should override
-  Chart.prototype.setWidgetsSize = function(){
-  };
+  Chart.prototype.setAxisesSize = function(){
+    this.mainG.select('g.x.axis')
+        .attr("transform", "translate(0," + (this.containerHeight - this.margin.top - this.margin.bottom) + ")");
+    this.mainG.select('g.y.axis')
+        .attr("transform", "translate(" + this.xScale(1) + ",0)");
+  }; 
 
   Chart.prototype.feedData = function(data){
     console.log('feedData');
@@ -197,9 +214,10 @@ TraderLightChart.BaseChart = (function(){
   }
 
   Chart.prototype.onChartContainerResize = function(){
+    console.log('on resize');
+    console.log('onChartContainerResize');
     this.setChartBasics();
-    this.setScales();
-    this.setWidgetsSize();
+    this.setMainSvgSize();
     this.draw();
   };
 

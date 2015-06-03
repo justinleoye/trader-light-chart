@@ -63,7 +63,7 @@ TraderLightChart.CandleChart = (function(){
   CandleChart.prototype.conbine = function(){
     console.log('conbine');
 
-    var ohlcSelection = this.mainSvg.append("g")
+    var ohlcSelection = this.mainG.append("g")
       .attr("class", "ohlc")
       .attr("transform", "translate(0,0)");
 
@@ -79,10 +79,10 @@ TraderLightChart.CandleChart = (function(){
       .attr("class", "indicator sma ma-0")
       .attr("clip-path", "url(#ohlcClip)");
 
-    this.mainSvg.append('g')
+    this.mainG.append('g')
         .attr("class", "x axis");
 
-    this.mainSvg.append('g')
+    this.mainG.append('g')
         .attr("class", "y axis")
       //.append("text")
       //  .attr("transform", "rotate(-90)")
@@ -91,33 +91,26 @@ TraderLightChart.CandleChart = (function(){
       //  .style("text-anchor", "end")
       //  .text("Price ($)");
 
-    this.mainSvg.append("g")
+    this.mainG.append("g")
         .attr("class", "close annotation up");
 
-    this.mainSvg.append("g")
+    this.mainG.append("g")
         .attr("class", "volume axis");
 
-    this.mainSvg.append('g')
+    this.mainG.append('g')
         .attr("class", "crosshair ohlc");
 
-    this.setWidgetsSize();
+    this.setAxisesSize();
   };
-
-  CandleChart.prototype.setWidgetsSize = function(){
-    this.mainSvg.select('g.x.axis')
-        .attr("transform", "translate(0," + (this.containerHeight - this.margin.top - this.margin.bottom) + ")");
-    this.mainSvg.select('g.y.axis')
-        .attr("transform", "translate(" + this.xScale(1) + ",0)");
-  }; 
 
   CandleChart.prototype.bindData = function(){
     console.log('bindData');
-    this.mainSvg.select("g.candlestick").datum(this.data);
+    this.mainG.select("g.candlestick").datum(this.data);
     var lastDatum = this.data[this.data.length-1];
     console.log('lastDatum:', lastDatum);
-    this.mainSvg.select("g.close.annotation").datum([lastDatum]);
-    this.bindLineData(this.mainSvg.select("g.sma.ma-0"), this.smaCalculator(this.data));
-    this.mainSvg.select("g.volume").datum(this.data);
+    this.mainG.select("g.close.annotation").datum([lastDatum]);
+    this.bindLineData(this.mainG.select("g.sma.ma-0"), this.smaCalculator(this.data));
+    this.mainG.select("g.volume").datum(this.data);
   };
 
   CandleChart.prototype.draw = function(){
@@ -133,15 +126,15 @@ TraderLightChart.CandleChart = (function(){
     this.yScale.domain(techan.scale.plot.ohlc(this.dataInVisiable()).domain());
     this.yScaleOfVolume.domain(techan.scale.plot.volume(this.dataInVisiable()).domain());
 
-    this.mainSvg.select('g.x.axis').call(this.xAxis);
-    this.mainSvg.select('g.y.axis').call(this.yAxis);
-    this.mainSvg.select("g.volume.axis").call(this.volumeAxis);
+    this.mainG.select('g.x.axis').call(this.xAxis);
+    this.mainG.select('g.y.axis').call(this.yAxis);
+    this.mainG.select("g.volume.axis").call(this.volumeAxis);
 
-    this.mainSvg.select("g.candlestick").call(this.mainPlot);
-    this.mainSvg.select("g.close.annotation").call(this.closeAnnotation);
-    this.mainSvg.select("g .sma.ma-0").call(this.sma);
-    this.mainSvg.select("g.volume").call(this.volume);
-    this.mainSvg.select("g.crosshair.ohlc").call(this.crosshair).call(this.zoom);
+    this.mainG.select("g.candlestick").call(this.mainPlot);
+    this.mainG.select("g.close.annotation").call(this.closeAnnotation);
+    this.mainG.select("g .sma.ma-0").call(this.sma);
+    this.mainG.select("g.volume").call(this.volume);
+    this.mainG.select("g.crosshair.ohlc").call(this.crosshair).call(this.zoom);
 
     // Associate the zoom with the scale after a domain has been applied
     if(!this.zoomAssociated){
@@ -158,15 +151,15 @@ TraderLightChart.CandleChart = (function(){
     this.zoom.translate();
     //this.zoom.scale();
 
-    this.mainSvg.select('g.x.axis').call(this.xAxis);
-    this.mainSvg.select('g.y.axis').call(this.yAxis);
-    this.mainSvg.select("g.volume.axis").call(this.volumeAxis);
+    this.mainG.select('g.x.axis').call(this.xAxis);
+    this.mainG.select('g.y.axis').call(this.yAxis);
+    this.mainG.select("g.volume.axis").call(this.volumeAxis);
 
-    this.mainSvg.select("g.candlestick").call(this.mainPlot.refresh);
-    this.mainSvg.select("g.close.annotation").call(this.closeAnnotation.refresh);
-    this.mainSvg.select("g .sma.ma-0").call(this.sma.refresh);
-    this.mainSvg.select("g.volume").call(this.volume.refresh);
-    this.mainSvg.select("g.crosshair.ohlc").call(this.crosshair.refresh);
+    this.mainG.select("g.candlestick").call(this.mainPlot.refresh);
+    this.mainG.select("g.close.annotation").call(this.closeAnnotation.refresh);
+    this.mainG.select("g .sma.ma-0").call(this.sma.refresh);
+    this.mainG.select("g.volume").call(this.volume.refresh);
+    this.mainG.select("g.crosshair.ohlc").call(this.crosshair.refresh);
   };
 
   return CandleChart;

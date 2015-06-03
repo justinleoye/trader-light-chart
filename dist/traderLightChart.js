@@ -113,7 +113,8 @@ TraderLightChart.BaseChart = (function(){
     this.setChartBasics();
 
     var _this = this;
-    this.containerElement.onresize = function(){
+    //this.containerElement.onresize = function(){
+    window.onresize = function(){
       _this.onChartContainerResize();
     };
 
@@ -122,6 +123,11 @@ TraderLightChart.BaseChart = (function(){
   };
 
   Chart.prototype.setChartBasics = function(){
+    // for test
+    //var width = document.body.clientWidth * 0.9;
+    //var height = document.body.clientHeight * 0.5;
+    //this.containerElement.setAttribute("style","width:"+width+"px;"+"height:"+height+"px");
+
     this.containerWidth = this.containerElement.offsetWidth;
     this.containerHeight = this.containerElement.offsetHeight;
 
@@ -130,20 +136,28 @@ TraderLightChart.BaseChart = (function(){
 
   Chart.prototype.initMainSvg = function(){
     console.log('initMainSvg');
-    var svg = this.containerSelector.append("svg")
-      .attr("width", this.containerWidth)
-      .attr("height", this.containerHeight);
+    this.mainSvg = this.containerSelector.append("svg")
 
-    var defs = svg.append("defs");
-    defs.append("clipPath")
+    var defs = this.mainSvg.append("defs");
+    this.rect = defs.append("clipPath")
           .attr("id", "ohlcClip")
       .append("rect")
           .attr("x", 0)
-          .attr("y", 0)
-          .attr("width", this.containerWidth - this.margin.left - this.margin.right)
-          .attr("height", this.containerHeight - this.margin.top - this.margin.bottom);
+          .attr("y", 0);
 
-    this.mainSvg  = svg.append("g")
+    this.mainG  = this.mainSvg.append("g");
+    this.setMainSvgSize();
+  };
+
+  Chart.prototype.setMainSvgSize = function(){
+    this.mainSvg
+      .attr("width", this.containerWidth)
+      .attr("height", this.containerHeight);
+    //this.mainSvg.select("defs clipPath#ohlcClip rect")
+    this.rect
+      .attr("width", this.containerWidth - this.margin.left - this.margin.right)
+      .attr("height", this.containerHeight - this.margin.top - this.margin.bottom);
+    this.mainG
       .attr("transform", "translate("+this.margin.left+","+this.margin.top+")");
   };
 
@@ -151,9 +165,12 @@ TraderLightChart.BaseChart = (function(){
   Chart.prototype.conbine = function(){
   };
 
-  // should override
-  Chart.prototype.setWidgetsSize = function(){
-  };
+  Chart.prototype.setAxisesSize = function(){
+    this.mainG.select('g.x.axis')
+        .attr("transform", "translate(0," + (this.containerHeight - this.margin.top - this.margin.bottom) + ")");
+    this.mainG.select('g.y.axis')
+        .attr("transform", "translate(" + this.xScale(1) + ",0)");
+  }; 
 
   Chart.prototype.feedData = function(data){
     console.log('feedData');
@@ -197,9 +214,10 @@ TraderLightChart.BaseChart = (function(){
   }
 
   Chart.prototype.onChartContainerResize = function(){
+    console.log('on resize');
+    console.log('onChartContainerResize');
     this.setChartBasics();
-    this.setScales();
-    this.setWidgetsSize();
+    this.setMainSvgSize();
     this.draw();
   };
 
@@ -253,7 +271,7 @@ TraderLightChart.LineChart = (function(){
   Chart.prototype.conbine = function(){
     console.log('conbine');
 
-    var ohlcSelection = this.mainSvg.append("g")
+    var ohlcSelection = this.mainG.append("g")
       .attr("class", "ohlc")
       .attr("transform", "translate(0,0)");
 
@@ -267,10 +285,10 @@ TraderLightChart.LineChart = (function(){
       .attr("class", "close")
       .attr("clip-path", "url(#ohlcClip)");
 
-    this.mainSvg.append('g')
+    this.mainG.append('g')
         .attr("class", "x axis");
 
-    this.mainSvg.append('g')
+    this.mainG.append('g')
         .attr("class", "y axis")
       //.append("text")
       //  .attr("transform", "rotate(-90)")
@@ -279,33 +297,26 @@ TraderLightChart.LineChart = (function(){
       //  .style("text-anchor", "end")
       //  .text("Price ($)");
 
-    this.mainSvg.append("g")
+    this.mainG.append("g")
         .attr("class", "close annotation up");
 
-    this.mainSvg.append("g")
+    this.mainG.append("g")
         .attr("class", "volume axis");
 
-    this.mainSvg.append('g')
+    this.mainG.append('g')
         .attr("class", "crosshair ohlc");
 
-    this.setWidgetsSize();
+    this.setAxisesSize();
   };
-
-  Chart.prototype.setWidgetsSize = function(){
-    this.mainSvg.select('g.x.axis')
-        .attr("transform", "translate(0," + (this.containerHeight - this.margin.top - this.margin.bottom) + ")");
-    this.mainSvg.select('g.y.axis')
-        .attr("transform", "translate(" + this.xScale(1) + ",0)");
-  }; 
 
   Chart.prototype.bindData = function(){
     console.log('bindData');
-    this.bindLineData(this.mainSvg.select("g.close"), this.data);
-    //this.mainSvg.select("g.candlestick").datum(this.data);
+    this.bindLineData(this.mainG.select("g.close"), this.data);
+    //this.mainG.select("g.candlestick").datum(this.data);
     var lastDatum = this.data[this.data.length-1];
     console.log('lastDatum:', lastDatum);
-    this.mainSvg.select("g.close.annotation").datum([lastDatum]);
-    this.mainSvg.select("g.volume").datum(this.data);
+    this.mainG.select("g.close.annotation").datum([lastDatum]);
+    this.mainG.select("g.volume").datum(this.data);
   };
 
   Chart.prototype.draw = function(){
@@ -321,15 +332,15 @@ TraderLightChart.LineChart = (function(){
     this.yScale.domain(techan.scale.plot.ohlc(this.dataInVisiable()).domain());
     this.yScaleOfVolume.domain(techan.scale.plot.volume(this.dataInVisiable()).domain());
 
-    this.mainSvg.select('g.x.axis').call(this.xAxis);
-    this.mainSvg.select('g.y.axis').call(this.yAxis);
-    this.mainSvg.select("g.volume.axis").call(this.volumeAxis);
+    this.mainG.select('g.x.axis').call(this.xAxis);
+    this.mainG.select('g.y.axis').call(this.yAxis);
+    this.mainG.select("g.volume.axis").call(this.volumeAxis);
 
-    this.mainSvg.select("g.close").call(this.mainPlot);
-    //this.mainSvg.select("g.candlestick").call(this.mainPlot);
-    this.mainSvg.select("g.close.annotation").call(this.closeAnnotation);
-    this.mainSvg.select("g.volume").call(this.volume);
-    this.mainSvg.select("g.crosshair.ohlc").call(this.crosshair);
+    this.mainG.select("g.close").call(this.mainPlot);
+    //this.mainG.select("g.candlestick").call(this.mainPlot);
+    this.mainG.select("g.close.annotation").call(this.closeAnnotation);
+    this.mainG.select("g.volume").call(this.volume);
+    this.mainG.select("g.crosshair.ohlc").call(this.crosshair);
 
   };
   
@@ -402,7 +413,7 @@ TraderLightChart.CandleChart = (function(){
   CandleChart.prototype.conbine = function(){
     console.log('conbine');
 
-    var ohlcSelection = this.mainSvg.append("g")
+    var ohlcSelection = this.mainG.append("g")
       .attr("class", "ohlc")
       .attr("transform", "translate(0,0)");
 
@@ -418,10 +429,10 @@ TraderLightChart.CandleChart = (function(){
       .attr("class", "indicator sma ma-0")
       .attr("clip-path", "url(#ohlcClip)");
 
-    this.mainSvg.append('g')
+    this.mainG.append('g')
         .attr("class", "x axis");
 
-    this.mainSvg.append('g')
+    this.mainG.append('g')
         .attr("class", "y axis")
       //.append("text")
       //  .attr("transform", "rotate(-90)")
@@ -430,33 +441,26 @@ TraderLightChart.CandleChart = (function(){
       //  .style("text-anchor", "end")
       //  .text("Price ($)");
 
-    this.mainSvg.append("g")
+    this.mainG.append("g")
         .attr("class", "close annotation up");
 
-    this.mainSvg.append("g")
+    this.mainG.append("g")
         .attr("class", "volume axis");
 
-    this.mainSvg.append('g')
+    this.mainG.append('g')
         .attr("class", "crosshair ohlc");
 
-    this.setWidgetsSize();
+    this.setAxisesSize();
   };
-
-  CandleChart.prototype.setWidgetsSize = function(){
-    this.mainSvg.select('g.x.axis')
-        .attr("transform", "translate(0," + (this.containerHeight - this.margin.top - this.margin.bottom) + ")");
-    this.mainSvg.select('g.y.axis')
-        .attr("transform", "translate(" + this.xScale(1) + ",0)");
-  }; 
 
   CandleChart.prototype.bindData = function(){
     console.log('bindData');
-    this.mainSvg.select("g.candlestick").datum(this.data);
+    this.mainG.select("g.candlestick").datum(this.data);
     var lastDatum = this.data[this.data.length-1];
     console.log('lastDatum:', lastDatum);
-    this.mainSvg.select("g.close.annotation").datum([lastDatum]);
-    this.bindLineData(this.mainSvg.select("g.sma.ma-0"), this.smaCalculator(this.data));
-    this.mainSvg.select("g.volume").datum(this.data);
+    this.mainG.select("g.close.annotation").datum([lastDatum]);
+    this.bindLineData(this.mainG.select("g.sma.ma-0"), this.smaCalculator(this.data));
+    this.mainG.select("g.volume").datum(this.data);
   };
 
   CandleChart.prototype.draw = function(){
@@ -472,15 +476,15 @@ TraderLightChart.CandleChart = (function(){
     this.yScale.domain(techan.scale.plot.ohlc(this.dataInVisiable()).domain());
     this.yScaleOfVolume.domain(techan.scale.plot.volume(this.dataInVisiable()).domain());
 
-    this.mainSvg.select('g.x.axis').call(this.xAxis);
-    this.mainSvg.select('g.y.axis').call(this.yAxis);
-    this.mainSvg.select("g.volume.axis").call(this.volumeAxis);
+    this.mainG.select('g.x.axis').call(this.xAxis);
+    this.mainG.select('g.y.axis').call(this.yAxis);
+    this.mainG.select("g.volume.axis").call(this.volumeAxis);
 
-    this.mainSvg.select("g.candlestick").call(this.mainPlot);
-    this.mainSvg.select("g.close.annotation").call(this.closeAnnotation);
-    this.mainSvg.select("g .sma.ma-0").call(this.sma);
-    this.mainSvg.select("g.volume").call(this.volume);
-    this.mainSvg.select("g.crosshair.ohlc").call(this.crosshair).call(this.zoom);
+    this.mainG.select("g.candlestick").call(this.mainPlot);
+    this.mainG.select("g.close.annotation").call(this.closeAnnotation);
+    this.mainG.select("g .sma.ma-0").call(this.sma);
+    this.mainG.select("g.volume").call(this.volume);
+    this.mainG.select("g.crosshair.ohlc").call(this.crosshair).call(this.zoom);
 
     // Associate the zoom with the scale after a domain has been applied
     if(!this.zoomAssociated){
@@ -497,15 +501,15 @@ TraderLightChart.CandleChart = (function(){
     this.zoom.translate();
     //this.zoom.scale();
 
-    this.mainSvg.select('g.x.axis').call(this.xAxis);
-    this.mainSvg.select('g.y.axis').call(this.yAxis);
-    this.mainSvg.select("g.volume.axis").call(this.volumeAxis);
+    this.mainG.select('g.x.axis').call(this.xAxis);
+    this.mainG.select('g.y.axis').call(this.yAxis);
+    this.mainG.select("g.volume.axis").call(this.volumeAxis);
 
-    this.mainSvg.select("g.candlestick").call(this.mainPlot.refresh);
-    this.mainSvg.select("g.close.annotation").call(this.closeAnnotation.refresh);
-    this.mainSvg.select("g .sma.ma-0").call(this.sma.refresh);
-    this.mainSvg.select("g.volume").call(this.volume.refresh);
-    this.mainSvg.select("g.crosshair.ohlc").call(this.crosshair.refresh);
+    this.mainG.select("g.candlestick").call(this.mainPlot.refresh);
+    this.mainG.select("g.close.annotation").call(this.closeAnnotation.refresh);
+    this.mainG.select("g .sma.ma-0").call(this.sma.refresh);
+    this.mainG.select("g.volume").call(this.volume.refresh);
+    this.mainG.select("g.crosshair.ohlc").call(this.crosshair.refresh);
   };
 
   return CandleChart;
