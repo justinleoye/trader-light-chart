@@ -1,36 +1,41 @@
 
-//var tlc = new TraderLightChart.LineChart();
-var tlc = new TraderLightChart.CandleChart();
+var lc = new TraderLightChart.LineChart();
+var cc = new TraderLightChart.CandleChart();
 
-d3.csv("data.csv", function(error, data) {
-  var parseDate = d3.time.format("%d-%b-%y").parse;
+testChart(lc);
+testChart(cc);
 
-  feed = data.slice(0, 200).map(function(d) {
-    return {
-      date: parseDate(d.Date),
-      open: +d.Open,
-      high: +d.High,
-      low: +d.Low,
-      close: +d.Close,
-      volume: +d.Volume
-    };
-  }).sort(function(a, b) { return d3.ascending(tlc.accessor.d(a), tlc.accessor.d(b)); });
+function testChart(tlc){
+  d3.csv("data.csv", function(error, data) {
+    var parseDate = d3.time.format("%d-%b-%y").parse;
 
-  var initData = feed.splice(0,180);
-  tlc.feedData(initData);
-  tlc.draw();
+    feed = data.slice(0, 200).map(function(d) {
+      return {
+        date: parseDate(d.Date),
+        open: +d.Open,
+        high: +d.High,
+        low: +d.Low,
+        close: +d.Close,
+        volume: +d.Volume
+      };
+    }).sort(function(a, b) { return d3.ascending(tlc.accessor.d(a), tlc.accessor.d(b)); });
 
-  drawBarsOneByOne();
+    var initData = feed.splice(0,180);
+    tlc.feedData(initData);
+    tlc.draw();
 
-  function drawBarsOneByOne(){
-    if(feed.length){
-      tlc.feedData([feed.shift()]);
-      tlc.draw();
+    drawBarsOneByOne();
 
-      setTimeout(function(){
-        drawBarsOneByOne();
-      }, 1000);
+    function drawBarsOneByOne(){
+      if(feed.length){
+        tlc.feedData([feed.shift()]);
+        tlc.draw();
+
+        setTimeout(function(){
+          drawBarsOneByOne();
+        }, 1000);
+      }
     }
-  }
 
-});
+  });
+}
