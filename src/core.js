@@ -20,7 +20,19 @@ TraderLightChart.core = TraderLightChart.core || {};
     }
   };
 
+  core.insertCSS = function(css){
+    var style = document.createElement('style');
+    style.innerHTML = css;
+    document.body.appendChild(style);
+  };
+
+  core.insertChartCSSToGloable = function(){
+    core.insertCSS(core.CHART_GLOABLE_CSS);
+  };
+
 })(TraderLightChart.core);
+
+TraderLightChart.core.insertChartCSSToGloable();
 
 TraderLightChart.BaseChart = (function(){
   function Chart(options){

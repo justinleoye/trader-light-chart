@@ -1,0 +1,2 @@
+    ";
+})(TraderLightChart.core);

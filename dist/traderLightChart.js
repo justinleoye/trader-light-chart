@@ -1,3 +1,5 @@
+var TraderLightChart=TraderLightChart||{};TraderLightChart.core=TraderLightChart.core||{},function(a){a.CHART_GLOABLE_CSS="\n\n\n\npath.line {\n    fill: none;\n    stroke: #000000;\n    stroke-width: 1;\n}\n\n.axis path,\n.axis line {\n    fill: none;\n    stroke: #000;\n    shape-rendering: crispEdges;\n}\n\npath {\n    fill: none;\n    stroke-width: 1;\n}\n\npath.candle {\n    stroke: #000000;\n}\n\npath.candle.body {\n    stroke-width: 0;\n}\n\npath.candle.up {\n    fill: #00AA00;\n    stroke: #00AA00;\n}\n\npath.candle.down {\n    fill: #FF0000;\n    stroke: #FF0000;\n}\n\npath.ohlc {\n    stroke: #000000;\n    stroke-width: 1;\n}\n\npath.ohlc.up {\n    stroke: #00AA00;\n}\n\npath.ohlc.down {\n    stroke: #FF0000;\n}\n\n.close.annotation.up path {\n    fill: #00AA00;\n}\n\n.ma-0 path.line {\n    stroke: #1f77b4;\n}\n\n.ma-1 path.line {\n    stroke: #aec7e8;\n}\n\npath.volume {\n    fill: #EEEEEE;\n}\n\n.crosshair {\n    cursor: crosshair;\n}\n\n.crosshair path.wire {\n    stroke: #DDDDDD;\n    stroke-dasharray: 1, 1;\n}\n\n.crosshair .axisannotation path {\n    fill: #DDDDDD;\n}\n\n\n\n    "}(TraderLightChart.core);
+
 var TraderLightChart = TraderLightChart || {};
 TraderLightChart.core = TraderLightChart.core || {};
 
@@ -20,7 +22,19 @@ TraderLightChart.core = TraderLightChart.core || {};
     }
   };
 
+  core.insertCSS = function(css){
+    var style = document.createElement('style');
+    style.innerHTML = css;
+    document.body.appendChild(style);
+  };
+
+  core.insertChartCSSToGloable = function(){
+    core.insertCSS(core.CHART_GLOABLE_CSS);
+  };
+
 })(TraderLightChart.core);
+
+TraderLightChart.core.insertChartCSSToGloable();
 
 TraderLightChart.BaseChart = (function(){
   function Chart(options){

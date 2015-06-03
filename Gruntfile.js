@@ -17,8 +17,17 @@ module.exports = function(grunt) {
       options: {
         separator: "\n\n"
       },
+      css: {
+        src: [
+          'src/_preCSS.js',
+          'src/static/css/chart.css',
+          'src/_endCSS.js',
+        ],
+        dest: 'dist/css.js'
+      },
       dist: {
         src: [
+          'dist/css.min.js',
           'src/core.js',
           'src/line_chart.js',
           'src/candle_chart.js',
@@ -28,12 +37,14 @@ module.exports = function(grunt) {
     },
 
     uglify: {
-      options: {
-        banner: '/*! <%= pkg.name.replace(".js", "") %> <%= grunt.template.today("dd-mm-yyyy") %> */\n'
-      },
       dist: {
         files: {
           'dist/<%= pkg.name.replace(".js", "") %>.min.js': ['<%= concat.dist.dest %>']
+        }
+      },
+      css: {
+        files: {
+          'dist/css.min.js': ['dist/css.js']
         }
       }
     },
@@ -119,6 +130,6 @@ module.exports = function(grunt) {
   grunt.registerTask('lint', ['newer:jshint', 'newer:jscs']);
   grunt.registerTask('test', ['jshint', 'qunit']);
   grunt.registerTask('dev', ['default', 'watch:dev']);
-  grunt.registerTask('default', ['concat', 'jade:dist', 'qunit', 'uglify']);
+  grunt.registerTask('default', ['concat:css', 'uglify:css', 'concat', 'jade:dist', 'qunit', 'uglify']);
 
 };
