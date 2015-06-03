@@ -11,6 +11,6 @@
   "dependencies": {
     "d3": "~3.5.5",
     "TechanJS": "https://github.com/andredumas/techan.js.git#~0.5.0",
-    "underscore": "~1.8.3"
+    "underscore": "~1.7.0"
   }
 }
