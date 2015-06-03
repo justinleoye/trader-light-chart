@@ -133,7 +133,7 @@ TraderLightChart.BaseChart = (function(){
 
     var _this = this;
     //this.containerElement.onresize = function(){
-    window.onresize = function(){
+    this.containerElement.onresize = function(){
       _this.onChartContainerResize();
     };
 
