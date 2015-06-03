@@ -146,9 +146,15 @@ TraderLightChart.BaseChart = (function(){
     //var height = document.body.clientHeight * 0.5;
     //this.containerElement.setAttribute("style","width:"+width+"px;"+"height:"+height+"px");
 
-    this.containerWidth = this.containerElement.offsetWidth;
-    this.containerHeight = this.containerElement.offsetHeight;
+    //this.containerWidth = this.containerElement.offsetWidth;
+    //this.containerHeight = this.containerElement.offsetHeight;
+    this.containerWidth = this.containerElement.clientWidth;
+    this.containerHeight = this.containerElement.clientHeight;
+    var scrollWidth = this.containerElement.scrollWidth;
+    var clientWidth = this.containerElement.clientWidth;
     console.log('offsetWidth: ' + this.containerWidth + ' ,offsetHeight: ' + this.containerHeight);
+    console.log('scrollWidth: ' + scrollWidth);
+    console.log('clientWidth: ' + clientWidth);
 
     this.containerWidth = (this.containerWidth - this.margin.left - this.margin.right) > 10 ? this.containerWidth : 400;
     this.containerHeight = (this.containerHeight - this.margin.top - this.margin.bottom) > 10 ? this.containerHeight : 300;
