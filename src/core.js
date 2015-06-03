@@ -180,7 +180,17 @@ TraderLightChart.BaseChart = (function(){
 
   Chart.prototype.feedData = function(data){
     console.log('feedData');
-    this.data = this.data.concat(data);
+    for(var i=0; i < data.length; i++){
+      var datum = {
+        date: data[i].date || data[i].time,
+        open: data[i].open,
+        high: data[i].high,
+        low: data[i].low,
+        close: data[i].close,
+        volume: data[i].volume
+      };
+      this.data.push(datum);
+    }
     console.log('data:', this.data);
   };
 
