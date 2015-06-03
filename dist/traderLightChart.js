@@ -237,6 +237,16 @@ TraderLightChart.BaseChart = (function(){
     this.draw();
   };
 
+  Chart.prototype.drawBars = function(bars){
+    this.feedData(bars);
+    this.draw();
+  };
+
+  Chart.prototype.drawBar = function(bar){
+    this.feedData([bar]);
+    this.draw();
+  };
+
   return Chart;
 })();
 
