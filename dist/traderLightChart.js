@@ -200,7 +200,7 @@ TraderLightChart.BaseChart = (function(){
     console.log('feedData');
     for(var i=0; i < data.length; i++){
       var datum = {
-        date: data[i].date || data[i].time,
+        date: moment(data[i].date || data[i].time).toDate(),
         open: data[i].open,
         high: data[i].high,
         low: data[i].low,
