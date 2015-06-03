@@ -89,9 +89,9 @@ TraderLightChart.LineChart = (function(){
   };
 
   Chart.prototype.draw = function(){
+    this.bindData();
     console.log('draw');
 
-    this.bindData();
 
     //this.xScale.domain(this.data.map(this.accessor.d)); // same as the following line
     this.xScale.domain(techan.scale.plot.time(this.data).domain());

@@ -28,6 +28,7 @@ module.exports = function(grunt) {
       dist: {
         src: [
           'dist/css.min.js',
+          'bower_components/javascript-detect-element-resize/detect-element-resize.js',
           'src/core.js',
           'src/line_chart.js',
           'src/candle_chart.js',

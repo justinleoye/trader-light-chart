@@ -2,12 +2,12 @@
 var lc = new TraderLightChart.LineChart({
       container_id: 'trader_line_chart_container',
     });
-var cc = new TraderLightChart.CandleChart({
-      container_id: 'trader_candle_chart_container',
-    });
+//var cc = new TraderLightChart.CandleChart({
+//      container_id: 'trader_candle_chart_container',
+//    });
 
 testChart(lc);
-testChart(cc);
+//testChart(cc);
 
 function testChart(tlc){
   d3.csv("data.csv", function(error, data) {

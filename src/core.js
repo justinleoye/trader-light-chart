@@ -51,6 +51,8 @@ TraderLightChart.BaseChart = (function(){
     _.extend(this.options, options)
 
     this.data = [];
+    this.isConbineReady = false;
+    this.pending = [];
   }
 
   // should override
@@ -128,14 +130,16 @@ TraderLightChart.BaseChart = (function(){
     console.log('initContainer');
     
     this.containerElement = document.getElementById(this.options.container_id);
-    this.containerElement.setAttribute("style","width:100%;height:100%;")
+    //this.containerElement.setAttribute("style","width:100%;height:100%;")
     this.setChartBasics();
 
     var _this = this;
-    //this.containerElement.onresize = function(){
-    this.containerElement.onresize = function(){
-      _this.onChartContainerResize();
+    var containerElementResizeCallback = function(){
+      _this.pendingExecute(function(){
+        _this.onChartContainerResize();
+      });
     };
+    addResizeListener(this.containerElement, containerElementResizeCallback);
 
     this.containerSelector = d3.select("body div[id="+this.options.container_id+"]"); 
     this.maxVisiableBars = 120; // TODO: calculate it
@@ -198,6 +202,26 @@ TraderLightChart.BaseChart = (function(){
     this.mainG.select('g.y.axis')
         .attr("transform", "translate(" + this.xScale(1) + ",0)");
   }; 
+
+  Chart.prototype.afterConbine = function(){
+    this.clearPending();
+    this.isConbineReady = true;
+  };
+
+  Chart.prototype.clearPending = function(){
+    while(this.pending.length>0){
+      var execution = this.pending.shift();
+      execution();
+    }
+  };
+
+  Chart.prototype.pendingExecute = function(callback){
+    if(this.isConbineReady){
+      callback();
+    }else{
+      this.pending.push(callback);
+    }
+  };
 
   Chart.prototype.feedData = function(data){
     console.log('feedData');

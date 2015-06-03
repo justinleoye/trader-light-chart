@@ -13,5 +13,8 @@
     "TechanJS": "https://github.com/andredumas/techan.js.git#~0.5.0",
     "underscore": "*",
     "moment": "*"
+  },
+  "devDependencies": {
+    "javascript-detect-element-resize": "https://github.com/sdecima/javascript-detect-element-resize.git#~0.5.3"
   }
 }

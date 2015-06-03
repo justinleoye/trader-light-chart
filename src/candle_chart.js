@@ -111,9 +111,8 @@ TraderLightChart.CandleChart = (function(){
   };
 
   CandleChart.prototype.draw = function(){
-    console.log('draw');
-
     this.bindData();
+    console.log('draw');
 
     //this.xScale.domain(this.data.map(this.accessor.d)); // same as the following line
     this.xScale.domain(techan.scale.plot.time(this.data).domain());
