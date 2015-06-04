@@ -209,6 +209,8 @@ TraderLightChart.BaseChart = (function(){
   }
 
   Chart.prototype._setAxisAnnotation= function(){
+    if(!this.isReady) return;
+
     this.timeAnnotation
       .width(65)
       .translate([0, this.containerHeight - this.margin.top - this.margin.bottom]);
