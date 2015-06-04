@@ -21,6 +21,7 @@ TraderLightChart.LineChart = (function(){
     this._createAxis();
     this._createMainPlot();
     this._createAxisAnnotation();
+    this._setAxisAnnotation();
     this._createSupstance();
     this._createCrossHair();
     this._conbine();
@@ -84,8 +85,8 @@ TraderLightChart.LineChart = (function(){
       .attr("class", "close")
       .attr("clip-path", "url(#ohlcClip)");
 
-    this.mainG.append("g")
-        .attr("class", "close annotation up");
+    //this.mainG.append("g")
+    //    .attr("class", "close annotation up");
 
     //this.mainG.append("g")
     //    .attr("class", "volume axis");
@@ -123,7 +124,7 @@ TraderLightChart.LineChart = (function(){
     //this.mainG.select("g.candlestick").datum(this.data);
     var lastDatum = this.data[this.data.length-1];
     //console.log('lastDatum:', lastDatum);
-    this.mainG.select("g.close.annotation").datum([lastDatum]);
+    //this.mainG.select("g.close.annotation").datum([lastDatum]);
     this.mainG.select("g.volume").datum(this.data);
   };
 
@@ -137,7 +138,7 @@ TraderLightChart.LineChart = (function(){
 
     this.mainG.select("g.close").call(this.mainPlot);
     //this.mainG.select("g.candlestick").call(this.mainPlot);
-    this.mainG.select("g.close.annotation").call(this.closeAnnotation);
+    //this.mainG.select("g.close.annotation").call(this.closeAnnotation);
     this.mainG.select("g.volume").call(this.volume);
     this.mainG.select("g.crosshair.ohlc").call(this.crosshair);
     this._drawSupstances();

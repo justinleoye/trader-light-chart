@@ -188,14 +188,11 @@ TraderLightChart.BaseChart = (function(){
     //console.log('timeAnnotationFormat:', timeAnnotationFormat);
     this.timeAnnotation = techan.plot.axisannotation()
       .axis(this.xAxis)
-      .format(timeAnnotationFormat)
-      .width(65)
-      .translate([0, this.containerHeight - this.margin.top - this.margin.bottom]);
+      .format(timeAnnotationFormat);
 
     this.ohlcAnnotationRight = techan.plot.axisannotation()
       .axis(this.yAxisRight)
-      .format(d3.format(',.2fs'))
-      .translate([this.xScale(1), 0]);
+      .format(d3.format(',.2fs'));
 
     this.ohlcAnnotationLeft= techan.plot.axisannotation()
       .axis(this.yAxisLeft)
@@ -204,13 +201,23 @@ TraderLightChart.BaseChart = (function(){
     this.closeAnnotation = techan.plot.axisannotation()
       .axis(this.yAxisRight)
       .accessor(this.accessor)
-      .format(d3.format(',.2fs'))
-      .translate([this.xScale(1), 0]);
+      .format(d3.format(',.2fs'));
 
     //this.volumeAnnotation = techan.plot.axisannotation()
     //  .axis(this.volumeAxis)
     //  .width(35);
   }
+
+  Chart.prototype._setAxisAnnotation= function(){
+    this.timeAnnotation
+      .width(65)
+      .translate([0, this.containerHeight - this.margin.top - this.margin.bottom]);
+
+    this.ohlcAnnotationRight
+      .translate([this.xScale(1), 0]);
+    this.closeAnnotation
+      .translate([this.xScale(1), 0]);
+  };
 
   Chart.prototype._createCrossHair = function(){
     if(!this.isReady) return;
@@ -395,6 +402,7 @@ TraderLightChart.BaseChart = (function(){
     this._setChartBasics();
     this._setMainSvgSize();
     this._setAxisesSize();
+    this._setAxisAnnotation();
     this.draw();
   };
 
@@ -461,6 +469,7 @@ TraderLightChart.LineChart = (function(){
     this._createAxis();
     this._createMainPlot();
     this._createAxisAnnotation();
+    this._setAxisAnnotation();
     this._createSupstance();
     this._createCrossHair();
     this._conbine();
@@ -524,8 +533,8 @@ TraderLightChart.LineChart = (function(){
       .attr("class", "close")
       .attr("clip-path", "url(#ohlcClip)");
 
-    this.mainG.append("g")
-        .attr("class", "close annotation up");
+    //this.mainG.append("g")
+    //    .attr("class", "close annotation up");
 
     //this.mainG.append("g")
     //    .attr("class", "volume axis");
@@ -563,7 +572,7 @@ TraderLightChart.LineChart = (function(){
     //this.mainG.select("g.candlestick").datum(this.data);
     var lastDatum = this.data[this.data.length-1];
     //console.log('lastDatum:', lastDatum);
-    this.mainG.select("g.close.annotation").datum([lastDatum]);
+    //this.mainG.select("g.close.annotation").datum([lastDatum]);
     this.mainG.select("g.volume").datum(this.data);
   };
 
@@ -577,7 +586,7 @@ TraderLightChart.LineChart = (function(){
 
     this.mainG.select("g.close").call(this.mainPlot);
     //this.mainG.select("g.candlestick").call(this.mainPlot);
-    this.mainG.select("g.close.annotation").call(this.closeAnnotation);
+    //this.mainG.select("g.close.annotation").call(this.closeAnnotation);
     this.mainG.select("g.volume").call(this.volume);
     this.mainG.select("g.crosshair.ohlc").call(this.crosshair);
     this._drawSupstances();
@@ -633,9 +642,9 @@ TraderLightChart.CandleChart = (function(){
     this.createBehavior();
     this._createScale();
     this._createAxis();
-    //this.createIndicators();
     this._createMainPlot();
     this._createAxisAnnotation();
+    this._setAxisAnnotation();
     this._createSupstance();
     this._createCrossHair();
     this._conbine();
@@ -647,15 +656,6 @@ TraderLightChart.CandleChart = (function(){
       .on("zoom", function(){
         _this.zoomed();
       });
-  };
-
-  CandleChart.prototype.createIndicators = function(){
-    this.sma = techan.plot.sma()
-        .xScale(this.xScale)
-        .yScale(this.yScale);
-
-    this.smaCalculator = techan.indicator.sma()
-        .period(10);
   };
 
   CandleChart.prototype._createMainPlot = function(){
@@ -710,8 +710,8 @@ TraderLightChart.CandleChart = (function(){
     this.mainG.append('g')
         .attr("class", "y axis left")
 
-    this.mainG.append("g")
-        .attr("class", "close annotation up");
+    //this.mainG.append("g")
+    //    .attr("class", "close annotation up");
 
     //this.mainG.append("g")
     //    .attr("class", "volume axis");
@@ -731,7 +731,7 @@ TraderLightChart.CandleChart = (function(){
     this.mainG.select("g.candlestick").datum(this.data);
     var lastDatum = this.data[this.data.length-1];
     //console.log('lastDatum:', lastDatum);
-    this.mainG.select("g.close.annotation").datum([lastDatum]);
+    //this.mainG.select("g.close.annotation").datum([lastDatum]);
     //this._bindLineData(this.mainG.select("g.sma.ma-0"), this.smaCalculator(this.data));
     this._bindStudies();
     this.mainG.select("g.volume").datum(this.data);
@@ -757,7 +757,7 @@ TraderLightChart.CandleChart = (function(){
     //this.mainG.select("g.volume.axis").call(this.volumeAxis);
 
     this.mainG.select("g.candlestick").call(this.mainPlot);
-    this.mainG.select("g.close.annotation").call(this.closeAnnotation);
+    //this.mainG.select("g.close.annotation").call(this.closeAnnotation);
     //this.mainG.select("g .sma.ma-0").call(this.sma);
     this._drawStudies();
     this.mainG.select("g.volume").call(this.volume);
@@ -783,7 +783,7 @@ TraderLightChart.CandleChart = (function(){
     //this.mainG.select("g.volume.axis").call(this.volumeAxis);
 
     this.mainG.select("g.candlestick").call(this.mainPlot.refresh);
-    this.mainG.select("g.close.annotation").call(this.closeAnnotation.refresh);
+    //this.mainG.select("g.close.annotation").call(this.closeAnnotation.refresh);
     //this.mainG.select("g .sma.ma-0").call(this.sma.refresh);
     this._zoomStudies();
     this.mainG.select("g.volume").call(this.volume.refresh);

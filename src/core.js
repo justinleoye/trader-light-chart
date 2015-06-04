@@ -186,14 +186,11 @@ TraderLightChart.BaseChart = (function(){
     //console.log('timeAnnotationFormat:', timeAnnotationFormat);
     this.timeAnnotation = techan.plot.axisannotation()
       .axis(this.xAxis)
-      .format(timeAnnotationFormat)
-      .width(65)
-      .translate([0, this.containerHeight - this.margin.top - this.margin.bottom]);
+      .format(timeAnnotationFormat);
 
     this.ohlcAnnotationRight = techan.plot.axisannotation()
       .axis(this.yAxisRight)
-      .format(d3.format(',.2fs'))
-      .translate([this.xScale(1), 0]);
+      .format(d3.format(',.2fs'));
 
     this.ohlcAnnotationLeft= techan.plot.axisannotation()
       .axis(this.yAxisLeft)
@@ -202,13 +199,23 @@ TraderLightChart.BaseChart = (function(){
     this.closeAnnotation = techan.plot.axisannotation()
       .axis(this.yAxisRight)
       .accessor(this.accessor)
-      .format(d3.format(',.2fs'))
-      .translate([this.xScale(1), 0]);
+      .format(d3.format(',.2fs'));
 
     //this.volumeAnnotation = techan.plot.axisannotation()
     //  .axis(this.volumeAxis)
     //  .width(35);
   }
+
+  Chart.prototype._setAxisAnnotation= function(){
+    this.timeAnnotation
+      .width(65)
+      .translate([0, this.containerHeight - this.margin.top - this.margin.bottom]);
+
+    this.ohlcAnnotationRight
+      .translate([this.xScale(1), 0]);
+    this.closeAnnotation
+      .translate([this.xScale(1), 0]);
+  };
 
   Chart.prototype._createCrossHair = function(){
     if(!this.isReady) return;
@@ -393,6 +400,7 @@ TraderLightChart.BaseChart = (function(){
     this._setChartBasics();
     this._setMainSvgSize();
     this._setAxisesSize();
+    this._setAxisAnnotation();
     this.draw();
   };
 
