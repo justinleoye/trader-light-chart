@@ -60,6 +60,7 @@ TraderLightChart.BaseChart = (function(){
       bottom: 30,
       left: 50,
       right: 1
+      //right: 50
     };
 
     this.options = {
@@ -374,6 +375,12 @@ TraderLightChart.BaseChart = (function(){
     }else{
       this.baseDatum = null;
     }
+  };
+
+  Chart.prototype.symmetrizeYScaleDomain = function(domain){
+    var base = this.baseDatum.close;
+    var distance = Math.max(Math.abs(domain[0] - base), Math.abs(domain[1] - base));
+    return [base - distance, base + distance];
   };
 
   Chart.prototype.symmetrizePercentDomain = function(domain){

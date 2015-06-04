@@ -62,6 +62,7 @@ TraderLightChart.BaseChart = (function(){
       bottom: 30,
       left: 50,
       right: 1
+      //right: 50
     };
 
     this.options = {
@@ -378,6 +379,12 @@ TraderLightChart.BaseChart = (function(){
     }
   };
 
+  Chart.prototype.symmetrizeYScaleDomain = function(domain){
+    var base = this.baseDatum.close;
+    var distance = Math.max(Math.abs(domain[0] - base), Math.abs(domain[1] - base));
+    return [base - distance, base + distance];
+  };
+
   Chart.prototype.symmetrizePercentDomain = function(domain){
     var distance = Math.max(Math.abs(domain[0]), Math.abs(domain[1]));
     return [-distance, +distance];
@@ -582,9 +589,13 @@ TraderLightChart.LineChart = (function(){
     this.xScale.zoomable().domain(this._domainInVisiable());
 
     // Update y scale min max, only on viewable zoomable.domain()
-    this.yScale.domain(techan.scale.plot.ohlc(this._dataInVisiable()).domain());
+    var yDomain = techan.scale.plot.ohlc(this._dataInVisiable()).domain();
+    yDomain = this.symmetrizeYScaleDomain(yDomain);
+    console.log('yDomain:', yDomain);
+    this.yScale.domain(yDomain);
     var percentDomain = techan.scale.plot.percent(this.yScale, this.accessor(this.getBaseDatum())).domain();
     percentDomain = this.symmetrizePercentDomain(percentDomain);
+    console.log('percentDomain:', percentDomain);
     this.yPercentScale.domain(percentDomain);
     this.yScaleOfVolume.domain(techan.scale.plot.volume(this._dataInVisiable()).domain());
 

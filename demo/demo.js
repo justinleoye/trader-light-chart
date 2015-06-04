@@ -50,6 +50,7 @@ function testIntrady(){
   lcIntraday.addSupstance({price: 17.03});
   ccIntraday.addSupstance({price: 20.03});
   ccIntraday.addSupstance({price: 17.03});
+  lcIntraday.setBaseDatum({time: "2015-05-13T15:00:00+08:00", high: 20.03, open: 20.03, low: 20.03, close: 20.03, volume: 0});
 
   testChartWithJSON(lcIntraday,'intraday');
   testChartWithJSON(ccIntraday, 'intraday');
