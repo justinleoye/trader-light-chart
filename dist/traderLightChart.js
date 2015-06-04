@@ -80,6 +80,7 @@ TraderLightChart.BaseChart = (function(){
     this.isReady = false;
     this.canReInit = true;
     this.supstanceData = [];
+    this.baseDatum = null;
   }
 
   // should override
@@ -362,6 +363,22 @@ TraderLightChart.BaseChart = (function(){
       };
   };
 
+  Chart.prototype.getBaseDatum = function(){
+    if(this.baseDatum){
+      return this.baseDatum;
+    }else{
+      return this.data[0];
+    }
+  };
+
+  Chart.prototype.setBaseDatum = function(datum){
+    if(datum && datum.high && datum.open && datum.low && datum.close){
+      this.baseDatum = this._pretreatData(datum);
+    }else{
+      this.baseDatum = null;
+    }
+  };
+
   Chart.prototype._onChartContainerResize = function(){
     //console.log('_onChartContainerResize');
     this._setChartBasics();
@@ -562,7 +579,7 @@ TraderLightChart.LineChart = (function(){
 
     // Update y scale min max, only on viewable zoomable.domain()
     this.yScale.domain(techan.scale.plot.ohlc(this._dataInVisiable()).domain());
-    this.yPercentScale.domain(techan.scale.plot.percent(this.yScale, this.accessor({})).domain());
+    this.yPercentScale.domain(techan.scale.plot.percent(this.yScale, this.accessor(this.getBaseDatum())).domain());
     this.yScaleOfVolume.domain(techan.scale.plot.volume(this._dataInVisiable()).domain());
 
     this.mainG.select('g.x.axis').call(this.xAxis);

@@ -78,6 +78,7 @@ TraderLightChart.BaseChart = (function(){
     this.isReady = false;
     this.canReInit = true;
     this.supstanceData = [];
+    this.baseDatum = null;
   }
 
   // should override
@@ -358,6 +359,22 @@ TraderLightChart.BaseChart = (function(){
         close: data.close,
         volume: data.volume
       };
+  };
+
+  Chart.prototype.getBaseDatum = function(){
+    if(this.baseDatum){
+      return this.baseDatum;
+    }else{
+      return this.data[0];
+    }
+  };
+
+  Chart.prototype.setBaseDatum = function(datum){
+    if(datum && datum.high && datum.open && datum.low && datum.close){
+      this.baseDatum = this._pretreatData(datum);
+    }else{
+      this.baseDatum = null;
+    }
   };
 
   Chart.prototype._onChartContainerResize = function(){
