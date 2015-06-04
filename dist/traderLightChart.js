@@ -658,22 +658,23 @@ TraderLightChart.CandleChart = (function(){
   };
 
   CandleChart.prototype.addStudy = function(studyName, input, options){
+    var _this = this;
     function addStudy(){
       if(studyName!="Moving Average") return;
       var study = techan.plot.sma()
-          .xScale(this.xScale)
-          .yScale(this.yScale);
+          .xScale(_this.xScale)
+          .yScale(_this.yScale);
       var calculator = techan.indicator.sma()
           .period(input[0]);
 
-      var cnt = this.studies.length;
+      var cnt = _this.studies.length;
       var studyClass = "ma-"+cnt;
-      this.ohlcSelection.append("g")
+      _this.ohlcSelection.append("g")
         .attr("class", "indicator sma "+ studyClass)
         .attr("clip-path", "url(#ohlcClip)");
 
-      var selector = this.mainG.select("g .sma." + studyClass);
-      this.studies.push([selector, study, calculator]);
+      var selector = _this.mainG.select("g .sma." + studyClass);
+      _this.studies.push([selector, study, calculator]);
     }
     this._pendingExecute(addStudy);
   };
