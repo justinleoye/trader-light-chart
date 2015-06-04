@@ -13,7 +13,7 @@ TraderLightChart.LineChart = (function(){
   TraderLightChart.core.classExtend(Chart, TraderLightChart.BaseChart);
 
   Chart.prototype._init = function(){
-    console.log('_init');
+    //console.log('_init');
 
     this._initContainer();
     this._initMainSvg();
@@ -26,7 +26,7 @@ TraderLightChart.LineChart = (function(){
   };
 
   Chart.prototype._createMainPlot = function(){
-    console.log('_createMainPlot');
+    //console.log('_createMainPlot');
     if(!this.isReady) return;
 
     this.mainPlot = techan.plot.close()
@@ -42,7 +42,7 @@ TraderLightChart.LineChart = (function(){
   };
 
   Chart.prototype._conbine = function(){
-    console.log('_conbine');
+    //console.log('_conbine');
     if(!this.isReady) return;
 
     var ohlcSelection = this.mainG.append("g")
@@ -87,11 +87,11 @@ TraderLightChart.LineChart = (function(){
   };
 
   Chart.prototype._bindData = function(){
-    console.log('_bindData');
+    //console.log('_bindData');
     this._bindLineData(this.mainG.select("g.close"), this.data);
     //this.mainG.select("g.candlestick").datum(this.data);
     var lastDatum = this.data[this.data.length-1];
-    console.log('lastDatum:', lastDatum);
+    //console.log('lastDatum:', lastDatum);
     this.mainG.select("g.close.annotation").datum([lastDatum]);
     this.mainG.select("g.volume").datum(this.data);
   };
@@ -100,7 +100,7 @@ TraderLightChart.LineChart = (function(){
     if(!this.isReady) return;
 
     this._bindData();
-    console.log('draw');
+    //console.log('draw');
 
 
     //this.xScale.domain(this.data.map(this.accessor.d)); // same as the following line

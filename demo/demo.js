@@ -1,6 +1,6 @@
 
-//test();
-testIntrady();
+test();
+//testIntrady();
 
 function test(){
   var lc = new TraderLightChart.LineChart({

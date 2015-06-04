@@ -12,7 +12,7 @@ TraderLightChart.CandleChart = (function(){
   TraderLightChart.core.classExtend(CandleChart, TraderLightChart.BaseChart);
 
   CandleChart.prototype._init = function(){
-    console.log('_init');
+    //console.log('_init');
     this.zoomAssociated = false;
 
     this._initContainer();
@@ -45,7 +45,7 @@ TraderLightChart.CandleChart = (function(){
   };
 
   CandleChart.prototype._createMainPlot = function(){
-    console.log('_createMainPlot');
+    //console.log('_createMainPlot');
     if(!this.isReady) return;
 
     //this.mainPlot = techan.plot.ohlc()
@@ -62,7 +62,7 @@ TraderLightChart.CandleChart = (function(){
   };
 
   CandleChart.prototype._conbine = function(){
-    console.log('_conbine');
+    //console.log('_conbine');
     if(!this.isReady) return;
 
     this.ohlcSelection = this.mainG.append("g")
@@ -109,10 +109,10 @@ TraderLightChart.CandleChart = (function(){
   };
 
   CandleChart.prototype._bindData = function(){
-    console.log('_bindData');
+    //console.log('_bindData');
     this.mainG.select("g.candlestick").datum(this.data);
     var lastDatum = this.data[this.data.length-1];
-    console.log('lastDatum:', lastDatum);
+    //console.log('lastDatum:', lastDatum);
     this.mainG.select("g.close.annotation").datum([lastDatum]);
     //this._bindLineData(this.mainG.select("g.sma.ma-0"), this.smaCalculator(this.data));
     this._bindStudies();
@@ -123,7 +123,7 @@ TraderLightChart.CandleChart = (function(){
     if(!this.isReady) return;
 
     this._bindData();
-    console.log('draw');
+    //console.log('draw');
 
     //this.xScale.domain(this.data.map(this.accessor.d)); // same as the following line
     this.xScale.domain(techan.scale.plot.time(this.data).domain());
@@ -147,16 +147,14 @@ TraderLightChart.CandleChart = (function(){
 
     // Associate the zoom with the scale after a domain has been applied
     if(!this.zoomAssociated){
-      console.log('zoomAssociated');
-      console.log('zoomable:', this.xScale.zoomable());
-      console.log('zoomable:', this.xScale.zoomable());
+      //console.log('zoomAssociated');
       this.zoom.x(this.xScale.zoomable()).y(this.yScale);
       this.zoomAssociated = true;
     }
   };
 
   CandleChart.prototype.zoomed = function(rect){
-    console.log('zoomed');
+    //console.log('zoomed');
     this.zoom.translate();
     //this.zoom.scale();
 
