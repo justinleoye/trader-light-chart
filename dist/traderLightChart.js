@@ -1,4 +1,4 @@
-var TraderLightChart=TraderLightChart||{};TraderLightChart.core=TraderLightChart.core||{},function(a){a.CHART_GLOABLE_CSS="\n\n\n.trader-light-chart {\n  font-size: 0.5rem;\n}\n.trader-light-chart path.line {\n  fill: none;\n  stroke: #000000;\n  stroke-width: 1;\n}\n.trader-light-chart .axis path,\n.trader-light-chart .axis line {\n  fill: none;\n  stroke: #555555;\n  shape-rendering: crispEdges;\n}\n.trader-light-chart path {\n  fill: none;\n  stroke-width: 1;\n}\n.trader-light-chart path.candle {\n  stroke: #000000;\n  shape-rendering: crispEdges;\n}\n.trader-light-chart path.candle.body {\n  stroke-width: 0;\n  shape-rendering: crispEdges;\n}\n.trader-light-chart path.candle.up {\n  fill: #d75442;\n  stroke: #d75442;\n  shape-rendering: crispEdges;\n}\n.trader-light-chart path.candle.down {\n  fill: #6ba583;\n  stroke: #6ba583;\n  shape-rendering: crispEdges;\n}\n.trader-light-chart path.ohlc {\n  stroke: #000000;\n  stroke-width: 1;\n}\n.trader-light-chart path.ohlc.up {\n  stroke: #d75442;\n}\n.trader-light-chart path.ohlc.down {\n  stroke: #6ba583;\n}\n.trader-light-chart .close.annotation.up path {\n  font-size: 0.5rem;\n  fill: #00AA00;\n}\n.trader-light-chart .ma-0 path.line {\n  stroke: #000000;\n}\n.trader-light-chart .ma-1 path.line {\n  stroke: #2679CB;\n}\n.trader-light-chart .ma-2 path.line {\n  stroke: #FA110F;\n}\n.trader-light-chart .ma-3 path.line {\n  stroke: #00A800;\n}\n.trader-light-chart .ma-4 path.line {\n  stroke: #C0C0C0;\n}\n.trader-light-chart .ma-5 path.line {\n  stroke: #0000FF;\n}\n.trader-light-chart path.volume {\n  fill: #EEEEEE;\n}\n.trader-light-chart .crosshair {\n  cursor: crosshair;\n}\n.trader-light-chart .crosshair path.wire {\n  stroke: #DDDDDD;\n  stroke-dasharray: 1, 1;\n}\n.trader-light-chart .crosshair .axisannotation path {\n  fill: #DDDDDD;\n}\n\n\n    "}(TraderLightChart.core);
+var TraderLightChart=TraderLightChart||{};TraderLightChart.core=TraderLightChart.core||{},function(a){a.CHART_GLOABLE_CSS="\n\n\n.trader-light-chart {\n  font-size: 0.5rem;\n}\n.trader-light-chart path.line {\n  fill: none;\n  stroke: #000000;\n  stroke-width: 1;\n}\n.trader-light-chart .axis path,\n.trader-light-chart .axis line {\n  fill: none;\n  stroke: #555555;\n  shape-rendering: crispEdges;\n}\n.trader-light-chart path {\n  fill: none;\n  stroke-width: 1;\n}\n.trader-light-chart path.candle {\n  stroke: #000000;\n  shape-rendering: crispEdges;\n}\n.trader-light-chart path.candle.body {\n  stroke-width: 0;\n  shape-rendering: crispEdges;\n}\n.trader-light-chart path.candle.up {\n  fill: #d75442;\n  stroke: #d75442;\n  shape-rendering: crispEdges;\n}\n.trader-light-chart path.candle.down {\n  fill: #6ba583;\n  stroke: #6ba583;\n  shape-rendering: crispEdges;\n}\n.trader-light-chart path.ohlc {\n  stroke: #000000;\n  stroke-width: 1;\n}\n.trader-light-chart path.ohlc.up {\n  stroke: #d75442;\n}\n.trader-light-chart path.ohlc.down {\n  stroke: #6ba583;\n}\n.trader-light-chart .close.annotation.up path {\n  font-size: 0.5rem;\n  fill: #00AA00;\n}\n.trader-light-chart .ma-0 path.line {\n  stroke: #000000;\n}\n.trader-light-chart .ma-1 path.line {\n  stroke: #2679CB;\n}\n.trader-light-chart .ma-2 path.line {\n  stroke: #FA110F;\n}\n.trader-light-chart .ma-3 path.line {\n  stroke: #00A800;\n}\n.trader-light-chart .ma-4 path.line {\n  stroke: #C0C0C0;\n}\n.trader-light-chart .ma-5 path.line {\n  stroke: #0000FF;\n}\n.trader-light-chart path.volume {\n  fill: #EEEEEE;\n}\n.trader-light-chart .crosshair {\n  cursor: crosshair;\n}\n.trader-light-chart .crosshair path.wire {\n  stroke: #DDDDDD;\n  stroke-dasharray: 1, 1;\n}\n.trader-light-chart .crosshair .axisannotation path {\n  fill: #DDDDDD;\n}\n.trader-light-chart .analysis path,\n.trader-light-chart .analysis circle {\n  stroke: #7E7E7E;\n  stroke-width: 0.8;\n}\n.trader-light-chart .interaction path,\n.trader-light-chart .interaction circle {\n  pointer-events: all;\n}\n.trader-light-chart .interaction .body {\n  cursor: move;\n}\n.trader-light-chart .supstance path {\n  stroke-dasharray: 2, 2;\n}\n.trader-light-chart .supstances .interaction path {\n  pointer-events: all;\n  cursor: ns-resize;\n}\n.trader-light-chart .mouseover .supstance path {\n  stroke-width: 1.5;\n}\n.trader-light-chart .dragging .supstance path {\n  stroke: darkblue;\n}\n\n\n    "}(TraderLightChart.core);
 
 var TraderLightChart = TraderLightChart || {};
 TraderLightChart.core = TraderLightChart.core || {};
@@ -61,7 +61,8 @@ TraderLightChart.BaseChart = (function(){
       top: 0,
       bottom: 30,
       left: 50,
-      right: 1
+      //right: 1
+      right: 50
     };
 
     this.options = {
@@ -78,6 +79,7 @@ TraderLightChart.BaseChart = (function(){
     this.pending = [];
     this.isReady = false;
     this.canReInit = true;
+    this.supstanceData = [];
   }
 
   // should override
@@ -92,6 +94,8 @@ TraderLightChart.BaseChart = (function(){
       .outerPadding(0);
     this.yScale = d3.scale.linear();
 
+    this.yPercentScale = this.yScale.copy();
+
     this.yScaleOfVolume = d3.scale.linear();
 
     this._setScales();
@@ -100,6 +104,7 @@ TraderLightChart.BaseChart = (function(){
   Chart.prototype._setScales = function(){
     this.xScale.range([0, this.containerWidth - this.margin.left - this.margin.right]);
     this.yScale.range([this.containerHeight - this.margin.top - this.margin.bottom, 0]);
+    this.yPercentScale.range([this.containerHeight - this.margin.top - this.margin.bottom, 0]);
     this.yScaleOfVolume.range([this.yScale(0), this.yScale(0.4)]);
   }
 
@@ -126,6 +131,50 @@ TraderLightChart.BaseChart = (function(){
   // should override
   Chart.prototype._createMainPlot = function(){
   };
+
+  ////////////////////// analysis supstance ///////////////////////////////////
+  Chart.prototype._createSupstance = function(){
+    this.supstance = techan.plot.supstance()
+      .xScale(this.xScale)
+      .yScale(this.yScale);
+  };
+
+  Chart.prototype.addSupstance = function(data){
+    //console.log('addSupstance');
+    var _this = this;
+    function addSupstance(){
+      _this.supstanceData.push(data.price);
+      _this._drawSupstances();
+    }
+    this._pendingExecute(addSupstance);
+  };
+
+  Chart.prototype._drawSupstances = function(){
+    //console.log('_drawSupstances');
+    var supstanceData = this._genSupstanceData(this.data[0], this.data[this.data.length-1]);
+    if(supstanceData.length > 0)
+      this.mainG.select("g.supstances").datum(supstanceData).call(this.supstance);
+  };
+
+  Chart.prototype._refreshSupstances = function(){
+    //console.log('_refreshSupstances');
+    var supstanceData = this._genSupstanceData(this.data[0], this.data[this.data.length-1]);
+    if(supstanceData.length > 0)
+      this.mainG.select("g.supstances").datum(supstanceData).call(this.supstance.refresh);
+  };
+
+  Chart.prototype._genSupstanceData = function(startDate, endDate){
+    var l = [];
+    for(var i=0; i < this.supstanceData.length; i++){
+      l.push({
+        start: startDate,
+        end: endDate,
+        value: this.supstanceData[i]
+      });
+    }
+    return l;
+  }
+  ////////////////////// end of analysis supstance ///////////////////////////////////
 
   Chart.prototype._createAxisAnnotation = function(){
     if(!this.isReady) return;
@@ -254,21 +303,16 @@ TraderLightChart.BaseChart = (function(){
   Chart.prototype._setAxisesSize = function(){
     this.mainG.select('g.x.axis')
         .attr("transform", "translate(0," + (this.containerHeight - this.margin.top - this.margin.bottom) + ")");
-    this.mainG.select('g.y.axis')
+    this.mainG.select('g.y.axis.right')
         .attr("transform", "translate(" + this.xScale(1) + ",0)");
+    this.mainG.select('g.y.axis.left')
+        .attr("transform", "translate(0,0)");
   }; 
 
   Chart.prototype.feedData = function(data){
     //console.log('feedData');
     for(var i=0; i < data.length; i++){
-      var datum = {
-        date: moment(data[i].date || data[i].time).toDate(),
-        open: data[i].open,
-        high: data[i].high,
-        low: data[i].low,
-        close: data[i].close,
-        volume: data[i].volume
-      };
+      var datum = this._pretreatData(data[i]);
       this.data.push(datum);
     }
     //console.log('data:', this.data);
@@ -302,12 +346,21 @@ TraderLightChart.BaseChart = (function(){
         selection.datum(data);
         return;
     }
-    //console.log('data len before bind:', datum.length);
     // Some trickery to remove old and insert new without changing array reference,
     // so no need to update __data__ in the DOM
     datum.splice.apply(datum, [0, datum.length].concat(data));
-    //console.log('data len after bind:', datum.length);
-  }
+  };
+
+  Chart.prototype._pretreatData = function(data) {
+    return {
+        date: moment(data.date || data.time).toDate(),
+        open: data.open,
+        high: data.high,
+        low: data.low,
+        close: data.close,
+        volume: data.volume
+      };
+  };
 
   Chart.prototype._onChartContainerResize = function(){
     //console.log('_onChartContainerResize');
@@ -379,7 +432,8 @@ TraderLightChart.LineChart = (function(){
     this._createAxis();
     this._createMainPlot();
     this._createAxisAnnotation();
-    this._createCrossHair()
+    this._createSupstance();
+    this._createCrossHair();
     this._conbine();
   };
 
@@ -399,6 +453,28 @@ TraderLightChart.LineChart = (function(){
       .yScale(this.yScaleOfVolume);
   };
 
+  Chart.prototype._createAxis = function(){
+    //console.log('_createAxis');
+    if(!this.isReady) return;
+
+    this.xAxis = d3.svg.axis()
+      .scale(this.xScale)
+      .orient("bottom");
+    this.yAxisRight = d3.svg.axis()
+      .scale(this.yScale)
+      .orient("right");
+    this.yAxisLeft = d3.svg.axis()
+      .scale(this.yPercentScale)
+      .orient("left")
+      .tickFormat(d3.format('+.1%'));
+
+    //this.volumeAxis = d3.svg.axis()
+    //  .scale(this.yScaleOfVolume)
+    //  .orient("right")
+    //  .ticks(3)
+    //  .tickFormat(d3.format(",.3s"));
+  };
+
   Chart.prototype._conbine = function(){
     //console.log('_conbine');
     if(!this.isReady) return;
@@ -412,11 +488,30 @@ TraderLightChart.LineChart = (function(){
       .attr("class", "volume")
       .attr("clip-path", "url(#ohlcClip)");
 
+    this._conbineAxises();
+
     ohlcSelection.append("g")
       //.attr("class", "candlestick")
       .attr("class", "close")
       .attr("clip-path", "url(#ohlcClip)");
 
+    this.mainG.append("g")
+        .attr("class", "close annotation up");
+
+    //this.mainG.append("g")
+    //    .attr("class", "volume axis");
+
+    this.mainG.append('g')
+        .attr("class", "crosshair ohlc");
+
+    this.mainG.append("g")
+            .attr("class", "supstances analysis")
+            .attr("clip-path", "url(#ohlcClip)");
+
+    this._afterConbine();
+  };
+
+  Chart.prototype._conbineAxises = function(){
     this.mainG.append('g')
         .attr("class", "x axis");
 
@@ -431,17 +526,6 @@ TraderLightChart.LineChart = (function(){
 
     this.mainG.append('g')
         .attr("class", "y axis left")
-
-    this.mainG.append("g")
-        .attr("class", "close annotation up");
-
-    //this.mainG.append("g")
-    //    .attr("class", "volume axis");
-
-    this.mainG.append('g')
-        .attr("class", "crosshair ohlc");
-
-    this._afterConbine();
   };
 
   Chart.prototype._bindData = function(){
@@ -460,6 +544,17 @@ TraderLightChart.LineChart = (function(){
     this._bindData();
     //console.log('draw');
 
+    this._drawAxises();
+
+    this.mainG.select("g.close").call(this.mainPlot);
+    //this.mainG.select("g.candlestick").call(this.mainPlot);
+    this.mainG.select("g.close.annotation").call(this.closeAnnotation);
+    this.mainG.select("g.volume").call(this.volume);
+    this.mainG.select("g.crosshair.ohlc").call(this.crosshair);
+    this._drawSupstances();
+  };
+
+  Chart.prototype._drawAxises = function(){
 
     //this.xScale.domain(this.data.map(this.accessor.d)); // same as the following line
     this.xScale.domain(techan.scale.plot.time(this.data).domain());
@@ -467,6 +562,7 @@ TraderLightChart.LineChart = (function(){
 
     // Update y scale min max, only on viewable zoomable.domain()
     this.yScale.domain(techan.scale.plot.ohlc(this._dataInVisiable()).domain());
+    this.yPercentScale.domain(techan.scale.plot.percent(this.yScale, this.accessor({})).domain());
     this.yScaleOfVolume.domain(techan.scale.plot.volume(this._dataInVisiable()).domain());
 
     this.mainG.select('g.x.axis').call(this.xAxis);
@@ -474,11 +570,6 @@ TraderLightChart.LineChart = (function(){
     this.mainG.select('g.y.axis.left').call(this.yAxisLeft);
     //this.mainG.select("g.volume.axis").call(this.volumeAxis);
 
-    this.mainG.select("g.close").call(this.mainPlot);
-    //this.mainG.select("g.candlestick").call(this.mainPlot);
-    this.mainG.select("g.close.annotation").call(this.closeAnnotation);
-    this.mainG.select("g.volume").call(this.volume);
-    this.mainG.select("g.crosshair.ohlc").call(this.crosshair);
   };
   
   return Chart;
@@ -510,7 +601,8 @@ TraderLightChart.CandleChart = (function(){
     //this.createIndicators();
     this._createMainPlot();
     this._createAxisAnnotation();
-    this._createCrossHair()
+    this._createSupstance();
+    this._createCrossHair();
     this._conbine();
   };
 
@@ -592,6 +684,10 @@ TraderLightChart.CandleChart = (function(){
     this.mainG.append('g')
         .attr("class", "crosshair ohlc");
 
+    this.mainG.append("g")
+            .attr("class", "supstances analysis")
+            .attr("clip-path", "url(#ohlcClip)");
+
     this._afterConbine();
   };
 
@@ -631,6 +727,7 @@ TraderLightChart.CandleChart = (function(){
     this._drawStudies();
     this.mainG.select("g.volume").call(this.volume);
     this.mainG.select("g.crosshair.ohlc").call(this.crosshair).call(this.zoom);
+    this._drawSupstances();
 
     // Associate the zoom with the scale after a domain has been applied
     if(!this.zoomAssociated){
@@ -656,6 +753,7 @@ TraderLightChart.CandleChart = (function(){
     this._zoomStudies();
     this.mainG.select("g.volume").call(this.volume.refresh);
     this.mainG.select("g.crosshair.ohlc").call(this.crosshair.refresh);
+    this._refreshSupstances();
   };
 
   CandleChart.prototype.addStudy = function(studyName, input, options){

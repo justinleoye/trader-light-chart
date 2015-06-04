@@ -1,6 +1,6 @@
 
-test();
-//testIntrady();
+//test();
+testIntrady();
 
 function test(){
   var lc = new TraderLightChart.LineChart({
@@ -10,12 +10,17 @@ function test(){
         container_id: 'trader_candle_chart_container',
       });
 
+  lc.addSupstance({price: 14.03});
+  lc.addSupstance({price: 8.03});
+
   cc.addStudy('Moving Average', [5]);
   cc.addStudy('Moving Average', [10]);
   cc.addStudy('Moving Average', [20]);
   cc.addStudy('Moving Average', [60]);
   cc.addStudy('Moving Average', [120]);
   cc.addStudy('Moving Average', [250]);
+  cc.addSupstance({price: 14.03});
+  cc.addSupstance({price: 8.03});
 
   //testChartWithCSV(lc);
   //testChartWithCSV(cc);
@@ -40,6 +45,11 @@ function testIntrady(){
         interval: '1',
         maxVisiableBars: 240,
       });
+
+  lcIntraday.addSupstance({price: 20.03});
+  lcIntraday.addSupstance({price: 17.03});
+  ccIntraday.addSupstance({price: 20.03});
+  ccIntraday.addSupstance({price: 17.03});
 
   testChartWithJSON(lcIntraday,'intraday');
   testChartWithJSON(ccIntraday, 'intraday');

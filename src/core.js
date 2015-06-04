@@ -59,7 +59,8 @@ TraderLightChart.BaseChart = (function(){
       top: 0,
       bottom: 30,
       left: 50,
-      right: 1
+      //right: 1
+      right: 50
     };
 
     this.options = {
@@ -76,6 +77,7 @@ TraderLightChart.BaseChart = (function(){
     this.pending = [];
     this.isReady = false;
     this.canReInit = true;
+    this.supstanceData = [];
   }
 
   // should override
@@ -90,6 +92,8 @@ TraderLightChart.BaseChart = (function(){
       .outerPadding(0);
     this.yScale = d3.scale.linear();
 
+    this.yPercentScale = this.yScale.copy();
+
     this.yScaleOfVolume = d3.scale.linear();
 
     this._setScales();
@@ -98,6 +102,7 @@ TraderLightChart.BaseChart = (function(){
   Chart.prototype._setScales = function(){
     this.xScale.range([0, this.containerWidth - this.margin.left - this.margin.right]);
     this.yScale.range([this.containerHeight - this.margin.top - this.margin.bottom, 0]);
+    this.yPercentScale.range([this.containerHeight - this.margin.top - this.margin.bottom, 0]);
     this.yScaleOfVolume.range([this.yScale(0), this.yScale(0.4)]);
   }
 
@@ -124,6 +129,50 @@ TraderLightChart.BaseChart = (function(){
   // should override
   Chart.prototype._createMainPlot = function(){
   };
+
+  ////////////////////// analysis supstance ///////////////////////////////////
+  Chart.prototype._createSupstance = function(){
+    this.supstance = techan.plot.supstance()
+      .xScale(this.xScale)
+      .yScale(this.yScale);
+  };
+
+  Chart.prototype.addSupstance = function(data){
+    //console.log('addSupstance');
+    var _this = this;
+    function addSupstance(){
+      _this.supstanceData.push(data.price);
+      _this._drawSupstances();
+    }
+    this._pendingExecute(addSupstance);
+  };
+
+  Chart.prototype._drawSupstances = function(){
+    //console.log('_drawSupstances');
+    var supstanceData = this._genSupstanceData(this.data[0], this.data[this.data.length-1]);
+    if(supstanceData.length > 0)
+      this.mainG.select("g.supstances").datum(supstanceData).call(this.supstance);
+  };
+
+  Chart.prototype._refreshSupstances = function(){
+    //console.log('_refreshSupstances');
+    var supstanceData = this._genSupstanceData(this.data[0], this.data[this.data.length-1]);
+    if(supstanceData.length > 0)
+      this.mainG.select("g.supstances").datum(supstanceData).call(this.supstance.refresh);
+  };
+
+  Chart.prototype._genSupstanceData = function(startDate, endDate){
+    var l = [];
+    for(var i=0; i < this.supstanceData.length; i++){
+      l.push({
+        start: startDate,
+        end: endDate,
+        value: this.supstanceData[i]
+      });
+    }
+    return l;
+  }
+  ////////////////////// end of analysis supstance ///////////////////////////////////
 
   Chart.prototype._createAxisAnnotation = function(){
     if(!this.isReady) return;
@@ -252,21 +301,16 @@ TraderLightChart.BaseChart = (function(){
   Chart.prototype._setAxisesSize = function(){
     this.mainG.select('g.x.axis')
         .attr("transform", "translate(0," + (this.containerHeight - this.margin.top - this.margin.bottom) + ")");
-    this.mainG.select('g.y.axis')
+    this.mainG.select('g.y.axis.right')
         .attr("transform", "translate(" + this.xScale(1) + ",0)");
+    this.mainG.select('g.y.axis.left')
+        .attr("transform", "translate(0,0)");
   }; 
 
   Chart.prototype.feedData = function(data){
     //console.log('feedData');
     for(var i=0; i < data.length; i++){
-      var datum = {
-        date: moment(data[i].date || data[i].time).toDate(),
-        open: data[i].open,
-        high: data[i].high,
-        low: data[i].low,
-        close: data[i].close,
-        volume: data[i].volume
-      };
+      var datum = this._pretreatData(data[i]);
       this.data.push(datum);
     }
     //console.log('data:', this.data);
@@ -300,12 +344,21 @@ TraderLightChart.BaseChart = (function(){
         selection.datum(data);
         return;
     }
-    //console.log('data len before bind:', datum.length);
     // Some trickery to remove old and insert new without changing array reference,
     // so no need to update __data__ in the DOM
     datum.splice.apply(datum, [0, datum.length].concat(data));
-    //console.log('data len after bind:', datum.length);
-  }
+  };
+
+  Chart.prototype._pretreatData = function(data) {
+    return {
+        date: moment(data.date || data.time).toDate(),
+        open: data.open,
+        high: data.high,
+        low: data.low,
+        close: data.close,
+        volume: data.volume
+      };
+  };
 
   Chart.prototype._onChartContainerResize = function(){
     //console.log('_onChartContainerResize');

@@ -23,7 +23,8 @@ TraderLightChart.CandleChart = (function(){
     //this.createIndicators();
     this._createMainPlot();
     this._createAxisAnnotation();
-    this._createCrossHair()
+    this._createSupstance();
+    this._createCrossHair();
     this._conbine();
   };
 
@@ -105,6 +106,10 @@ TraderLightChart.CandleChart = (function(){
     this.mainG.append('g')
         .attr("class", "crosshair ohlc");
 
+    this.mainG.append("g")
+            .attr("class", "supstances analysis")
+            .attr("clip-path", "url(#ohlcClip)");
+
     this._afterConbine();
   };
 
@@ -144,6 +149,7 @@ TraderLightChart.CandleChart = (function(){
     this._drawStudies();
     this.mainG.select("g.volume").call(this.volume);
     this.mainG.select("g.crosshair.ohlc").call(this.crosshair).call(this.zoom);
+    this._drawSupstances();
 
     // Associate the zoom with the scale after a domain has been applied
     if(!this.zoomAssociated){
@@ -169,6 +175,7 @@ TraderLightChart.CandleChart = (function(){
     this._zoomStudies();
     this.mainG.select("g.volume").call(this.volume.refresh);
     this.mainG.select("g.crosshair.ohlc").call(this.crosshair.refresh);
+    this._refreshSupstances();
   };
 
   CandleChart.prototype.addStudy = function(studyName, input, options){

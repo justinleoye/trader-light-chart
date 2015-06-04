@@ -79,3 +79,28 @@
 .trader-light-chart .crosshair .axisannotation path {
   fill: #DDDDDD;
 }
+.trader-light-chart .analysis path,
+.trader-light-chart .analysis circle {
+  stroke: #7E7E7E;
+  stroke-width: 0.8;
+}
+.trader-light-chart .interaction path,
+.trader-light-chart .interaction circle {
+  pointer-events: all;
+}
+.trader-light-chart .interaction .body {
+  cursor: move;
+}
+.trader-light-chart .supstance path {
+  stroke-dasharray: 2, 2;
+}
+.trader-light-chart .supstances .interaction path {
+  pointer-events: all;
+  cursor: ns-resize;
+}
+.trader-light-chart .mouseover .supstance path {
+  stroke-width: 1.5;
+}
+.trader-light-chart .dragging .supstance path {
+  stroke: darkblue;
+}

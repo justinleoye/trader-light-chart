@@ -100,4 +100,34 @@
         fill: #DDDDDD;
     }
 
+    .analysis path, .analysis circle {
+        stroke: #7E7E7E;
+        stroke-width: 0.8;
+    }
+
+    .interaction path, .interaction circle {
+        pointer-events: all;
+    }
+
+    .interaction .body {
+        cursor: move;
+    }
+
+    .supstance path {
+        stroke-dasharray: 2, 2;
+    }
+
+    .supstances .interaction path {
+        pointer-events: all;
+        cursor: ns-resize;
+    }
+
+    .mouseover .supstance path {
+        stroke-width: 1.5;
+    }
+
+    .dragging .supstance path {
+        stroke: darkblue;
+    }
+
 }

@@ -21,7 +21,8 @@ TraderLightChart.LineChart = (function(){
     this._createAxis();
     this._createMainPlot();
     this._createAxisAnnotation();
-    this._createCrossHair()
+    this._createSupstance();
+    this._createCrossHair();
     this._conbine();
   };
 
@@ -41,6 +42,28 @@ TraderLightChart.LineChart = (function(){
       .yScale(this.yScaleOfVolume);
   };
 
+  Chart.prototype._createAxis = function(){
+    //console.log('_createAxis');
+    if(!this.isReady) return;
+
+    this.xAxis = d3.svg.axis()
+      .scale(this.xScale)
+      .orient("bottom");
+    this.yAxisRight = d3.svg.axis()
+      .scale(this.yScale)
+      .orient("right");
+    this.yAxisLeft = d3.svg.axis()
+      .scale(this.yPercentScale)
+      .orient("left")
+      .tickFormat(d3.format('+.1%'));
+
+    //this.volumeAxis = d3.svg.axis()
+    //  .scale(this.yScaleOfVolume)
+    //  .orient("right")
+    //  .ticks(3)
+    //  .tickFormat(d3.format(",.3s"));
+  };
+
   Chart.prototype._conbine = function(){
     //console.log('_conbine');
     if(!this.isReady) return;
@@ -54,11 +77,30 @@ TraderLightChart.LineChart = (function(){
       .attr("class", "volume")
       .attr("clip-path", "url(#ohlcClip)");
 
+    this._conbineAxises();
+
     ohlcSelection.append("g")
       //.attr("class", "candlestick")
       .attr("class", "close")
       .attr("clip-path", "url(#ohlcClip)");
 
+    this.mainG.append("g")
+        .attr("class", "close annotation up");
+
+    //this.mainG.append("g")
+    //    .attr("class", "volume axis");
+
+    this.mainG.append('g')
+        .attr("class", "crosshair ohlc");
+
+    this.mainG.append("g")
+            .attr("class", "supstances analysis")
+            .attr("clip-path", "url(#ohlcClip)");
+
+    this._afterConbine();
+  };
+
+  Chart.prototype._conbineAxises = function(){
     this.mainG.append('g')
         .attr("class", "x axis");
 
@@ -73,17 +115,6 @@ TraderLightChart.LineChart = (function(){
 
     this.mainG.append('g')
         .attr("class", "y axis left")
-
-    this.mainG.append("g")
-        .attr("class", "close annotation up");
-
-    //this.mainG.append("g")
-    //    .attr("class", "volume axis");
-
-    this.mainG.append('g')
-        .attr("class", "crosshair ohlc");
-
-    this._afterConbine();
   };
 
   Chart.prototype._bindData = function(){
@@ -102,6 +133,17 @@ TraderLightChart.LineChart = (function(){
     this._bindData();
     //console.log('draw');
 
+    this._drawAxises();
+
+    this.mainG.select("g.close").call(this.mainPlot);
+    //this.mainG.select("g.candlestick").call(this.mainPlot);
+    this.mainG.select("g.close.annotation").call(this.closeAnnotation);
+    this.mainG.select("g.volume").call(this.volume);
+    this.mainG.select("g.crosshair.ohlc").call(this.crosshair);
+    this._drawSupstances();
+  };
+
+  Chart.prototype._drawAxises = function(){
 
     //this.xScale.domain(this.data.map(this.accessor.d)); // same as the following line
     this.xScale.domain(techan.scale.plot.time(this.data).domain());
@@ -109,6 +151,7 @@ TraderLightChart.LineChart = (function(){
 
     // Update y scale min max, only on viewable zoomable.domain()
     this.yScale.domain(techan.scale.plot.ohlc(this._dataInVisiable()).domain());
+    this.yPercentScale.domain(techan.scale.plot.percent(this.yScale, this.accessor({})).domain());
     this.yScaleOfVolume.domain(techan.scale.plot.volume(this._dataInVisiable()).domain());
 
     this.mainG.select('g.x.axis').call(this.xAxis);
@@ -116,11 +159,6 @@ TraderLightChart.LineChart = (function(){
     this.mainG.select('g.y.axis.left').call(this.yAxisLeft);
     //this.mainG.select("g.volume.axis").call(this.volumeAxis);
 
-    this.mainG.select("g.close").call(this.mainPlot);
-    //this.mainG.select("g.candlestick").call(this.mainPlot);
-    this.mainG.select("g.close.annotation").call(this.closeAnnotation);
-    this.mainG.select("g.volume").call(this.volume);
-    this.mainG.select("g.crosshair.ohlc").call(this.crosshair);
   };
   
   return Chart;
