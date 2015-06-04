@@ -77,8 +77,8 @@ TraderLightChart.LineChart = (function(){
     this.mainG.append("g")
         .attr("class", "close annotation up");
 
-    this.mainG.append("g")
-        .attr("class", "volume axis");
+    //this.mainG.append("g")
+    //    .attr("class", "volume axis");
 
     this.mainG.append('g')
         .attr("class", "crosshair ohlc");
@@ -114,7 +114,7 @@ TraderLightChart.LineChart = (function(){
     this.mainG.select('g.x.axis').call(this.xAxis);
     this.mainG.select('g.y.axis.right').call(this.yAxisRight);
     this.mainG.select('g.y.axis.left').call(this.yAxisLeft);
-    this.mainG.select("g.volume.axis").call(this.volumeAxis);
+    //this.mainG.select("g.volume.axis").call(this.volumeAxis);
 
     this.mainG.select("g.close").call(this.mainPlot);
     //this.mainG.select("g.candlestick").call(this.mainPlot);

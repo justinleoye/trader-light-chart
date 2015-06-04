@@ -1,6 +1,6 @@
 
-test();
-//testIntrady();
+//test();
+testIntrady();
 
 function test(){
   var lc = new TraderLightChart.LineChart({
@@ -32,11 +32,13 @@ function testIntrady(){
   var lcIntraday = new TraderLightChart.LineChart({
         container_id: 'trader_line_chart_container',
         interval: '1',
+        maxVisiableBars: 240,
       });
 
   var ccIntraday = new TraderLightChart.CandleChart({
         container_id: 'trader_candle_chart_container',
         interval: '1',
+        maxVisiableBars: 240,
       });
 
   testChartWithJSON(lcIntraday,'intraday');

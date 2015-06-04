@@ -59,15 +59,18 @@ TraderLightChart.BaseChart = (function(){
       top: 20,
       bottom: 30,
       left: 50,
-      right: 50
+      right: 1
     };
 
     this.options = {
       container_id: 'trader_light_chart_container',
-      interval: 'D'
+      interval: 'D',
+      maxVisiableBars: 120,
     };
 
     _.extend(this.options, options)
+
+    this.maxVisiableBars = this.options.maxVisiableBars; // TODO: calculate it
 
     this.data = [];
     this.pending = [];
@@ -111,11 +114,11 @@ TraderLightChart.BaseChart = (function(){
     this.yAxisLeft = d3.svg.axis()
       .scale(this.yScale)
       .orient("left");
-    this.volumeAxis = d3.svg.axis()
-      .scale(this.yScaleOfVolume)
-      .orient("right")
-      .ticks(3)
-      .tickFormat(d3.format(",.3s"));
+    //this.volumeAxis = d3.svg.axis()
+    //  .scale(this.yScaleOfVolume)
+    //  .orient("right")
+    //  .ticks(3)
+    //  .tickFormat(d3.format(",.3s"));
   };
 
   // should override
@@ -154,9 +157,9 @@ TraderLightChart.BaseChart = (function(){
       .format(d3.format(',.2fs'))
       .translate([this.xScale(1), 0]);
 
-    this.volumeAnnotation = techan.plot.axisannotation()
-      .axis(this.volumeAxis)
-      .width(35);
+    //this.volumeAnnotation = techan.plot.axisannotation()
+    //  .axis(this.volumeAxis)
+    //  .width(35);
   }
 
   Chart.prototype._createCrossHair = function(){
@@ -166,7 +169,8 @@ TraderLightChart.BaseChart = (function(){
       .xScale(this.xScale)
       .yScale(this.yScale)
       .xAnnotation(this.timeAnnotation)
-      .yAnnotation([this.ohlcAnnotationRight, this.ohlcAnnotationLeft, this.volumeAnnotation]);
+      //.yAnnotation([this.ohlcAnnotationRight, this.ohlcAnnotationLeft, this.volumeAnnotation]);
+      .yAnnotation([this.ohlcAnnotationRight, this.ohlcAnnotationLeft]);
   }
 
   Chart.prototype._initContainer = function(){
@@ -187,7 +191,6 @@ TraderLightChart.BaseChart = (function(){
     };
 
     this.containerSelector = d3.select("body div[id="+this.options.container_id+"]"); 
-    this.maxVisiableBars = 120; // TODO: calculate it
   };
 
   Chart.prototype._setChartBasics = function(){
