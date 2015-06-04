@@ -399,6 +399,7 @@ TraderLightChart.BaseChart = (function(){
 
   Chart.prototype._onChartContainerResize = function(){
     //console.log('_onChartContainerResize');
+    return; // bugs
     this._setChartBasics();
     this._setMainSvgSize();
     this._setAxisesSize();
