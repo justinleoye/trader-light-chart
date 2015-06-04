@@ -174,21 +174,24 @@ TraderLightChart.CandleChart = (function(){
   };
 
   CandleChart.prototype.addStudy = function(studyName, input, options){
-    if(studyName!="Moving Average") return;
-    var study = techan.plot.sma()
-        .xScale(this.xScale)
-        .yScale(this.yScale);
-    var calculator = techan.indicator.sma()
-        .period(input[0]);
+    function addStudy(){
+      if(studyName!="Moving Average") return;
+      var study = techan.plot.sma()
+          .xScale(this.xScale)
+          .yScale(this.yScale);
+      var calculator = techan.indicator.sma()
+          .period(input[0]);
 
-    var cnt = this.studies.length;
-    var studyClass = "ma-"+cnt;
-    this.ohlcSelection.append("g")
-      .attr("class", "indicator sma "+ studyClass)
-      .attr("clip-path", "url(#ohlcClip)");
+      var cnt = this.studies.length;
+      var studyClass = "ma-"+cnt;
+      this.ohlcSelection.append("g")
+        .attr("class", "indicator sma "+ studyClass)
+        .attr("clip-path", "url(#ohlcClip)");
 
-    var selector = this.mainG.select("g .sma." + studyClass);
-    this.studies.push([selector, study, calculator]);
+      var selector = this.mainG.select("g .sma." + studyClass);
+      this.studies.push([selector, study, calculator]);
+    }
+    this._pendingExecute(addStudy);
   };
 
   CandleChart.prototype._bindStudies = function(){

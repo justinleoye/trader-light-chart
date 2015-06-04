@@ -70,6 +70,7 @@ TraderLightChart.BaseChart = (function(){
     _.extend(this.options, options)
 
     this.data = [];
+    this.pending = [];
     this.isReady = false;
     this.canReInit = true;
   }
@@ -245,6 +246,7 @@ TraderLightChart.BaseChart = (function(){
   Chart.prototype._afterConbine = function(){
     this._setAxisesSize();
     this.canReInit = false;
+    this._clearPending();
   };
 
   Chart.prototype._setAxisesSize = function(){
@@ -311,6 +313,21 @@ TraderLightChart.BaseChart = (function(){
     this._setChartBasics();
     this._setMainSvgSize();
     this.draw();
+  };
+
+  Chart.prototype._pendingExecute = function(callback){
+    if(this.isReady){
+      callback();
+    }else{
+      this.pending.push(callback)
+    }
+  };
+
+  Chart.prototype._clearPending = function(){
+    while(this.pending.length > 0){
+      var execution = this.pending.shift();
+      execution();
+    }
   };
 
   Chart.prototype.drawBars = function(bars){
