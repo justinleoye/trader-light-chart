@@ -61,8 +61,7 @@ TraderLightChart.BaseChart = (function(){
       top: 0,
       bottom: 30,
       left: 50,
-      //right: 1
-      right: 50
+      right: 1
     };
 
     this.options = {
