@@ -1,0 +1,99 @@
+@base-font-size: 0.5rem;
+.trader-light-chart {
+    font-size: @base-font-size;
+    path.line {
+        fill: none;
+        stroke: #000000;
+        stroke-width: 1;
+    }
+
+    .axis path,
+    .axis line {
+        fill: none;
+        stroke: #555555;
+        shape-rendering: crispEdges;
+    }
+
+    path {
+        fill: none;
+        stroke-width: 1;
+    }
+
+    path.candle {
+        stroke: #000000;
+    }
+
+    path.candle.body {
+        stroke-width: 0;
+    }
+
+    path.candle.up {
+        fill: #d75442;
+        stroke: #d75442;
+    }
+
+    path.candle.down {
+        fill: #6ba583;
+        stroke: #6ba583;
+    }
+
+    path.ohlc {
+        stroke: #000000;
+        stroke-width: 1;
+    }
+
+    path.ohlc.up {
+        stroke: #d75442;
+    }
+
+    path.ohlc.down {
+        stroke: #6ba583;
+    }
+
+    .close.annotation.up path {
+        font-size: @base-font-size;
+        fill: #00AA00;
+    }
+
+    .ma-0 path.line {
+        stroke: #000000;
+    }
+
+    .ma-1 path.line {
+        stroke: #2679CB;
+    }
+
+    .ma-2 path.line {
+        stroke: #FA110F;
+    }
+
+    .ma-3 path.line {
+        stroke: #00A800;
+    }
+
+    .ma-4 path.line {
+        stroke: #C0C0C0;
+    }
+
+    .ma-5 path.line {
+        stroke: #0000FF;
+    }
+
+    path.volume {
+        fill: #EEEEEE;
+    }
+
+    .crosshair {
+        cursor: crosshair;
+    }
+
+    .crosshair path.wire {
+        stroke: #DDDDDD;
+        stroke-dasharray: 1, 1;
+    }
+
+    .crosshair .axisannotation path {
+        fill: #DDDDDD;
+    }
+
+}

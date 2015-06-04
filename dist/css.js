@@ -5,85 +5,83 @@ TraderLightChart.core = TraderLightChart.core || {};
   core.CHART_GLOABLE_CSS = "
 
 
-
-path.line {
-    fill: none;
-    stroke: #000000;
-    stroke-width: 1;
+.trader-light-chart {
+  font-size: 0.5rem;
 }
-
-.axis path,
-.axis line {
-    fill: none;
-    stroke: #000;
-    shape-rendering: crispEdges;
+.trader-light-chart path.line {
+  fill: none;
+  stroke: #000000;
+  stroke-width: 1;
 }
-
-path {
-    fill: none;
-    stroke-width: 1;
+.trader-light-chart .axis path,
+.trader-light-chart .axis line {
+  fill: none;
+  stroke: #555555;
+  shape-rendering: crispEdges;
 }
-
-path.candle {
-    stroke: #000000;
+.trader-light-chart path {
+  fill: none;
+  stroke-width: 1;
 }
-
-path.candle.body {
-    stroke-width: 0;
+.trader-light-chart path.candle {
+  stroke: #000000;
 }
-
-path.candle.up {
-    fill: #00AA00;
-    stroke: #00AA00;
+.trader-light-chart path.candle.body {
+  stroke-width: 0;
 }
-
-path.candle.down {
-    fill: #FF0000;
-    stroke: #FF0000;
+.trader-light-chart path.candle.up {
+  fill: #d75442;
+  stroke: #d75442;
 }
-
-path.ohlc {
-    stroke: #000000;
-    stroke-width: 1;
+.trader-light-chart path.candle.down {
+  fill: #6ba583;
+  stroke: #6ba583;
 }
-
-path.ohlc.up {
-    stroke: #00AA00;
+.trader-light-chart path.ohlc {
+  stroke: #000000;
+  stroke-width: 1;
 }
-
-path.ohlc.down {
-    stroke: #FF0000;
+.trader-light-chart path.ohlc.up {
+  stroke: #d75442;
 }
-
-.close.annotation.up path {
-    fill: #00AA00;
+.trader-light-chart path.ohlc.down {
+  stroke: #6ba583;
 }
-
-.ma-0 path.line {
-    stroke: #1f77b4;
+.trader-light-chart .close.annotation.up path {
+  font-size: 0.5rem;
+  fill: #00AA00;
 }
-
-.ma-1 path.line {
-    stroke: #aec7e8;
+.trader-light-chart .ma-0 path.line {
+  stroke: #000000;
 }
-
-path.volume {
-    fill: #EEEEEE;
+.trader-light-chart .ma-1 path.line {
+  stroke: #2679CB;
 }
-
-.crosshair {
-    cursor: crosshair;
+.trader-light-chart .ma-2 path.line {
+  stroke: #FA110F;
 }
-
-.crosshair path.wire {
-    stroke: #DDDDDD;
-    stroke-dasharray: 1, 1;
+.trader-light-chart .ma-3 path.line {
+  stroke: #00A800;
 }
-
-.crosshair .axisannotation path {
-    fill: #DDDDDD;
+.trader-light-chart .ma-4 path.line {
+  stroke: #C0C0C0;
 }
-
+.trader-light-chart .ma-5 path.line {
+  stroke: #0000FF;
+}
+.trader-light-chart path.volume {
+  fill: #EEEEEE;
+}
+.trader-light-chart .crosshair {
+  cursor: crosshair;
+}
+.trader-light-chart .crosshair path.wire {
+  stroke: #DDDDDD;
+  stroke-dasharray: 1, 1;
+}
+.trader-light-chart .crosshair .axisannotation path {
+  fill: #DDDDDD;
+}
 
 
     ";

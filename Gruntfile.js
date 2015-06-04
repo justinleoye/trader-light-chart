@@ -28,7 +28,6 @@ module.exports = function(grunt) {
       dist: {
         src: [
           'dist/css.min.js',
-          'bower_components/javascript-detect-element-resize/detect-element-resize.js',
           'src/core.js',
           'src/line_chart.js',
           'src/candle_chart.js',
@@ -84,6 +83,14 @@ module.exports = function(grunt) {
         }
     },
 
+    less: {
+      dev: {
+        files: {
+          "src/static/css/chart.css": "src/static/css/chart.less"
+        }
+      }
+    },
+
     qunit: {
       files: ['test/*.html']
     },
@@ -109,7 +116,7 @@ module.exports = function(grunt) {
         }
       },
       dev: {
-        files: ['<%= app.src %>/*', '<%= app.test %>/*', '<%= app.demo %>/*'],
+        files: ['<%= app.src %>/*', '<%= app.src %>/static/css/*', '<%= app.test %>/*', '<%= app.demo %>/*'],
         tasks: ['default'],
         options: {
           reload: true
@@ -126,11 +133,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-jade');
+  grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-newer');
 
   grunt.registerTask('lint', ['newer:jshint', 'newer:jscs']);
   grunt.registerTask('test', ['jshint', 'qunit']);
   grunt.registerTask('dev', ['default', 'watch:dev']);
-  grunt.registerTask('default', ['concat:css', 'uglify:css', 'concat', 'jade:dist', 'qunit', 'uglify']);
+  grunt.registerTask('default', ['concat:css', 'uglify:css', 'concat', 'jade:dist', 'less:dev', 'qunit', 'uglify']);
 
 };

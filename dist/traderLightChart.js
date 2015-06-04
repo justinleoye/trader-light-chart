@@ -1,152 +1,4 @@
-var TraderLightChart=TraderLightChart||{};TraderLightChart.core=TraderLightChart.core||{},function(a){a.CHART_GLOABLE_CSS="\n\n\n\npath.line {\n    fill: none;\n    stroke: #000000;\n    stroke-width: 1;\n}\n\n.axis path,\n.axis line {\n    fill: none;\n    stroke: #000;\n    shape-rendering: crispEdges;\n}\n\npath {\n    fill: none;\n    stroke-width: 1;\n}\n\npath.candle {\n    stroke: #000000;\n}\n\npath.candle.body {\n    stroke-width: 0;\n}\n\npath.candle.up {\n    fill: #00AA00;\n    stroke: #00AA00;\n}\n\npath.candle.down {\n    fill: #FF0000;\n    stroke: #FF0000;\n}\n\npath.ohlc {\n    stroke: #000000;\n    stroke-width: 1;\n}\n\npath.ohlc.up {\n    stroke: #00AA00;\n}\n\npath.ohlc.down {\n    stroke: #FF0000;\n}\n\n.close.annotation.up path {\n    fill: #00AA00;\n}\n\n.ma-0 path.line {\n    stroke: #1f77b4;\n}\n\n.ma-1 path.line {\n    stroke: #aec7e8;\n}\n\npath.volume {\n    fill: #EEEEEE;\n}\n\n.crosshair {\n    cursor: crosshair;\n}\n\n.crosshair path.wire {\n    stroke: #DDDDDD;\n    stroke-dasharray: 1, 1;\n}\n\n.crosshair .axisannotation path {\n    fill: #DDDDDD;\n}\n\n\n\n    "}(TraderLightChart.core);
-
-/**
-* Detect Element Resize
-*
-* https://github.com/sdecima/javascript-detect-element-resize
-* Sebastian Decima
-*
-* version: 0.5.3
-**/
-
-(function () {
-	var attachEvent = document.attachEvent,
-		stylesCreated = false;
-	
-	if (!attachEvent) {
-		var requestFrame = (function(){
-			var raf = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame ||
-								function(fn){ return window.setTimeout(fn, 20); };
-			return function(fn){ return raf(fn); };
-		})();
-		
-		var cancelFrame = (function(){
-			var cancel = window.cancelAnimationFrame || window.mozCancelAnimationFrame || window.webkitCancelAnimationFrame ||
-								   window.clearTimeout;
-		  return function(id){ return cancel(id); };
-		})();
-
-		function resetTriggers(element){
-			var triggers = element.__resizeTriggers__,
-				expand = triggers.firstElementChild,
-				contract = triggers.lastElementChild,
-				expandChild = expand.firstElementChild;
-			contract.scrollLeft = contract.scrollWidth;
-			contract.scrollTop = contract.scrollHeight;
-			expandChild.style.width = expand.offsetWidth + 1 + 'px';
-			expandChild.style.height = expand.offsetHeight + 1 + 'px';
-			expand.scrollLeft = expand.scrollWidth;
-			expand.scrollTop = expand.scrollHeight;
-		};
-
-		function checkTriggers(element){
-			return element.offsetWidth != element.__resizeLast__.width ||
-						 element.offsetHeight != element.__resizeLast__.height;
-		}
-		
-		function scrollListener(e){
-			var element = this;
-			resetTriggers(this);
-			if (this.__resizeRAF__) cancelFrame(this.__resizeRAF__);
-			this.__resizeRAF__ = requestFrame(function(){
-				if (checkTriggers(element)) {
-					element.__resizeLast__.width = element.offsetWidth;
-					element.__resizeLast__.height = element.offsetHeight;
-					element.__resizeListeners__.forEach(function(fn){
-						fn.call(element, e);
-					});
-				}
-			});
-		};
-		
-		/* Detect CSS Animations support to detect element display/re-attach */
-		var animation = false,
-			animationstring = 'animation',
-			keyframeprefix = '',
-			animationstartevent = 'animationstart',
-			domPrefixes = 'Webkit Moz O ms'.split(' '),
-			startEvents = 'webkitAnimationStart animationstart oAnimationStart MSAnimationStart'.split(' '),
-			pfx  = '';
-		{
-			var elm = document.createElement('fakeelement');
-			if( elm.style.animationName !== undefined ) { animation = true; }    
-			
-			if( animation === false ) {
-				for( var i = 0; i < domPrefixes.length; i++ ) {
-					if( elm.style[ domPrefixes[i] + 'AnimationName' ] !== undefined ) {
-						pfx = domPrefixes[ i ];
-						animationstring = pfx + 'Animation';
-						keyframeprefix = '-' + pfx.toLowerCase() + '-';
-						animationstartevent = startEvents[ i ];
-						animation = true;
-						break;
-					}
-				}
-			}
-		}
-		
-		var animationName = 'resizeanim';
-		var animationKeyframes = '@' + keyframeprefix + 'keyframes ' + animationName + ' { from { opacity: 0; } to { opacity: 0; } } ';
-		var animationStyle = keyframeprefix + 'animation: 1ms ' + animationName + '; ';
-	}
-	
-	function createStyles() {
-		if (!stylesCreated) {
-			//opacity:0 works around a chrome bug https://code.google.com/p/chromium/issues/detail?id=286360
-			var css = (animationKeyframes ? animationKeyframes : '') +
-					'.resize-triggers { ' + (animationStyle ? animationStyle : '') + 'visibility: hidden; opacity: 0; } ' +
-					'.resize-triggers, .resize-triggers > div, .contract-trigger:before { content: \" \"; display: block; position: absolute; top: 0; left: 0; height: 100%; width: 100%; overflow: hidden; } .resize-triggers > div { background: #eee; overflow: auto; } .contract-trigger:before { width: 200%; height: 200%; }',
-				head = document.head || document.getElementsByTagName('head')[0],
-				style = document.createElement('style');
-			
-			style.type = 'text/css';
-			if (style.styleSheet) {
-				style.styleSheet.cssText = css;
-			} else {
-				style.appendChild(document.createTextNode(css));
-			}
-
-			head.appendChild(style);
-			stylesCreated = true;
-		}
-	}
-	
-	window.addResizeListener = function(element, fn){
-		if (attachEvent) element.attachEvent('onresize', fn);
-		else {
-			if (!element.__resizeTriggers__) {
-				if (getComputedStyle(element).position == 'static') element.style.position = 'relative';
-				createStyles();
-				element.__resizeLast__ = {};
-				element.__resizeListeners__ = [];
-				(element.__resizeTriggers__ = document.createElement('div')).className = 'resize-triggers';
-				element.__resizeTriggers__.innerHTML = '<div class="expand-trigger"><div></div></div>' +
-																						'<div class="contract-trigger"></div>';
-				element.appendChild(element.__resizeTriggers__);
-				resetTriggers(element);
-				element.addEventListener('scroll', scrollListener, true);
-				
-				/* Listen for a css animation to detect element display/re-attach */
-				animationstartevent && element.__resizeTriggers__.addEventListener(animationstartevent, function(e) {
-					if(e.animationName == animationName)
-						resetTriggers(element);
-				});
-			}
-			element.__resizeListeners__.push(fn);
-		}
-	};
-	
-	window.removeResizeListener = function(element, fn){
-		if (attachEvent) element.detachEvent('onresize', fn);
-		else {
-			element.__resizeListeners__.splice(element.__resizeListeners__.indexOf(fn), 1);
-			if (!element.__resizeListeners__.length) {
-					element.removeEventListener('scroll', scrollListener);
-					element.__resizeTriggers__ = !element.removeChild(element.__resizeTriggers__);
-			}
-		}
-	}
-})();
+var TraderLightChart=TraderLightChart||{};TraderLightChart.core=TraderLightChart.core||{},function(a){a.CHART_GLOABLE_CSS="\n\n\n.trader-light-chart {\n  font-size: 0.5rem;\n}\n.trader-light-chart path.line {\n  fill: none;\n  stroke: #000000;\n  stroke-width: 1;\n}\n.trader-light-chart .axis path,\n.trader-light-chart .axis line {\n  fill: none;\n  stroke: #555555;\n  shape-rendering: crispEdges;\n}\n.trader-light-chart path {\n  fill: none;\n  stroke-width: 1;\n}\n.trader-light-chart path.candle {\n  stroke: #000000;\n}\n.trader-light-chart path.candle.body {\n  stroke-width: 0;\n}\n.trader-light-chart path.candle.up {\n  fill: #d75442;\n  stroke: #d75442;\n}\n.trader-light-chart path.candle.down {\n  fill: #6ba583;\n  stroke: #6ba583;\n}\n.trader-light-chart path.ohlc {\n  stroke: #000000;\n  stroke-width: 1;\n}\n.trader-light-chart path.ohlc.up {\n  stroke: #d75442;\n}\n.trader-light-chart path.ohlc.down {\n  stroke: #6ba583;\n}\n.trader-light-chart .close.annotation.up path {\n  font-size: 0.5rem;\n  fill: #00AA00;\n}\n.trader-light-chart .ma-0 path.line {\n  stroke: #000000;\n}\n.trader-light-chart .ma-1 path.line {\n  stroke: #2679CB;\n}\n.trader-light-chart .ma-2 path.line {\n  stroke: #FA110F;\n}\n.trader-light-chart .ma-3 path.line {\n  stroke: #00A800;\n}\n.trader-light-chart .ma-4 path.line {\n  stroke: #C0C0C0;\n}\n.trader-light-chart .ma-5 path.line {\n  stroke: #0000FF;\n}\n.trader-light-chart path.volume {\n  fill: #EEEEEE;\n}\n.trader-light-chart .crosshair {\n  cursor: crosshair;\n}\n.trader-light-chart .crosshair path.wire {\n  stroke: #DDDDDD;\n  stroke-dasharray: 1, 1;\n}\n.trader-light-chart .crosshair .axisannotation path {\n  fill: #DDDDDD;\n}\n\n\n    "}(TraderLightChart.core);
 
 var TraderLightChart = TraderLightChart || {};
 TraderLightChart.core = TraderLightChart.core || {};
@@ -180,9 +32,28 @@ TraderLightChart.core = TraderLightChart.core || {};
     core.insertCSS(core.CHART_GLOABLE_CSS);
   };
 
+  // TODO
+  core.locale = function(locale){
+  };
+
 })(TraderLightChart.core);
 
 TraderLightChart.core.insertChartCSSToGloable();
+
+TraderLightChart.core.locale({
+  "decimal": ".",
+  "thousands": ",",
+  "grouping": [3],
+  "currency": ["￥", ""],
+  "dateTime": "%Y-%m-%d %H:%M:%S",
+  "date": "%Y-%m-%d",
+  "time": "%H:%M:%S",
+  "periods": ["AM", "PM"],
+  "days": ["周日", "周一", "周二", "周三", "周四", "周五", "周六"],
+  "shortDays": ["周日", "周一", "周二", "周三", "周四", "周五", "周六"],
+  "months": ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
+  "shortMonths": ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
+});
 
 TraderLightChart.BaseChart = (function(){
   function Chart(options){
@@ -225,7 +96,7 @@ TraderLightChart.BaseChart = (function(){
   Chart.prototype._setScales = function(){
     this.xScale.range([0, this.containerWidth - this.margin.left - this.margin.right]);
     this.yScale.range([this.containerHeight - this.margin.top - this.margin.bottom, 0]);
-    this.yScaleOfVolume.range([this.yScale(0), this.yScale(0.2)]);
+    this.yScaleOfVolume.range([this.yScale(0), this.yScale(0.4)]);
   }
 
   Chart.prototype._createAxis = function(){
@@ -235,9 +106,12 @@ TraderLightChart.BaseChart = (function(){
     this.xAxis = d3.svg.axis()
       .scale(this.xScale)
       .orient("bottom");
-    this.yAxis = d3.svg.axis()
+    this.yAxisRight = d3.svg.axis()
       .scale(this.yScale)
       .orient("right");
+    this.yAxisLeft = d3.svg.axis()
+      .scale(this.yScale)
+      .orient("left");
     this.volumeAxis = d3.svg.axis()
       .scale(this.yScaleOfVolume)
       .orient("right")
@@ -252,19 +126,31 @@ TraderLightChart.BaseChart = (function(){
   Chart.prototype._createAxisAnnotation = function(){
     if(!this.isReady) return;
 
+    var timeAnnotationFormat = (function(interval){
+      console.log('timeAnnotationFormat');
+      console.log('interval:',interval);
+      if(interval==='1') return d3.time.format('%H:%M');
+      return d3.time.format('%Y-%m-%d');
+    })(this.options.interval);
+
+    console.log('timeAnnotationFormat:', timeAnnotationFormat);
     this.timeAnnotation = techan.plot.axisannotation()
       .axis(this.xAxis)
-      .format(d3.time.format('%Y-%m-%d'))
+      .format(timeAnnotationFormat)
       .width(65)
       .translate([0, this.containerHeight - this.margin.top - this.margin.bottom]);
 
-    this.ohlcAnnotation = techan.plot.axisannotation()
-      .axis(this.yAxis)
+    this.ohlcAnnotationRight = techan.plot.axisannotation()
+      .axis(this.yAxisRight)
       .format(d3.format(',.2fs'))
       .translate([this.xScale(1), 0]);
 
+    this.ohlcAnnotationLeft= techan.plot.axisannotation()
+      .axis(this.yAxisLeft)
+      .format(d3.format(',.2fs'));
+
     this.closeAnnotation = techan.plot.axisannotation()
-      .axis(this.yAxis)
+      .axis(this.yAxisRight)
       .accessor(this.accessor)
       .format(d3.format(',.2fs'))
       .translate([this.xScale(1), 0]);
@@ -281,7 +167,7 @@ TraderLightChart.BaseChart = (function(){
       .xScale(this.xScale)
       .yScale(this.yScale)
       .xAnnotation(this.timeAnnotation)
-      .yAnnotation([this.ohlcAnnotation, this.volumeAnnotation]);
+      .yAnnotation([this.ohlcAnnotationRight, this.ohlcAnnotationLeft, this.volumeAnnotation]);
   }
 
   Chart.prototype._initContainer = function(){
@@ -292,6 +178,7 @@ TraderLightChart.BaseChart = (function(){
     if(this.containerElement.offsetWidth<=0 || this.containerElement.offsetHeight<=0){
       return ;
     }
+    this.containerElement.classList.add("trader-light-chart");
 
     this.isReady = true;
     this._setChartBasics();
@@ -438,6 +325,7 @@ TraderLightChart.BaseChart = (function(){
     this.draw();
   };
   Chart.prototype.reInit = function(){
+    console.log('reInit');
     if(!this.canReInit) return;
     this._init();
     this.draw();
@@ -513,13 +401,16 @@ TraderLightChart.LineChart = (function(){
         .attr("class", "x axis");
 
     this.mainG.append('g')
-        .attr("class", "y axis")
+        .attr("class", "y axis right")
       //.append("text")
       //  .attr("transform", "rotate(-90)")
       //  .attr("y", 6)
       //  .attr("dy", ".71em")
       //  .style("text-anchor", "end")
       //  .text("Price ($)");
+
+    this.mainG.append('g')
+        .attr("class", "y axis left")
 
     this.mainG.append("g")
         .attr("class", "close annotation up");
@@ -559,7 +450,8 @@ TraderLightChart.LineChart = (function(){
     this.yScaleOfVolume.domain(techan.scale.plot.volume(this._dataInVisiable()).domain());
 
     this.mainG.select('g.x.axis').call(this.xAxis);
-    this.mainG.select('g.y.axis').call(this.yAxis);
+    this.mainG.select('g.y.axis.right').call(this.yAxisRight);
+    this.mainG.select('g.y.axis.left').call(this.yAxisLeft);
     this.mainG.select("g.volume.axis").call(this.volumeAxis);
 
     this.mainG.select("g.close").call(this.mainPlot);
@@ -581,6 +473,7 @@ TraderLightChart.CandleChart = (function(){
     CandleChart.superClass.constructor.call(this, options);
 
     this._init();
+    this.studies = [];
   }
 
   TraderLightChart.core.classExtend(CandleChart, TraderLightChart.BaseChart);
@@ -594,7 +487,7 @@ TraderLightChart.CandleChart = (function(){
     this.createBehavior();
     this._createScale();
     this._createAxis();
-    this.createIndicators();
+    //this.createIndicators();
     this._createMainPlot();
     this._createAxisAnnotation();
     this._createCrossHair()
@@ -622,7 +515,8 @@ TraderLightChart.CandleChart = (function(){
     console.log('_createMainPlot');
     if(!this.isReady) return;
 
-    this.mainPlot = techan.plot.ohlc()
+    //this.mainPlot = techan.plot.ohlc()
+    this.mainPlot = techan.plot.candlestick()
       .xScale(this.xScale)
       .yScale(this.yScale);
 
@@ -638,33 +532,36 @@ TraderLightChart.CandleChart = (function(){
     console.log('_conbine');
     if(!this.isReady) return;
 
-    var ohlcSelection = this.mainG.append("g")
+    this.ohlcSelection = this.mainG.append("g")
       .attr("class", "ohlc")
       .attr("transform", "translate(0,0)");
 
-    ohlcSelection.append("g")
+    this.ohlcSelection.append("g")
       .attr("class", "volume")
       .attr("clip-path", "url(#ohlcClip)");
 
-    ohlcSelection.append("g")
+    this.ohlcSelection.append("g")
       .attr("class", "candlestick")
       .attr("clip-path", "url(#ohlcClip)");
 
-    ohlcSelection.append("g")
-      .attr("class", "indicator sma ma-0")
-      .attr("clip-path", "url(#ohlcClip)");
+    //this.ohlcSelection.append("g")
+    //  .attr("class", "indicator sma ma-0")
+    //  .attr("clip-path", "url(#ohlcClip)");
 
     this.mainG.append('g')
         .attr("class", "x axis");
 
     this.mainG.append('g')
-        .attr("class", "y axis")
+        .attr("class", "y axis right")
       //.append("text")
       //  .attr("transform", "rotate(-90)")
       //  .attr("y", 6)
       //  .attr("dy", ".71em")
       //  .style("text-anchor", "end")
       //  .text("Price ($)");
+
+    this.mainG.append('g')
+        .attr("class", "y axis left")
 
     this.mainG.append("g")
         .attr("class", "close annotation up");
@@ -684,7 +581,8 @@ TraderLightChart.CandleChart = (function(){
     var lastDatum = this.data[this.data.length-1];
     console.log('lastDatum:', lastDatum);
     this.mainG.select("g.close.annotation").datum([lastDatum]);
-    this._bindLineData(this.mainG.select("g.sma.ma-0"), this.smaCalculator(this.data));
+    //this._bindLineData(this.mainG.select("g.sma.ma-0"), this.smaCalculator(this.data));
+    this._bindStudies();
     this.mainG.select("g.volume").datum(this.data);
   };
 
@@ -703,12 +601,14 @@ TraderLightChart.CandleChart = (function(){
     this.yScaleOfVolume.domain(techan.scale.plot.volume(this._dataInVisiable()).domain());
 
     this.mainG.select('g.x.axis').call(this.xAxis);
-    this.mainG.select('g.y.axis').call(this.yAxis);
+    this.mainG.select('g.y.axis.right').call(this.yAxisRight);
+    this.mainG.select('g.y.axis.left').call(this.yAxisLeft);
     this.mainG.select("g.volume.axis").call(this.volumeAxis);
 
     this.mainG.select("g.candlestick").call(this.mainPlot);
     this.mainG.select("g.close.annotation").call(this.closeAnnotation);
-    this.mainG.select("g .sma.ma-0").call(this.sma);
+    //this.mainG.select("g .sma.ma-0").call(this.sma);
+    this._drawStudies();
     this.mainG.select("g.volume").call(this.volume);
     this.mainG.select("g.crosshair.ohlc").call(this.crosshair).call(this.zoom);
 
@@ -728,14 +628,61 @@ TraderLightChart.CandleChart = (function(){
     //this.zoom.scale();
 
     this.mainG.select('g.x.axis').call(this.xAxis);
-    this.mainG.select('g.y.axis').call(this.yAxis);
+    this.mainG.select('g.y.axis.right').call(this.yAxisRight);
+    this.mainG.select('g.y.axis.left').call(this.yAxisLeft);
     this.mainG.select("g.volume.axis").call(this.volumeAxis);
 
     this.mainG.select("g.candlestick").call(this.mainPlot.refresh);
     this.mainG.select("g.close.annotation").call(this.closeAnnotation.refresh);
-    this.mainG.select("g .sma.ma-0").call(this.sma.refresh);
+    //this.mainG.select("g .sma.ma-0").call(this.sma.refresh);
+    this._zoomStudies();
     this.mainG.select("g.volume").call(this.volume.refresh);
     this.mainG.select("g.crosshair.ohlc").call(this.crosshair.refresh);
+  };
+
+  CandleChart.prototype.addStudy = function(studyName, input, options){
+    if(studyName!="Moving Average") return;
+    var study = techan.plot.sma()
+        .xScale(this.xScale)
+        .yScale(this.yScale);
+    var calculator = techan.indicator.sma()
+        .period(input[0]);
+
+    var cnt = this.studies.length;
+    var studyClass = "ma-"+cnt;
+    this.ohlcSelection.append("g")
+      .attr("class", "indicator sma "+ studyClass)
+      .attr("clip-path", "url(#ohlcClip)");
+
+    var selector = this.mainG.select("g .sma." + studyClass);
+    this.studies.push([selector, study, calculator]);
+  };
+
+  CandleChart.prototype._bindStudies = function(){
+    for(var i=0; i < this.studies.length; i++){
+      var selector = this.studies[i][0];
+      var study = this.studies[i][1];
+      var calculator = this.studies[i][2];
+      this._bindLineData(selector, calculator(this.data));
+    }
+  };
+
+  CandleChart.prototype._drawStudies = function(){
+    for(var i=0; i < this.studies.length; i++){
+      var selector = this.studies[i][0];
+      var study = this.studies[i][1];
+      var calculator = this.studies[i][2];
+      selector.call(study);
+    }
+  };
+
+  CandleChart.prototype._zoomStudies = function(){
+    for(var i=0; i < this.studies.length; i++){
+      var selector = this.studies[i][0];
+      var study = this.studies[i][1];
+      var calculator = this.studies[i][2];
+      selector.call(study.refresh);
+    }
   };
 
   return CandleChart;

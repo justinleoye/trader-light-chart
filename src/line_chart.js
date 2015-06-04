@@ -63,13 +63,16 @@ TraderLightChart.LineChart = (function(){
         .attr("class", "x axis");
 
     this.mainG.append('g')
-        .attr("class", "y axis")
+        .attr("class", "y axis right")
       //.append("text")
       //  .attr("transform", "rotate(-90)")
       //  .attr("y", 6)
       //  .attr("dy", ".71em")
       //  .style("text-anchor", "end")
       //  .text("Price ($)");
+
+    this.mainG.append('g')
+        .attr("class", "y axis left")
 
     this.mainG.append("g")
         .attr("class", "close annotation up");
@@ -109,7 +112,8 @@ TraderLightChart.LineChart = (function(){
     this.yScaleOfVolume.domain(techan.scale.plot.volume(this._dataInVisiable()).domain());
 
     this.mainG.select('g.x.axis').call(this.xAxis);
-    this.mainG.select('g.y.axis').call(this.yAxis);
+    this.mainG.select('g.y.axis.right').call(this.yAxisRight);
+    this.mainG.select('g.y.axis.left').call(this.yAxisLeft);
     this.mainG.select("g.volume.axis").call(this.volumeAxis);
 
     this.mainG.select("g.close").call(this.mainPlot);

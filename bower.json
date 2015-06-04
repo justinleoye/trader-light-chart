@@ -10,11 +10,9 @@
   ],
   "dependencies": {
     "d3": "~3.5.5",
-    "TechanJS": "https://github.com/andredumas/techan.js.git#~0.5.0",
     "underscore": "*",
-    "moment": "*"
+    "moment": "*",
+    "techan": "ssh://git@git.agutong.com:5678/kuankr-chart/techan-js.git#dev"
   },
-  "devDependencies": {
-    "javascript-detect-element-resize": "https://github.com/sdecima/javascript-detect-element-resize.git#~0.5.3"
-  }
+  "devDependencies": {}
 }

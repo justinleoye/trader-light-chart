@@ -30,9 +30,28 @@ TraderLightChart.core = TraderLightChart.core || {};
     core.insertCSS(core.CHART_GLOABLE_CSS);
   };
 
+  // TODO
+  core.locale = function(locale){
+  };
+
 })(TraderLightChart.core);
 
 TraderLightChart.core.insertChartCSSToGloable();
+
+TraderLightChart.core.locale({
+  "decimal": ".",
+  "thousands": ",",
+  "grouping": [3],
+  "currency": ["￥", ""],
+  "dateTime": "%Y-%m-%d %H:%M:%S",
+  "date": "%Y-%m-%d",
+  "time": "%H:%M:%S",
+  "periods": ["AM", "PM"],
+  "days": ["周日", "周一", "周二", "周三", "周四", "周五", "周六"],
+  "shortDays": ["周日", "周一", "周二", "周三", "周四", "周五", "周六"],
+  "months": ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
+  "shortMonths": ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
+});
 
 TraderLightChart.BaseChart = (function(){
   function Chart(options){
@@ -75,7 +94,7 @@ TraderLightChart.BaseChart = (function(){
   Chart.prototype._setScales = function(){
     this.xScale.range([0, this.containerWidth - this.margin.left - this.margin.right]);
     this.yScale.range([this.containerHeight - this.margin.top - this.margin.bottom, 0]);
-    this.yScaleOfVolume.range([this.yScale(0), this.yScale(0.2)]);
+    this.yScaleOfVolume.range([this.yScale(0), this.yScale(0.4)]);
   }
 
   Chart.prototype._createAxis = function(){
@@ -85,9 +104,12 @@ TraderLightChart.BaseChart = (function(){
     this.xAxis = d3.svg.axis()
       .scale(this.xScale)
       .orient("bottom");
-    this.yAxis = d3.svg.axis()
+    this.yAxisRight = d3.svg.axis()
       .scale(this.yScale)
       .orient("right");
+    this.yAxisLeft = d3.svg.axis()
+      .scale(this.yScale)
+      .orient("left");
     this.volumeAxis = d3.svg.axis()
       .scale(this.yScaleOfVolume)
       .orient("right")
@@ -102,19 +124,31 @@ TraderLightChart.BaseChart = (function(){
   Chart.prototype._createAxisAnnotation = function(){
     if(!this.isReady) return;
 
+    var timeAnnotationFormat = (function(interval){
+      console.log('timeAnnotationFormat');
+      console.log('interval:',interval);
+      if(interval==='1') return d3.time.format('%H:%M');
+      return d3.time.format('%Y-%m-%d');
+    })(this.options.interval);
+
+    console.log('timeAnnotationFormat:', timeAnnotationFormat);
     this.timeAnnotation = techan.plot.axisannotation()
       .axis(this.xAxis)
-      .format(d3.time.format('%Y-%m-%d'))
+      .format(timeAnnotationFormat)
       .width(65)
       .translate([0, this.containerHeight - this.margin.top - this.margin.bottom]);
 
-    this.ohlcAnnotation = techan.plot.axisannotation()
-      .axis(this.yAxis)
+    this.ohlcAnnotationRight = techan.plot.axisannotation()
+      .axis(this.yAxisRight)
       .format(d3.format(',.2fs'))
       .translate([this.xScale(1), 0]);
 
+    this.ohlcAnnotationLeft= techan.plot.axisannotation()
+      .axis(this.yAxisLeft)
+      .format(d3.format(',.2fs'));
+
     this.closeAnnotation = techan.plot.axisannotation()
-      .axis(this.yAxis)
+      .axis(this.yAxisRight)
       .accessor(this.accessor)
       .format(d3.format(',.2fs'))
       .translate([this.xScale(1), 0]);
@@ -131,7 +165,7 @@ TraderLightChart.BaseChart = (function(){
       .xScale(this.xScale)
       .yScale(this.yScale)
       .xAnnotation(this.timeAnnotation)
-      .yAnnotation([this.ohlcAnnotation, this.volumeAnnotation]);
+      .yAnnotation([this.ohlcAnnotationRight, this.ohlcAnnotationLeft, this.volumeAnnotation]);
   }
 
   Chart.prototype._initContainer = function(){
@@ -142,6 +176,7 @@ TraderLightChart.BaseChart = (function(){
     if(this.containerElement.offsetWidth<=0 || this.containerElement.offsetHeight<=0){
       return ;
     }
+    this.containerElement.classList.add("trader-light-chart");
 
     this.isReady = true;
     this._setChartBasics();
@@ -288,6 +323,7 @@ TraderLightChart.BaseChart = (function(){
     this.draw();
   };
   Chart.prototype.reInit = function(){
+    console.log('reInit');
     if(!this.canReInit) return;
     this._init();
     this.draw();
