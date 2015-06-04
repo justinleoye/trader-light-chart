@@ -139,7 +139,8 @@ TraderLightChart.BaseChart = (function(){
         _this.onChartContainerResize();
       });
     };
-    addResizeListener(this.containerElement, containerElementResizeCallback);
+
+    this._addWatchContainer(containerElementResizeCallback);
 
     this.containerSelector = d3.select("body div[id="+this.options.container_id+"]"); 
     this.maxVisiableBars = 120; // TODO: calculate it
@@ -206,6 +207,29 @@ TraderLightChart.BaseChart = (function(){
   Chart.prototype.afterConbine = function(){
     this.clearPending();
     this.isConbineReady = true;
+  };
+
+  Chart.prototype._addWatchContainer = function(callback){
+    this.watchContainer = true;
+    var offsetWidth = this.containerElement.offsetWidth;
+    if(offsetWidth > 0) return;
+    watchContainerSize();
+    function watchContainerSize(){
+      console.log('watchContainerSize');
+      if(this.watchContainer){
+        setTimeout(function(){
+          if(this.containerElement.offsetWidth != offsetWidth){
+            callback();
+          }else{
+            watchContainerSize();
+          }
+        },300);
+      }
+    }
+  };
+
+  Chart.prototype._removeWatchWatchContainer = function(){
+    this.watchContainer = false;
   };
 
   Chart.prototype.clearPending = function(){

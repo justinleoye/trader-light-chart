@@ -140,6 +140,8 @@ TraderLightChart.CandleChart = (function(){
       this.zoom.x(this.xScale.zoomable()).y(this.yScale);
       this.zoomAssociated = true;
     }
+
+    this.afterConbine();
   };
 
   CandleChart.prototype.zoomed = function(rect){

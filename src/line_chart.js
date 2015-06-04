@@ -111,6 +111,7 @@ TraderLightChart.LineChart = (function(){
     this.mainG.select("g.volume").call(this.volume);
     this.mainG.select("g.crosshair.ohlc").call(this.crosshair);
 
+    this.afterConbine();
   };
   
   return Chart;
