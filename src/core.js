@@ -389,9 +389,10 @@ TraderLightChart.BaseChart = (function(){
   };
 
   Chart.prototype._onChartContainerResize = function(){
-    console.log('_onChartContainerResize');
+    //console.log('_onChartContainerResize');
     this._setChartBasics();
     this._setMainSvgSize();
+    this._setAxisesSize();
     this.draw();
   };
 

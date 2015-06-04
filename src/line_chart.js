@@ -152,11 +152,11 @@ TraderLightChart.LineChart = (function(){
     // Update y scale min max, only on viewable zoomable.domain()
     var yDomain = techan.scale.plot.ohlc(this._dataInVisiable()).domain();
     yDomain = this.symmetrizeYScaleDomain(yDomain);
-    console.log('yDomain:', yDomain);
+    //console.log('yDomain:', yDomain);
     this.yScale.domain(yDomain);
     var percentDomain = techan.scale.plot.percent(this.yScale, this.accessor(this.getBaseDatum())).domain();
     percentDomain = this.symmetrizePercentDomain(percentDomain);
-    console.log('percentDomain:', percentDomain);
+    //console.log('percentDomain:', percentDomain);
     this.yPercentScale.domain(percentDomain);
     this.yScaleOfVolume.domain(techan.scale.plot.volume(this._dataInVisiable(), this.accessor.v).domain());
 
