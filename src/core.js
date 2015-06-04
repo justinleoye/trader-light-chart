@@ -376,6 +376,11 @@ TraderLightChart.BaseChart = (function(){
     }
   };
 
+  Chart.prototype.symmetrizePercentDomain = function(domain){
+    var distance = Math.max(Math.abs(domain[0]), Math.abs(domain[1]));
+    return [-distance, +distance];
+  };
+
   Chart.prototype._onChartContainerResize = function(){
     //console.log('_onChartContainerResize');
     this._setChartBasics();

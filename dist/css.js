@@ -102,7 +102,7 @@ TraderLightChart.core = TraderLightChart.core || {};
   stroke-dasharray: 2, 2;
 }
 .trader-light-chart .supstances .interaction path {
-  pointer-events: all;
+  pointer-events: none;
   cursor: ns-resize;
 }
 .trader-light-chart .mouseover .supstance path {
