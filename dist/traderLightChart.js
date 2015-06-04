@@ -201,8 +201,9 @@ TraderLightChart.BaseChart = (function(){
 
     this.containerWidth = this.containerElement.offsetWidth;
     this.containerHeight = this.containerElement.offsetHeight;
+
     if(this.containerElement.offsetWidth < 360){
-      this._setMargin({left:25});
+      this._setMargin({left:30});
     }
 
     this.containerWidth = (this.containerWidth - this.margin.left - this.margin.right) > 10 ? this.containerWidth : 400;
