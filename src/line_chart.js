@@ -37,7 +37,7 @@ TraderLightChart.LineChart = (function(){
     this.accessor = this.mainPlot.accessor();
 
     this.volume = techan.plot.volume()
-      .accessor(this.accessor)
+      .accessor(techan.accessor.ohlc())
       .xScale(this.xScale)
       .yScale(this.yScaleOfVolume);
   };
@@ -158,7 +158,7 @@ TraderLightChart.LineChart = (function(){
     percentDomain = this.symmetrizePercentDomain(percentDomain);
     console.log('percentDomain:', percentDomain);
     this.yPercentScale.domain(percentDomain);
-    this.yScaleOfVolume.domain(techan.scale.plot.volume(this._dataInVisiable()).domain());
+    this.yScaleOfVolume.domain(techan.scale.plot.volume(this._dataInVisiable(), this.accessor.v).domain());
 
     this.mainG.select('g.x.axis').call(this.xAxis);
     this.mainG.select('g.y.axis.right').call(this.yAxisRight);

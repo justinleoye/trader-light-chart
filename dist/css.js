@@ -74,7 +74,15 @@ TraderLightChart.core = TraderLightChart.core || {};
   stroke: #0000FF;
 }
 .trader-light-chart path.volume {
-  fill: #EEEEEE;
+  fill: #AAAAAA;
+  opacity: 0.5;
+  shape-rendering: crispEdges;
+}
+.trader-light-chart path.volume.up {
+  fill: #FF0000;
+}
+.trader-light-chart path.volume.down {
+  fill: #00AA00;
 }
 .trader-light-chart .crosshair {
   cursor: crosshair;

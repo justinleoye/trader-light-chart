@@ -378,7 +378,7 @@ TraderLightChart.BaseChart = (function(){
   };
 
   Chart.prototype.symmetrizeYScaleDomain = function(domain){
-    var base = this.baseDatum.close;
+    var base = this.getBaseDatum().close;
     var distance = Math.max(Math.abs(domain[0] - base), Math.abs(domain[1] - base));
     return [base - distance, base + distance];
   };

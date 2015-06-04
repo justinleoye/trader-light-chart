@@ -57,7 +57,7 @@ TraderLightChart.CandleChart = (function(){
     this.accessor = this.mainPlot.accessor();
 
     this.volume = techan.plot.volume()
-      .accessor(this.accessor)
+      .accessor(techan.accessor.ohlc())
       .xScale(this.xScale)
       .yScale(this.yScaleOfVolume);
   };
@@ -136,7 +136,7 @@ TraderLightChart.CandleChart = (function(){
 
     // Update y scale min max, only on viewable zoomable.domain()
     this.yScale.domain(techan.scale.plot.ohlc(this._dataInVisiable()).domain());
-    this.yScaleOfVolume.domain(techan.scale.plot.volume(this._dataInVisiable()).domain());
+    this.yScaleOfVolume.domain(techan.scale.plot.volume(this._dataInVisiable(), this.accessor.v).domain());
 
     this.mainG.select('g.x.axis').call(this.xAxis);
     this.mainG.select('g.y.axis.right').call(this.yAxisRight);
