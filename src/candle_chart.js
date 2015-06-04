@@ -5,25 +5,25 @@ TraderLightChart.CandleChart = (function(){
   function CandleChart(options){
     CandleChart.superClass.constructor.call(this, options);
 
-    this.init();
+    this._init();
   }
 
   TraderLightChart.core.classExtend(CandleChart, TraderLightChart.BaseChart);
 
-  CandleChart.prototype.init = function(){
-    console.log('init');
+  CandleChart.prototype._init = function(){
+    console.log('_init');
     this.zoomAssociated = false;
 
-    this.initContainer();
-    this.initMainSvg();
+    this._initContainer();
+    this._initMainSvg();
     this.createBehavior();
-    this.createScale();
-    this.createAxis();
+    this._createScale();
+    this._createAxis();
     this.createIndicators();
-    this.createMainPlot();
-    this.createAxisAnnotation();
-    this.createCrossHair()
-    this.conbine();
+    this._createMainPlot();
+    this._createAxisAnnotation();
+    this._createCrossHair()
+    this._conbine();
   };
 
   CandleChart.prototype.createBehavior = function(){
@@ -43,8 +43,10 @@ TraderLightChart.CandleChart = (function(){
         .period(10);
   };
 
-  CandleChart.prototype.createMainPlot = function(){
-    console.log('createMainPlot');
+  CandleChart.prototype._createMainPlot = function(){
+    console.log('_createMainPlot');
+    if(!this.isReady) return;
+
     this.mainPlot = techan.plot.ohlc()
       .xScale(this.xScale)
       .yScale(this.yScale);
@@ -57,8 +59,9 @@ TraderLightChart.CandleChart = (function(){
       .yScale(this.yScaleOfVolume);
   };
 
-  CandleChart.prototype.conbine = function(){
-    console.log('conbine');
+  CandleChart.prototype._conbine = function(){
+    console.log('_conbine');
+    if(!this.isReady) return;
 
     var ohlcSelection = this.mainG.append("g")
       .attr("class", "ohlc")
@@ -97,30 +100,32 @@ TraderLightChart.CandleChart = (function(){
     this.mainG.append('g')
         .attr("class", "crosshair ohlc");
 
-    this.setAxisesSize();
+    this._afterConbine();
   };
 
-  CandleChart.prototype.bindData = function(){
-    console.log('bindData');
+  CandleChart.prototype._bindData = function(){
+    console.log('_bindData');
     this.mainG.select("g.candlestick").datum(this.data);
     var lastDatum = this.data[this.data.length-1];
     console.log('lastDatum:', lastDatum);
     this.mainG.select("g.close.annotation").datum([lastDatum]);
-    this.bindLineData(this.mainG.select("g.sma.ma-0"), this.smaCalculator(this.data));
+    this._bindLineData(this.mainG.select("g.sma.ma-0"), this.smaCalculator(this.data));
     this.mainG.select("g.volume").datum(this.data);
   };
 
   CandleChart.prototype.draw = function(){
-    this.bindData();
+    if(!this.isReady) return;
+
+    this._bindData();
     console.log('draw');
 
     //this.xScale.domain(this.data.map(this.accessor.d)); // same as the following line
     this.xScale.domain(techan.scale.plot.time(this.data).domain());
-    this.xScale.zoomable().domain(this.domainInVisiable());
+    this.xScale.zoomable().domain(this._domainInVisiable());
 
     // Update y scale min max, only on viewable zoomable.domain()
-    this.yScale.domain(techan.scale.plot.ohlc(this.dataInVisiable()).domain());
-    this.yScaleOfVolume.domain(techan.scale.plot.volume(this.dataInVisiable()).domain());
+    this.yScale.domain(techan.scale.plot.ohlc(this._dataInVisiable()).domain());
+    this.yScaleOfVolume.domain(techan.scale.plot.volume(this._dataInVisiable()).domain());
 
     this.mainG.select('g.x.axis').call(this.xAxis);
     this.mainG.select('g.y.axis').call(this.yAxis);
@@ -140,8 +145,6 @@ TraderLightChart.CandleChart = (function(){
       this.zoom.x(this.xScale.zoomable()).y(this.yScale);
       this.zoomAssociated = true;
     }
-
-    this.afterConbine();
   };
 
   CandleChart.prototype.zoomed = function(rect){

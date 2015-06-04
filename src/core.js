@@ -51,33 +51,37 @@ TraderLightChart.BaseChart = (function(){
     _.extend(this.options, options)
 
     this.data = [];
-    this.isConbineReady = false;
-    this.pending = [];
+    this.isReady = false;
+    this.canReInit = true;
   }
 
   // should override
-  Chart.prototype.init = function(){
+  Chart.prototype._init = function(){
   };
 
-  Chart.prototype.createScale = function(){
-    console.log('createScale');
+  Chart.prototype._createScale = function(){
+    console.log('_createScale');
+    if(!this.isReady) return;
+
     this.xScale = techan.scale.financetime()
       .outerPadding(0);
     this.yScale = d3.scale.linear();
 
     this.yScaleOfVolume = d3.scale.linear();
 
-    this.setScales();
+    this._setScales();
   };
 
-  Chart.prototype.setScales = function(){
+  Chart.prototype._setScales = function(){
     this.xScale.range([0, this.containerWidth - this.margin.left - this.margin.right]);
     this.yScale.range([this.containerHeight - this.margin.top - this.margin.bottom, 0]);
     this.yScaleOfVolume.range([this.yScale(0), this.yScale(0.2)]);
   }
 
-  Chart.prototype.createAxis = function(){
-    console.log('createAxis');
+  Chart.prototype._createAxis = function(){
+    console.log('_createAxis');
+    if(!this.isReady) return;
+
     this.xAxis = d3.svg.axis()
       .scale(this.xScale)
       .orient("bottom");
@@ -92,10 +96,12 @@ TraderLightChart.BaseChart = (function(){
   };
 
   // should override
-  Chart.prototype.createMainPlot = function(){
+  Chart.prototype._createMainPlot = function(){
   };
 
-  Chart.prototype.createAxisAnnotation = function(){
+  Chart.prototype._createAxisAnnotation = function(){
+    if(!this.isReady) return;
+
     this.timeAnnotation = techan.plot.axisannotation()
       .axis(this.xAxis)
       .format(d3.time.format('%Y-%m-%d'))
@@ -118,7 +124,9 @@ TraderLightChart.BaseChart = (function(){
       .width(35);
   }
 
-  Chart.prototype.createCrossHair = function(){
+  Chart.prototype._createCrossHair = function(){
+    if(!this.isReady) return;
+
     this.crosshair = techan.plot.crosshair()
       .xScale(this.xScale)
       .yScale(this.yScale)
@@ -126,27 +134,27 @@ TraderLightChart.BaseChart = (function(){
       .yAnnotation([this.ohlcAnnotation, this.volumeAnnotation]);
   }
 
-  Chart.prototype.initContainer = function(){
-    console.log('initContainer');
+  Chart.prototype._initContainer = function(){
+    console.log('_initContainer');
     
     this.containerElement = document.getElementById(this.options.container_id);
-    //this.containerElement.setAttribute("style","width:100%;height:100%;")
-    this.setChartBasics();
+    // the container width or height is invalid
+    if(this.containerElement.offsetWidth<=0 || this.containerElement.offsetHeight<=0){
+      return ;
+    }
 
+    this.isReady = true;
+    this._setChartBasics();
     var _this = this;
-    var containerElementResizeCallback = function(){
-      _this.pendingExecute(function(){
-        _this.onChartContainerResize();
-      });
+    window.onresize = function(){
+      _this._onChartContainerResize();
     };
-
-    this._addWatchContainer(containerElementResizeCallback);
 
     this.containerSelector = d3.select("body div[id="+this.options.container_id+"]"); 
     this.maxVisiableBars = 120; // TODO: calculate it
   };
 
-  Chart.prototype.setChartBasics = function(){
+  Chart.prototype._setChartBasics = function(){
     // for test
     //var width = document.body.clientWidth * 0.9;
     //var height = document.body.clientHeight * 0.5;
@@ -166,8 +174,10 @@ TraderLightChart.BaseChart = (function(){
     console.log('containerWidth: ' + this.containerWidth + ' ,containerHeight: ' + this.containerHeight);
   };
 
-  Chart.prototype.initMainSvg = function(){
-    console.log('initMainSvg');
+  Chart.prototype._initMainSvg = function(){
+    console.log('_initMainSvg');
+    if(!this.isReady) return;
+
     this.mainSvg = this.containerSelector.append("svg")
 
     var defs = this.mainSvg.append("defs");
@@ -178,10 +188,10 @@ TraderLightChart.BaseChart = (function(){
           .attr("y", 0);
 
     this.mainG  = this.mainSvg.append("g");
-    this.setMainSvgSize();
+    this._setMainSvgSize();
   };
 
-  Chart.prototype.setMainSvgSize = function(){
+  Chart.prototype._setMainSvgSize = function(){
     this.mainSvg
       .attr("width", this.containerWidth)
       .attr("height", this.containerHeight);
@@ -194,58 +204,20 @@ TraderLightChart.BaseChart = (function(){
   };
 
   // should override
-  Chart.prototype.conbine = function(){
+  Chart.prototype._conbine = function(){
   };
 
-  Chart.prototype.setAxisesSize = function(){
+  Chart.prototype._afterConbine = function(){
+    this._setAxisesSize();
+    this.canReInit = false;
+  };
+
+  Chart.prototype._setAxisesSize = function(){
     this.mainG.select('g.x.axis')
         .attr("transform", "translate(0," + (this.containerHeight - this.margin.top - this.margin.bottom) + ")");
     this.mainG.select('g.y.axis')
         .attr("transform", "translate(" + this.xScale(1) + ",0)");
   }; 
-
-  Chart.prototype.afterConbine = function(){
-    this.clearPending();
-    this.isConbineReady = true;
-  };
-
-  Chart.prototype._addWatchContainer = function(callback){
-    this.watchContainer = true;
-    var offsetWidth = this.containerElement.offsetWidth;
-    if(offsetWidth > 0) return;
-    watchContainerSize();
-    function watchContainerSize(){
-      console.log('watchContainerSize');
-      if(this.watchContainer){
-        setTimeout(function(){
-          if(this.containerElement.offsetWidth != offsetWidth){
-            callback();
-          }else{
-            watchContainerSize();
-          }
-        },300);
-      }
-    }
-  };
-
-  Chart.prototype._removeWatchWatchContainer = function(){
-    this.watchContainer = false;
-  };
-
-  Chart.prototype.clearPending = function(){
-    while(this.pending.length>0){
-      var execution = this.pending.shift();
-      execution();
-    }
-  };
-
-  Chart.prototype.pendingExecute = function(callback){
-    if(this.isConbineReady){
-      callback();
-    }else{
-      this.pending.push(callback);
-    }
-  };
 
   Chart.prototype.feedData = function(data){
     console.log('feedData');
@@ -264,19 +236,19 @@ TraderLightChart.BaseChart = (function(){
   };
 
   // should override
-  Chart.prototype.bindData = function(){
+  Chart.prototype._bindData = function(){
   };
 
   // should override
   Chart.prototype.draw = function(){
   };
 
-  Chart.prototype.dataInVisiable = function(){
-    var domain = this.domainInVisiable();
+  Chart.prototype._dataInVisiable = function(){
+    var domain = this._domainInVisiable();
     return this.data.slice(domain[0], domain[1]);
   };
 
-  Chart.prototype.domainInVisiable = function(){
+  Chart.prototype._domainInVisiable = function(){
     if(this.maxVisiableBars > this.data.length){
       return [0,this.data.length];
     }else{
@@ -284,7 +256,7 @@ TraderLightChart.BaseChart = (function(){
     }
   };
 
-  Chart.prototype.bindLineData  = function(selection, data) {
+  Chart.prototype._bindLineData  = function(selection, data) {
     console.log('refreshIndicator');
     var datum = selection.datum();
     if(!datum){ // first time bind data
@@ -298,11 +270,11 @@ TraderLightChart.BaseChart = (function(){
     console.log('data len after bind:', datum.length);
   }
 
-  Chart.prototype.onChartContainerResize = function(){
+  Chart.prototype._onChartContainerResize = function(){
     console.log('on resize');
-    console.log('onChartContainerResize');
-    this.setChartBasics();
-    this.setMainSvgSize();
+    console.log('_onChartContainerResize');
+    this._setChartBasics();
+    this._setMainSvgSize();
     this.draw();
   };
 
@@ -313,6 +285,11 @@ TraderLightChart.BaseChart = (function(){
 
   Chart.prototype.drawBar = function(bar){
     this.feedData([bar]);
+    this.draw();
+  };
+  Chart.prototype.reInit = function(){
+    if(!this.canReInit) return;
+    this._init();
     this.draw();
   };
 

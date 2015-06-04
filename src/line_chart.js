@@ -5,26 +5,30 @@ TraderLightChart.LineChart = (function(){
   function Chart(options){
     Chart.superClass.constructor.call(this, options);
 
-    this.init();
+    this.accessor = techan.plot.close().accessor();
+
+    this._init();
   }
 
   TraderLightChart.core.classExtend(Chart, TraderLightChart.BaseChart);
 
-  Chart.prototype.init = function(){
-    console.log('init');
+  Chart.prototype._init = function(){
+    console.log('_init');
 
-    this.initContainer();
-    this.initMainSvg();
-    this.createScale();
-    this.createAxis();
-    this.createMainPlot();
-    this.createAxisAnnotation();
-    this.createCrossHair()
-    this.conbine();
+    this._initContainer();
+    this._initMainSvg();
+    this._createScale();
+    this._createAxis();
+    this._createMainPlot();
+    this._createAxisAnnotation();
+    this._createCrossHair()
+    this._conbine();
   };
 
-  Chart.prototype.createMainPlot = function(){
-    console.log('createMainPlot');
+  Chart.prototype._createMainPlot = function(){
+    console.log('_createMainPlot');
+    if(!this.isReady) return;
+
     this.mainPlot = techan.plot.close()
       .xScale(this.xScale)
       .yScale(this.yScale);
@@ -37,8 +41,9 @@ TraderLightChart.LineChart = (function(){
       .yScale(this.yScaleOfVolume);
   };
 
-  Chart.prototype.conbine = function(){
-    console.log('conbine');
+  Chart.prototype._conbine = function(){
+    console.log('_conbine');
+    if(!this.isReady) return;
 
     var ohlcSelection = this.mainG.append("g")
       .attr("class", "ohlc")
@@ -75,12 +80,12 @@ TraderLightChart.LineChart = (function(){
     this.mainG.append('g')
         .attr("class", "crosshair ohlc");
 
-    this.setAxisesSize();
+    this._afterConbine();
   };
 
-  Chart.prototype.bindData = function(){
-    console.log('bindData');
-    this.bindLineData(this.mainG.select("g.close"), this.data);
+  Chart.prototype._bindData = function(){
+    console.log('_bindData');
+    this._bindLineData(this.mainG.select("g.close"), this.data);
     //this.mainG.select("g.candlestick").datum(this.data);
     var lastDatum = this.data[this.data.length-1];
     console.log('lastDatum:', lastDatum);
@@ -89,17 +94,19 @@ TraderLightChart.LineChart = (function(){
   };
 
   Chart.prototype.draw = function(){
-    this.bindData();
+    if(!this.isReady) return;
+
+    this._bindData();
     console.log('draw');
 
 
     //this.xScale.domain(this.data.map(this.accessor.d)); // same as the following line
     this.xScale.domain(techan.scale.plot.time(this.data).domain());
-    this.xScale.zoomable().domain(this.domainInVisiable());
+    this.xScale.zoomable().domain(this._domainInVisiable());
 
     // Update y scale min max, only on viewable zoomable.domain()
-    this.yScale.domain(techan.scale.plot.ohlc(this.dataInVisiable()).domain());
-    this.yScaleOfVolume.domain(techan.scale.plot.volume(this.dataInVisiable()).domain());
+    this.yScale.domain(techan.scale.plot.ohlc(this._dataInVisiable()).domain());
+    this.yScaleOfVolume.domain(techan.scale.plot.volume(this._dataInVisiable()).domain());
 
     this.mainG.select('g.x.axis').call(this.xAxis);
     this.mainG.select('g.y.axis').call(this.yAxis);
@@ -110,8 +117,6 @@ TraderLightChart.LineChart = (function(){
     this.mainG.select("g.close.annotation").call(this.closeAnnotation);
     this.mainG.select("g.volume").call(this.volume);
     this.mainG.select("g.crosshair.ohlc").call(this.crosshair);
-
-    this.afterConbine();
   };
   
   return Chart;
