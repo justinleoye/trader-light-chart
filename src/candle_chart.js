@@ -118,6 +118,8 @@ TraderLightChart.CandleChart = (function(){
   CandleChart.prototype.draw = function(){
     if(!this.isReady) return;
 
+    if(this.data.length < this.maxVisiableBars) this._setXScale();
+
     this._bindData();
     //console.log('draw');
 

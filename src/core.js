@@ -102,10 +102,23 @@ TraderLightChart.BaseChart = (function(){
   };
 
   Chart.prototype._setScales = function(){
-    this.xScale.range([0, this.containerWidth - this.margin.left - this.margin.right]);
+    this._initSetXScale();
     this.yScale.range([this.containerHeight - this.margin.top - this.margin.bottom, 0]);
     this.yPercentScale.range([this.containerHeight - this.margin.top - this.margin.bottom, 0]);
     this.yScaleOfVolume.range([this.yScale(0), this.yScale(0.4)]);
+  }
+
+  Chart.prototype._initSetXScale = function(){
+      this.xScale.range([0, this.containerWidth - this.margin.left - this.margin.right]);
+  }
+
+  Chart.prototype._setXScale = function(){
+    if(this.data.length < this.maxVisiableBars){
+      var times = this.data.length / this.maxVisiableBars;
+      this.xScale.range([0, (this.containerWidth - this.margin.left - this.margin.right)*times]);
+    }else{
+      this.xScale.range([0, this.containerWidth - this.margin.left - this.margin.right]);
+    }
   }
 
   Chart.prototype._createAxis = function(){
