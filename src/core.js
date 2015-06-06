@@ -58,7 +58,8 @@ TraderLightChart.BaseChart = (function(){
     this.margin = {
       top: 0,
       bottom: 30,
-      left: 50,
+      //left: 50,
+      left: 1,
       right: 1
       //right: 50
     };
@@ -119,7 +120,8 @@ TraderLightChart.BaseChart = (function(){
       .orient("right");
     this.yAxisLeft = d3.svg.axis()
       .scale(this.yScale)
-      .orient("left");
+      //.orient("left");
+      .orient("right");
     //this.volumeAxis = d3.svg.axis()
     //  .scale(this.yScaleOfVolume)
     //  .orient("right")

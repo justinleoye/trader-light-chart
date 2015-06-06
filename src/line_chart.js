@@ -55,7 +55,8 @@ TraderLightChart.LineChart = (function(){
       .orient("right");
     this.yAxisLeft = d3.svg.axis()
       .scale(this.yPercentScale)
-      .orient("left")
+      //.orient("left")
+      .orient("right")
       .tickFormat(d3.format('+.1%'));
 
     //this.volumeAxis = d3.svg.axis()
