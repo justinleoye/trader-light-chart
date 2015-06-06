@@ -23,7 +23,7 @@ TraderLightChart.core = TraderLightChart.core || {};
   core.insertCSS = function(css){
     var style = document.createElement('style');
     style.innerHTML = css;
-    document.body.appendChild(style);
+    document.body && document.body.appendChild(style);
   };
 
   core.insertChartCSSToGloable = function(){
