@@ -118,6 +118,21 @@ TraderLightChart.LineChart = (function(){
         .attr("class", "y axis left")
   };
 
+  Chart.prototype.feedData = function(data){
+    for(var i=0; i < data.length; i++){
+      var datum = this._pretreatData(data[i]);
+      // TODO: isIntraday()
+      if(this.options.interval == '1'){
+        if(this.data.length > 0){
+          datum.open = this.data[this.data.length-1].close;
+        }else{ // the first feed datum
+          datum.open = this.baseDatum&&this.baseDatum.close ? this.baseDatum.close : datum.close;
+        }
+      }
+      this.data.push(datum);
+    }
+  };
+
   Chart.prototype._bindData = function(){
     //console.log('_bindData');
     this._bindLineData(this.mainG.select("g.close"), this.data);
