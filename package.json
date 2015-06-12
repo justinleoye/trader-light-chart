@@ -24,6 +24,7 @@
     "grunt-jscs": "^1.8.0",
     "grunt-karma": "^0.10.1",
     "grunt-newer": "^1.1.0",
+    "grunt-serve": "^0.1.6",
     "karma": "^0.12.32"
   }
 }
