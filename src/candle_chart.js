@@ -2,16 +2,16 @@ var TraderLightChart = TraderLightChart || {};
 
 TraderLightChart.CandleChart = (function(){
 
-  function CandleChart(options){
-    CandleChart.superClass.constructor.call(this, options);
+  function Chart(options){
+    Chart.superClass.constructor.call(this, options);
 
     this._init();
     this.studies = [];
   }
 
-  TraderLightChart.core.classExtend(CandleChart, TraderLightChart.BaseChart);
+  TraderLightChart.core.classExtend(Chart, TraderLightChart.BaseChart);
 
-  CandleChart.prototype._init = function(){
+  Chart.prototype._init = function(){
     //console.log('_init');
     this.zoomAssociated = false;
 
@@ -28,7 +28,7 @@ TraderLightChart.CandleChart = (function(){
     this._conbine();
   };
 
-  CandleChart.prototype.createBehavior = function(){
+  Chart.prototype.createBehavior = function(){
     var _this = this;
     this.zoom = d3.behavior.zoom()
       .on("zoom", function(){
@@ -36,7 +36,7 @@ TraderLightChart.CandleChart = (function(){
       });
   };
 
-  CandleChart.prototype._createMainPlot = function(){
+  Chart.prototype._createMainPlot = function(){
     //console.log('_createMainPlot');
     if(!this.isReady) return;
 
@@ -53,7 +53,7 @@ TraderLightChart.CandleChart = (function(){
       .yScale(this.yScaleOfVolume);
   };
 
-  CandleChart.prototype._conbine = function(){
+  Chart.prototype._conbine = function(){
     //console.log('_conbine');
     if(!this.isReady) return;
 
@@ -104,7 +104,7 @@ TraderLightChart.CandleChart = (function(){
     this._afterConbine();
   };
 
-  CandleChart.prototype._bindData = function(){
+  Chart.prototype._bindData = function(){
     //console.log('_bindData');
     this.mainG.select("g.candlestick").datum(this.data);
     var lastDatum = this.data[this.data.length-1];
@@ -115,7 +115,13 @@ TraderLightChart.CandleChart = (function(){
     this.mainG.select("g.volume").datum(this.data);
   };
 
-  CandleChart.prototype.draw = function(){
+  Chart.prototype._setYScaleDomain = function(){
+    // Update y scale min max, only on viewable zoomable.domain()
+    this.yScale.domain(techan.scale.plot.ohlc(this._dataInVisiable()).domain());
+    this.yScaleOfVolume.domain(techan.scale.plot.volume(this._dataInVisiable(), this.accessor.v).domain());
+  };
+
+  Chart.prototype.draw = function(){
     if(!this.isReady) return;
 
     if(this.data.length < this.maxVisiableBars) this._setXScale();
@@ -123,13 +129,10 @@ TraderLightChart.CandleChart = (function(){
     this._bindData();
     //console.log('draw');
 
-    //this.xScale.domain(this.data.map(this.accessor.d)); // same as the following line
-    this.xScale.domain(techan.scale.plot.time(this.data).domain());
-    this.xScale.zoomable().domain(this._domainInVisiable());
+    this._setXScaleDomain();
+    this._setTimeScaleDomain();
+    this._setYScaleDomain();
 
-    // Update y scale min max, only on viewable zoomable.domain()
-    this.yScale.domain(techan.scale.plot.ohlc(this._dataInVisiable()).domain());
-    this.yScaleOfVolume.domain(techan.scale.plot.volume(this._dataInVisiable(), this.accessor.v).domain());
 
     this.mainG.select('g.x.axis').call(this.xAxis);
     this.mainG.select('g.y.axis.right').call(this.yAxisRight);
@@ -152,7 +155,7 @@ TraderLightChart.CandleChart = (function(){
     }
   };
 
-  CandleChart.prototype.zoomed = function(rect){
+  Chart.prototype.zoomed = function(rect){
     //console.log('zoomed');
     this.zoom.translate();
     //this.zoom.scale();
@@ -171,7 +174,7 @@ TraderLightChart.CandleChart = (function(){
     this._refreshSupstances();
   };
 
-  CandleChart.prototype.addStudy = function(studyName, input, options){
+  Chart.prototype.addStudy = function(studyName, input, options){
     var _this = this;
     function addStudy(){
       if(studyName!="Moving Average") return;
@@ -193,7 +196,7 @@ TraderLightChart.CandleChart = (function(){
     this._pendingExecute(addStudy);
   };
 
-  CandleChart.prototype._bindStudies = function(){
+  Chart.prototype._bindStudies = function(){
     for(var i=0; i < this.studies.length; i++){
       var selector = this.studies[i][0];
       var study = this.studies[i][1];
@@ -202,7 +205,7 @@ TraderLightChart.CandleChart = (function(){
     }
   };
 
-  CandleChart.prototype._drawStudies = function(){
+  Chart.prototype._drawStudies = function(){
     for(var i=0; i < this.studies.length; i++){
       var selector = this.studies[i][0];
       var study = this.studies[i][1];
@@ -211,7 +214,7 @@ TraderLightChart.CandleChart = (function(){
     }
   };
 
-  CandleChart.prototype._zoomStudies = function(){
+  Chart.prototype._zoomStudies = function(){
     for(var i=0; i < this.studies.length; i++){
       var selector = this.studies[i][0];
       var study = this.studies[i][1];
@@ -220,5 +223,5 @@ TraderLightChart.CandleChart = (function(){
     }
   };
 
-  return CandleChart;
+  return Chart;
 })();

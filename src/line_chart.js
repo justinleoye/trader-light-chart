@@ -47,8 +47,10 @@ TraderLightChart.LineChart = (function(){
     //console.log('_createAxis');
     if(!this.isReady) return;
 
+    console.log('this.timeScale:', this.timeScale);
     this.xAxis = d3.svg.axis()
-      .scale(this.xScale)
+      //.scale(this.xScale)
+      .scale(this.timeScale)
       .orient("bottom");
     this.yAxisRight = d3.svg.axis()
       .scale(this.yScale)
@@ -144,6 +146,19 @@ TraderLightChart.LineChart = (function(){
     this.mainG.select("g.volume").datum(this.data);
   };
 
+  Chart.prototype._setYScaleDomain = function(){
+    // Update y scale min max, only on viewable zoomable.domain()
+    var yDomain = techan.scale.plot.ohlc(this._dataInVisiable()).domain();
+    yDomain = this.symmetrizeYScaleDomain(yDomain);
+    //console.log('yDomain:', yDomain);
+    this.yScale.domain(yDomain);
+    var percentDomain = techan.scale.plot.percent(this.yScale, this.accessor(this.getBaseDatum())).domain();
+    percentDomain = this.symmetrizePercentDomain(percentDomain);
+    //console.log('percentDomain:', percentDomain);
+    this.yPercentScale.domain(percentDomain);
+    this.yScaleOfVolume.domain(techan.scale.plot.volume(this._dataInVisiable(), this.accessor.v).domain());
+  };
+
   Chart.prototype.draw = function(){
     if(!this.isReady) return;
 
@@ -164,20 +179,9 @@ TraderLightChart.LineChart = (function(){
 
   Chart.prototype._drawAxises = function(){
 
-    //this.xScale.domain(this.data.map(this.accessor.d)); // same as the following line
-    this.xScale.domain(techan.scale.plot.time(this.data).domain());
-    this.xScale.zoomable().domain(this._domainInVisiable());
-
-    // Update y scale min max, only on viewable zoomable.domain()
-    var yDomain = techan.scale.plot.ohlc(this._dataInVisiable()).domain();
-    yDomain = this.symmetrizeYScaleDomain(yDomain);
-    //console.log('yDomain:', yDomain);
-    this.yScale.domain(yDomain);
-    var percentDomain = techan.scale.plot.percent(this.yScale, this.accessor(this.getBaseDatum())).domain();
-    percentDomain = this.symmetrizePercentDomain(percentDomain);
-    //console.log('percentDomain:', percentDomain);
-    this.yPercentScale.domain(percentDomain);
-    this.yScaleOfVolume.domain(techan.scale.plot.volume(this._dataInVisiable(), this.accessor.v).domain());
+    this._setXScaleDomain();
+    this._setTimeScaleDomain();
+    this._setYScaleDomain();
 
     this.mainG.select('g.x.axis').call(this.xAxis);
     this.mainG.select('g.y.axis.right').call(this.yAxisRight);
@@ -185,6 +189,6 @@ TraderLightChart.LineChart = (function(){
     //this.mainG.select("g.volume.axis").call(this.volumeAxis);
 
   };
-  
+
   return Chart;
 })();

@@ -66,7 +66,7 @@ TraderLightChart.BaseChart = (function(){
 
     this.options = {
       container_id: 'trader_light_chart_container',
-      interval: 'D',
+      interval: 'D', // '1', 'D', 'W', 'M', 'Y'
       maxVisiableBars: 120,
     };
 
@@ -86,12 +86,19 @@ TraderLightChart.BaseChart = (function(){
   Chart.prototype._init = function(){
   };
 
+  Chart.prototype._handleInterval = function(){
+  };
+
   Chart.prototype._createScale = function(){
     //console.log('_createScale');
     if(!this.isReady) return;
 
     this.xScale = techan.scale.financetime()
       .outerPadding(0);
+
+    this.timeScale = techan.scale.financetime()
+      .outerPadding(0);
+
     this.yScale = d3.scale.linear();
 
     this.yPercentScale = this.yScale.copy();
@@ -103,6 +110,7 @@ TraderLightChart.BaseChart = (function(){
 
   Chart.prototype._setScales = function(){
     this._initSetXScale();
+    this.timeScale.range([0, this.containerWidth - this.margin.left - this.margin.right]);
     this.yScale.range([this.containerHeight - this.margin.top - this.margin.bottom, 0]);
     this.yPercentScale.range([this.containerHeight - this.margin.top - this.margin.bottom, 0]);
     this.yScaleOfVolume.range([this.yScale(0), this.yScale(0.4)]);
@@ -126,7 +134,8 @@ TraderLightChart.BaseChart = (function(){
     if(!this.isReady) return;
 
     this.xAxis = d3.svg.axis()
-      .scale(this.xScale)
+      //.scale(this.xScale)
+      .scale(this.timeScale)
       .orient("bottom");
     this.yAxisRight = d3.svg.axis()
       .scale(this.yScale)
@@ -323,6 +332,29 @@ TraderLightChart.BaseChart = (function(){
     this._clearPending();
   };
 
+  Chart.prototype._setXScaleDomain = function(){
+    var domain = techan.scale.plot.time(this.data).domain();
+    this.xScale.domain(domain);
+    this.xScale.zoomable().domain(this._domainInVisiable());
+  };
+
+  // should override
+  Chart.prototype._setYScaleDomain = function(){
+  };
+
+  Chart.prototype._setTimeScaleDomain = function(){
+    var domain = techan.scale.plot.time(this.data).domain();
+    if(this.options.interval === '1'){
+      var timeScaleDomain = this._genTimeScaleDomain(domain[1]);
+      this.timeScale.domain(timeScaleDomain);
+      //this.timeScale.zoomable().domain(timeScaleDomain);
+    }else{
+      this.timeScale.domain(domain);
+      this.timeScale.zoomable().domain(this._domainInVisiable());
+    }
+
+  };
+
   Chart.prototype._setAxisesSize = function(){
     this.mainG.select('g.x.axis')
         .attr("transform", "translate(0," + (this.containerHeight - this.margin.top - this.margin.bottom) + ")");
@@ -412,6 +444,21 @@ TraderLightChart.BaseChart = (function(){
     return [-distance, +distance];
   };
 
+  Chart.prototype._genTimeScaleDomain = function(initialDate){
+    var domain = [];
+    var len = this.maxVisiableBars;
+    for(var i=0; i < len; i++){
+      var d = createOffsetedDate(initialDate, i);
+      domain.push(d);
+    }
+    return domain;
+
+    function createOffsetedDate(date, offset){
+      var d = moment(date);
+      return d.add(offset, 'm').toDate();
+    }
+  };
+  
   Chart.prototype._onChartContainerResize = function(){
     //console.log('_onChartContainerResize');
     return; // bugs

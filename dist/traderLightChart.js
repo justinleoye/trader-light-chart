@@ -68,7 +68,7 @@ TraderLightChart.BaseChart = (function(){
 
     this.options = {
       container_id: 'trader_light_chart_container',
-      interval: 'D',
+      interval: 'D', // '1', 'D', 'W', 'M', 'Y'
       maxVisiableBars: 120,
     };
 
@@ -88,12 +88,19 @@ TraderLightChart.BaseChart = (function(){
   Chart.prototype._init = function(){
   };
 
+  Chart.prototype._handleInterval = function(){
+  };
+
   Chart.prototype._createScale = function(){
     //console.log('_createScale');
     if(!this.isReady) return;
 
     this.xScale = techan.scale.financetime()
       .outerPadding(0);
+
+    this.timeScale = techan.scale.financetime()
+      .outerPadding(0);
+
     this.yScale = d3.scale.linear();
 
     this.yPercentScale = this.yScale.copy();
@@ -105,6 +112,7 @@ TraderLightChart.BaseChart = (function(){
 
   Chart.prototype._setScales = function(){
     this._initSetXScale();
+    this.timeScale.range([0, this.containerWidth - this.margin.left - this.margin.right]);
     this.yScale.range([this.containerHeight - this.margin.top - this.margin.bottom, 0]);
     this.yPercentScale.range([this.containerHeight - this.margin.top - this.margin.bottom, 0]);
     this.yScaleOfVolume.range([this.yScale(0), this.yScale(0.4)]);
@@ -128,7 +136,8 @@ TraderLightChart.BaseChart = (function(){
     if(!this.isReady) return;
 
     this.xAxis = d3.svg.axis()
-      .scale(this.xScale)
+      //.scale(this.xScale)
+      .scale(this.timeScale)
       .orient("bottom");
     this.yAxisRight = d3.svg.axis()
       .scale(this.yScale)
@@ -325,6 +334,29 @@ TraderLightChart.BaseChart = (function(){
     this._clearPending();
   };
 
+  Chart.prototype._setXScaleDomain = function(){
+    var domain = techan.scale.plot.time(this.data).domain();
+    this.xScale.domain(domain);
+    this.xScale.zoomable().domain(this._domainInVisiable());
+  };
+
+  // should override
+  Chart.prototype._setYScaleDomain = function(){
+  };
+
+  Chart.prototype._setTimeScaleDomain = function(){
+    var domain = techan.scale.plot.time(this.data).domain();
+    if(this.options.interval === '1'){
+      var timeScaleDomain = this._genTimeScaleDomain(domain[1]);
+      this.timeScale.domain(timeScaleDomain);
+      //this.timeScale.zoomable().domain(timeScaleDomain);
+    }else{
+      this.timeScale.domain(domain);
+      this.timeScale.zoomable().domain(this._domainInVisiable());
+    }
+
+  };
+
   Chart.prototype._setAxisesSize = function(){
     this.mainG.select('g.x.axis')
         .attr("transform", "translate(0," + (this.containerHeight - this.margin.top - this.margin.bottom) + ")");
@@ -414,6 +446,21 @@ TraderLightChart.BaseChart = (function(){
     return [-distance, +distance];
   };
 
+  Chart.prototype._genTimeScaleDomain = function(initialDate){
+    var domain = [];
+    var len = this.maxVisiableBars;
+    for(var i=0; i < len; i++){
+      var d = createOffsetedDate(initialDate, i);
+      domain.push(d);
+    }
+    return domain;
+
+    function createOffsetedDate(date, offset){
+      var d = moment(date);
+      return d.add(offset, 'm').toDate();
+    }
+  };
+  
   Chart.prototype._onChartContainerResize = function(){
     //console.log('_onChartContainerResize');
     return; // bugs
@@ -513,8 +560,10 @@ TraderLightChart.LineChart = (function(){
     //console.log('_createAxis');
     if(!this.isReady) return;
 
+    console.log('this.timeScale:', this.timeScale);
     this.xAxis = d3.svg.axis()
-      .scale(this.xScale)
+      //.scale(this.xScale)
+      .scale(this.timeScale)
       .orient("bottom");
     this.yAxisRight = d3.svg.axis()
       .scale(this.yScale)
@@ -610,6 +659,19 @@ TraderLightChart.LineChart = (function(){
     this.mainG.select("g.volume").datum(this.data);
   };
 
+  Chart.prototype._setYScaleDomain = function(){
+    // Update y scale min max, only on viewable zoomable.domain()
+    var yDomain = techan.scale.plot.ohlc(this._dataInVisiable()).domain();
+    yDomain = this.symmetrizeYScaleDomain(yDomain);
+    //console.log('yDomain:', yDomain);
+    this.yScale.domain(yDomain);
+    var percentDomain = techan.scale.plot.percent(this.yScale, this.accessor(this.getBaseDatum())).domain();
+    percentDomain = this.symmetrizePercentDomain(percentDomain);
+    //console.log('percentDomain:', percentDomain);
+    this.yPercentScale.domain(percentDomain);
+    this.yScaleOfVolume.domain(techan.scale.plot.volume(this._dataInVisiable(), this.accessor.v).domain());
+  };
+
   Chart.prototype.draw = function(){
     if(!this.isReady) return;
 
@@ -630,20 +692,9 @@ TraderLightChart.LineChart = (function(){
 
   Chart.prototype._drawAxises = function(){
 
-    //this.xScale.domain(this.data.map(this.accessor.d)); // same as the following line
-    this.xScale.domain(techan.scale.plot.time(this.data).domain());
-    this.xScale.zoomable().domain(this._domainInVisiable());
-
-    // Update y scale min max, only on viewable zoomable.domain()
-    var yDomain = techan.scale.plot.ohlc(this._dataInVisiable()).domain();
-    yDomain = this.symmetrizeYScaleDomain(yDomain);
-    //console.log('yDomain:', yDomain);
-    this.yScale.domain(yDomain);
-    var percentDomain = techan.scale.plot.percent(this.yScale, this.accessor(this.getBaseDatum())).domain();
-    percentDomain = this.symmetrizePercentDomain(percentDomain);
-    //console.log('percentDomain:', percentDomain);
-    this.yPercentScale.domain(percentDomain);
-    this.yScaleOfVolume.domain(techan.scale.plot.volume(this._dataInVisiable(), this.accessor.v).domain());
+    this._setXScaleDomain();
+    this._setTimeScaleDomain();
+    this._setYScaleDomain();
 
     this.mainG.select('g.x.axis').call(this.xAxis);
     this.mainG.select('g.y.axis.right').call(this.yAxisRight);
@@ -651,7 +702,7 @@ TraderLightChart.LineChart = (function(){
     //this.mainG.select("g.volume.axis").call(this.volumeAxis);
 
   };
-  
+
   return Chart;
 })();
 
@@ -660,16 +711,16 @@ var TraderLightChart = TraderLightChart || {};
 
 TraderLightChart.CandleChart = (function(){
 
-  function CandleChart(options){
-    CandleChart.superClass.constructor.call(this, options);
+  function Chart(options){
+    Chart.superClass.constructor.call(this, options);
 
     this._init();
     this.studies = [];
   }
 
-  TraderLightChart.core.classExtend(CandleChart, TraderLightChart.BaseChart);
+  TraderLightChart.core.classExtend(Chart, TraderLightChart.BaseChart);
 
-  CandleChart.prototype._init = function(){
+  Chart.prototype._init = function(){
     //console.log('_init');
     this.zoomAssociated = false;
 
@@ -686,7 +737,7 @@ TraderLightChart.CandleChart = (function(){
     this._conbine();
   };
 
-  CandleChart.prototype.createBehavior = function(){
+  Chart.prototype.createBehavior = function(){
     var _this = this;
     this.zoom = d3.behavior.zoom()
       .on("zoom", function(){
@@ -694,7 +745,7 @@ TraderLightChart.CandleChart = (function(){
       });
   };
 
-  CandleChart.prototype._createMainPlot = function(){
+  Chart.prototype._createMainPlot = function(){
     //console.log('_createMainPlot');
     if(!this.isReady) return;
 
@@ -711,7 +762,7 @@ TraderLightChart.CandleChart = (function(){
       .yScale(this.yScaleOfVolume);
   };
 
-  CandleChart.prototype._conbine = function(){
+  Chart.prototype._conbine = function(){
     //console.log('_conbine');
     if(!this.isReady) return;
 
@@ -762,7 +813,7 @@ TraderLightChart.CandleChart = (function(){
     this._afterConbine();
   };
 
-  CandleChart.prototype._bindData = function(){
+  Chart.prototype._bindData = function(){
     //console.log('_bindData');
     this.mainG.select("g.candlestick").datum(this.data);
     var lastDatum = this.data[this.data.length-1];
@@ -773,7 +824,13 @@ TraderLightChart.CandleChart = (function(){
     this.mainG.select("g.volume").datum(this.data);
   };
 
-  CandleChart.prototype.draw = function(){
+  Chart.prototype._setYScaleDomain = function(){
+    // Update y scale min max, only on viewable zoomable.domain()
+    this.yScale.domain(techan.scale.plot.ohlc(this._dataInVisiable()).domain());
+    this.yScaleOfVolume.domain(techan.scale.plot.volume(this._dataInVisiable(), this.accessor.v).domain());
+  };
+
+  Chart.prototype.draw = function(){
     if(!this.isReady) return;
 
     if(this.data.length < this.maxVisiableBars) this._setXScale();
@@ -781,13 +838,10 @@ TraderLightChart.CandleChart = (function(){
     this._bindData();
     //console.log('draw');
 
-    //this.xScale.domain(this.data.map(this.accessor.d)); // same as the following line
-    this.xScale.domain(techan.scale.plot.time(this.data).domain());
-    this.xScale.zoomable().domain(this._domainInVisiable());
+    this._setXScaleDomain();
+    this._setTimeScaleDomain();
+    this._setYScaleDomain();
 
-    // Update y scale min max, only on viewable zoomable.domain()
-    this.yScale.domain(techan.scale.plot.ohlc(this._dataInVisiable()).domain());
-    this.yScaleOfVolume.domain(techan.scale.plot.volume(this._dataInVisiable(), this.accessor.v).domain());
 
     this.mainG.select('g.x.axis').call(this.xAxis);
     this.mainG.select('g.y.axis.right').call(this.yAxisRight);
@@ -810,7 +864,7 @@ TraderLightChart.CandleChart = (function(){
     }
   };
 
-  CandleChart.prototype.zoomed = function(rect){
+  Chart.prototype.zoomed = function(rect){
     //console.log('zoomed');
     this.zoom.translate();
     //this.zoom.scale();
@@ -829,7 +883,7 @@ TraderLightChart.CandleChart = (function(){
     this._refreshSupstances();
   };
 
-  CandleChart.prototype.addStudy = function(studyName, input, options){
+  Chart.prototype.addStudy = function(studyName, input, options){
     var _this = this;
     function addStudy(){
       if(studyName!="Moving Average") return;
@@ -851,7 +905,7 @@ TraderLightChart.CandleChart = (function(){
     this._pendingExecute(addStudy);
   };
 
-  CandleChart.prototype._bindStudies = function(){
+  Chart.prototype._bindStudies = function(){
     for(var i=0; i < this.studies.length; i++){
       var selector = this.studies[i][0];
       var study = this.studies[i][1];
@@ -860,7 +914,7 @@ TraderLightChart.CandleChart = (function(){
     }
   };
 
-  CandleChart.prototype._drawStudies = function(){
+  Chart.prototype._drawStudies = function(){
     for(var i=0; i < this.studies.length; i++){
       var selector = this.studies[i][0];
       var study = this.studies[i][1];
@@ -869,7 +923,7 @@ TraderLightChart.CandleChart = (function(){
     }
   };
 
-  CandleChart.prototype._zoomStudies = function(){
+  Chart.prototype._zoomStudies = function(){
     for(var i=0; i < this.studies.length; i++){
       var selector = this.studies[i][0];
       var study = this.studies[i][1];
@@ -878,5 +932,5 @@ TraderLightChart.CandleChart = (function(){
     }
   };
 
-  return CandleChart;
+  return Chart;
 })();

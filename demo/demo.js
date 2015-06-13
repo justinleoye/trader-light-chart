@@ -1,13 +1,17 @@
 
-//test();
+//test('D');
+//test('W');
+//test('M');
 testIntrady();
 
-function test(){
+function test(interval){
   var lc = new TraderLightChart.LineChart({
         container_id: 'trader_line_chart_container',
+        interval: interval
       });
   var cc = new TraderLightChart.CandleChart({
         container_id: 'trader_candle_chart_container',
+        interval: interval
       });
 
   lc.addSupstance({price: 14.03});
@@ -25,12 +29,21 @@ function test(){
   //testChartWithCSV(lc);
   //testChartWithCSV(cc);
 
-  //testChartWithJSON(lc,'intraday');
-  //testChartWithJSON(cc, 'intraday');
-  testChartWithJSON(lc,'week');
-  testChartWithJSON(cc, 'week');
-  //testChartWithJSON(lc,'month');
-  //testChartWithJSON(cc, 'month');
+  switch(interval){
+    case 'D':
+      testChartWithJSON(lc,'day');
+      testChartWithJSON(cc, 'day');
+      break;
+    case 'W':
+      testChartWithJSON(lc,'week');
+      testChartWithJSON(cc, 'week');
+      break;
+    case 'M':
+      testChartWithJSON(lc,'month');
+      testChartWithJSON(cc, 'month');
+      break;
+
+  }
 }
 
 function testIntrady(){
