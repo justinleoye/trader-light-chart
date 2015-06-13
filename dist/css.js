@@ -17,8 +17,12 @@ TraderLightChart.core = TraderLightChart.core || {};
 .trader-light-chart .axis path,
 .trader-light-chart .axis line {
   fill: none;
-  stroke: #555555;
+  stroke: #DEDEDE;
   shape-rendering: crispEdges;
+}
+.trader-light-chart .axis g.tick text {
+  stroke: #DEDEDE;
+  stroke-width: 0.4;
 }
 .trader-light-chart path {
   fill: none;
