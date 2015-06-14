@@ -21,8 +21,8 @@ TraderLightChart.core = TraderLightChart.core || {};
   shape-rendering: crispEdges;
 }
 .trader-light-chart .axis g.tick text {
-  stroke: #DEDEDE;
-  stroke-width: 0.4;
+  stroke: #808080;
+  stroke-width: 0.3;
 }
 .trader-light-chart path {
   fill: none;
@@ -56,7 +56,7 @@ TraderLightChart.core = TraderLightChart.core || {};
 .trader-light-chart path.ohlc.down {
   stroke: #6ba583;
 }
-.trader-light-chart .close.annotation.up path {
+.trader-light-chart .line-close.annotation.up path {
   font-size: 0.5rem;
   fill: #00AA00;
 }

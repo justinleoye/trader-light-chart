@@ -85,11 +85,11 @@ TraderLightChart.LineChart = (function(){
 
     ohlcSelection.append("g")
       //.attr("class", "candlestick")
-      .attr("class", "close")
+      .attr("class", "line-close")
       .attr("clip-path", "url(#ohlcClip)");
 
     //this.mainG.append("g")
-    //    .attr("class", "close annotation up");
+    //    .attr("class", "line-close annotation up");
 
     //this.mainG.append("g")
     //    .attr("class", "volume axis");
@@ -138,11 +138,11 @@ TraderLightChart.LineChart = (function(){
 
   Chart.prototype._bindData = function(){
     //console.log('_bindData');
-    this._bindLineData(this.mainG.select("g.close"), this.data);
+    this._bindLineData(this.mainG.select("g.line-close"), this.data);
     //this.mainG.select("g.candlestick").datum(this.data);
     var lastDatum = this.data[this.data.length-1];
     //console.log('lastDatum:', lastDatum);
-    //this.mainG.select("g.close.annotation").datum([lastDatum]);
+    //this.mainG.select("g.line-close.annotation").datum([lastDatum]);
     this.mainG.select("g.volume").datum(this.data);
   };
 
@@ -169,9 +169,9 @@ TraderLightChart.LineChart = (function(){
 
     this._drawAxises();
 
-    this.mainG.select("g.close").call(this.mainPlot);
+    this.mainG.select("g.line-close").call(this.mainPlot);
     //this.mainG.select("g.candlestick").call(this.mainPlot);
-    //this.mainG.select("g.close.annotation").call(this.closeAnnotation);
+    //this.mainG.select("g.line-close.annotation").call(this.closeAnnotation);
     this.mainG.select("g.volume").call(this.volume);
     this.mainG.select("g.crosshair.ohlc").call(this.crosshair);
     this._drawSupstances();

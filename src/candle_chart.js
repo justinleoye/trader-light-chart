@@ -89,7 +89,7 @@ TraderLightChart.CandleChart = (function(){
         .attr("class", "y axis left")
 
     //this.mainG.append("g")
-    //    .attr("class", "close annotation up");
+    //    .attr("class", "line-close annotation up");
 
     //this.mainG.append("g")
     //    .attr("class", "volume axis");
@@ -109,7 +109,7 @@ TraderLightChart.CandleChart = (function(){
     this.mainG.select("g.candlestick").datum(this.data);
     var lastDatum = this.data[this.data.length-1];
     //console.log('lastDatum:', lastDatum);
-    //this.mainG.select("g.close.annotation").datum([lastDatum]);
+    //this.mainG.select("g.line-close.annotation").datum([lastDatum]);
     //this._bindLineData(this.mainG.select("g.sma.ma-0"), this.smaCalculator(this.data));
     this._bindStudies();
     this.mainG.select("g.volume").datum(this.data);
@@ -140,7 +140,7 @@ TraderLightChart.CandleChart = (function(){
     //this.mainG.select("g.volume.axis").call(this.volumeAxis);
 
     this.mainG.select("g.candlestick").call(this.mainPlot);
-    //this.mainG.select("g.close.annotation").call(this.closeAnnotation);
+    //this.mainG.select("g.line-close.annotation").call(this.closeAnnotation);
     //this.mainG.select("g .sma.ma-0").call(this.sma);
     this._drawStudies();
     this.mainG.select("g.volume").call(this.volume);
@@ -166,7 +166,7 @@ TraderLightChart.CandleChart = (function(){
     //this.mainG.select("g.volume.axis").call(this.volumeAxis);
 
     this.mainG.select("g.candlestick").call(this.mainPlot.refresh);
-    //this.mainG.select("g.close.annotation").call(this.closeAnnotation.refresh);
+    //this.mainG.select("g.line-close.annotation").call(this.closeAnnotation.refresh);
     //this.mainG.select("g .sma.ma-0").call(this.sma.refresh);
     this._zoomStudies();
     this.mainG.select("g.volume").call(this.volume.refresh);

@@ -345,7 +345,7 @@ TraderLightChart.BaseChart = (function(){
   Chart.prototype._setTimeScaleDomain = function(){
     var domain = techan.scale.plot.time(this.data).domain();
     if(this.options.interval === '1'){
-      var timeScaleDomain = this._genTimeScaleDomain(domain[1]);
+      var timeScaleDomain = this._genTimeScaleDomain(domain[0]);
       this.timeScale.domain(timeScaleDomain);
       //this.timeScale.zoomable().domain(timeScaleDomain);
     }else{
