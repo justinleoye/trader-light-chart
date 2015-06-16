@@ -340,6 +340,7 @@ TraderLightChart.BaseChart = (function(){
   };
 
   Chart.prototype._setTimeScaleDomain = function(){
+    //console.log('_setTimeScaleDomain');
     var domain = techan.scale.plot.time(this.data).domain();
     if(this.options.interval === '1'){
       var timeScaleDomain = this._genTimeScaleDomain(domain[0]);
@@ -347,6 +348,7 @@ TraderLightChart.BaseChart = (function(){
       //this.timeScale.zoomable().domain(timeScaleDomain);
     }else{
       this.timeScale.domain(domain);
+      //console.log('_domainInVisiable:', this._domainInVisiable());
       this.timeScale.zoomable().domain(this._domainInVisiable());
     }
 
@@ -742,6 +744,7 @@ TraderLightChart.CandleChart = (function(){
       .on("zoom", function(){
         _this.zoomed();
       });
+    this.timeZoom = d3.behavior.zoom();
   };
 
   Chart.prototype._createMainPlot = function(){
@@ -858,14 +861,16 @@ TraderLightChart.CandleChart = (function(){
     // Associate the zoom with the scale after a domain has been applied
     if(!this.zoomAssociated){
       //console.log('zoomAssociated');
+      //this.zoom.x(this.xScale.zoomable()).y(this.yScale);
       this.zoom.x(this.xScale.zoomable()).y(this.yScale);
+      this.timeZoom.x(this.timeScale.zoomable());
       this.zoomAssociated = true;
     }
   };
 
   Chart.prototype.zoomed = function(rect){
     //console.log('zoomed');
-    this.zoom.translate();
+    this.timeZoom.translate(this.zoom.translate());
     //this.zoom.scale();
 
     this.mainG.select('g.x.axis').call(this.xAxis);

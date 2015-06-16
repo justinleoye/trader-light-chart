@@ -1,8 +1,8 @@
 
-test('D');
+//test('D');
 //test('W');
 //test('M');
-//testIntrady();
+testIntrady();
 
 function test(interval){
   var lc = new TraderLightChart.LineChart({
@@ -109,7 +109,7 @@ function testChartWithCSV(tlc){
 function testChartWithJSON(tlc, type){ // type: 'intraday'
   d3.json("portfolio_klines.json", function(error, data) {
 
-    var feed = data['data'][type].slice(0, 200).map(function(d) {
+    var feed = data['data'][type].map(function(d) {
       if(type=='intraday'){
         return {
           date: moment(d[0]).toDate(),
@@ -131,7 +131,8 @@ function testChartWithJSON(tlc, type){ // type: 'intraday'
       }
     });
 
-    var initData = feed.splice(0,120);
+    var initData = feed.splice(0,239);
+    //var initData = feed;
     tlc.feedData(initData);
     tlc.draw();
 
