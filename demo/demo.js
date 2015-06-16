@@ -1,8 +1,8 @@
 
-//test('D');
+test('D');
 //test('W');
 //test('M');
-testIntrady();
+//testIntrady();
 
 function test(interval){
   var lc = new TraderLightChart.LineChart({
@@ -131,7 +131,7 @@ function testChartWithJSON(tlc, type){ // type: 'intraday'
       }
     });
 
-    var initData = feed.splice(0,10);
+    var initData = feed.splice(0,120);
     tlc.feedData(initData);
     tlc.draw();
 

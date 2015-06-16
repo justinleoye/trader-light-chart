@@ -60,10 +60,12 @@ TraderLightChart.BaseChart = (function(){
     this.margin = {
       top: 0,
       bottom: 30,
-      //left: 50,
       left: 1,
       right: 1
-      //right: 50
+    };
+
+    this.standardSize = {
+      small: 320,
     };
 
     this.options = {
@@ -235,8 +237,9 @@ TraderLightChart.BaseChart = (function(){
   Chart.prototype._setAxisAnnotation= function(){
     if(!this.isReady) return;
 
+    var width = 65;
     this.timeAnnotation
-      .width(65)
+      .width(width)
       .translate([0, this.containerHeight - this.margin.top - this.margin.bottom]);
 
     this.ohlcAnnotationRight
@@ -278,21 +281,13 @@ TraderLightChart.BaseChart = (function(){
 
   Chart.prototype._setChartBasics = function(){
     // for test
-    //var width = document.body.clientWidth * 0.9;
-    //var height = document.body.clientHeight * 0.5;
-    //this.containerElement.setAttribute("style","width:"+width+"px;"+"height:"+height+"px");
 
     this.containerWidth = this.containerElement.offsetWidth;
     this.containerHeight = this.containerElement.offsetHeight;
 
-    //if(this.containerElement.offsetWidth < 360){
-    //  this._setMargin({left:30});
-    //}
-
     this.containerWidth = (this.containerWidth - this.margin.left - this.margin.right) > 10 ? this.containerWidth : 400;
     this.containerHeight = (this.containerHeight - this.margin.top - this.margin.bottom) > 10 ? this.containerHeight : 300;
 
-    //console.log('containerWidth: ' + this.containerWidth + ' ,containerHeight: ' + this.containerHeight);
   };
 
   Chart.prototype._initMainSvg = function(){
@@ -504,6 +499,10 @@ TraderLightChart.BaseChart = (function(){
     if(!this.canReInit) return;
     this._init();
     this.draw();
+  };
+
+  Chart.prototype.isSmallSize = function(){
+    return this.containerWidth <= this.standardSize.small
   };
 
   return Chart;
