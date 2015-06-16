@@ -8,6 +8,7 @@ TraderLightChart.core = TraderLightChart.core || {};
 .trader-light-chart {
   border: 1px solid #DEDEDE;
   font-size: 0.5rem;
+  overflow: hidden;
 }
 .trader-light-chart path.line {
   fill: none;
