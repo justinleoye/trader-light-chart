@@ -343,12 +343,10 @@ TraderLightChart.BaseChart = (function(){
     //console.log('_setTimeScaleDomain');
     var domain = techan.scale.plot.time(this.data).domain();
     if(this.options.interval === '1'){
-      var timeScaleDomain = this._genTimeScaleDomain(domain[0]);
+      var timeScaleDomain = this._genTimeScaleDomain(domain);
       this.timeScale.domain(timeScaleDomain);
-      //this.timeScale.zoomable().domain(timeScaleDomain);
     }else{
       this.timeScale.domain(domain);
-      //console.log('_domainInVisiable:', this._domainInVisiable());
       this.timeScale.zoomable().domain(this._domainInVisiable());
     }
 
@@ -367,9 +365,9 @@ TraderLightChart.BaseChart = (function(){
     //console.log('feedData');
     for(var i=0; i < data.length; i++){
       var datum = this._pretreatData(data[i]);
+      if(this.data.length>0 && datum.date < this.data[this.data.length-1].date) continue;
       this.data.push(datum);
     }
-    //console.log('data:', this.data);
   };
 
   // should override
@@ -443,13 +441,17 @@ TraderLightChart.BaseChart = (function(){
     return [-distance, +distance];
   };
 
-  Chart.prototype._genTimeScaleDomain = function(initialDate){
+  Chart.prototype._genTimeScaleDomain = function(initialDomain){
     var domain = [];
-    var len = this.maxVisiableBars;
+    domain = domain.concat(initialDomain);
+
+    var len = this.maxVisiableBars - domain.length;
     for(var i=0; i < len; i++){
-      var d = createOffsetedDate(initialDate, i);
+      var startDate = domain[domain.length-1];
+      var d = createOffsetedDate(startDate, 1);
       domain.push(d);
     }
+    //return [domain[0], domain[domain.length-1]];
     return domain;
 
     function createOffsetedDate(date, offset){
@@ -561,7 +563,6 @@ TraderLightChart.LineChart = (function(){
     //console.log('_createAxis');
     if(!this.isReady) return;
 
-    console.log('this.timeScale:', this.timeScale);
     this.xAxis = d3.svg.axis()
       //.scale(this.xScale)
       .scale(this.timeScale)
@@ -646,6 +647,7 @@ TraderLightChart.LineChart = (function(){
           datum.open = this.baseDatum&&this.baseDatum.close ? this.baseDatum.close : datum.close;
         }
       }
+      if(this.data.length>0 && datum.date < this.data[this.data.length-1].date) continue;
       this.data.push(datum);
     }
   };
@@ -869,7 +871,6 @@ TraderLightChart.CandleChart = (function(){
   };
 
   Chart.prototype.zoomed = function(rect){
-    //console.log('zoomed');
     this.timeZoom.translate(this.zoom.translate());
     //this.zoom.scale();
 

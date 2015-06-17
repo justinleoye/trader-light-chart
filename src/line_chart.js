@@ -47,7 +47,6 @@ TraderLightChart.LineChart = (function(){
     //console.log('_createAxis');
     if(!this.isReady) return;
 
-    console.log('this.timeScale:', this.timeScale);
     this.xAxis = d3.svg.axis()
       //.scale(this.xScale)
       .scale(this.timeScale)
@@ -132,6 +131,7 @@ TraderLightChart.LineChart = (function(){
           datum.open = this.baseDatum&&this.baseDatum.close ? this.baseDatum.close : datum.close;
         }
       }
+      if(this.data.length>0 && datum.date < this.data[this.data.length-1].date) continue;
       this.data.push(datum);
     }
   };

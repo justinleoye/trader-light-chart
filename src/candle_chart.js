@@ -159,7 +159,6 @@ TraderLightChart.CandleChart = (function(){
   };
 
   Chart.prototype.zoomed = function(rect){
-    //console.log('zoomed');
     this.timeZoom.translate(this.zoom.translate());
     //this.zoom.scale();
 

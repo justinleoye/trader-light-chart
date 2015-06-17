@@ -42,7 +42,6 @@ function test(interval){
       testChartWithJSON(lc,'month');
       testChartWithJSON(cc, 'month');
       break;
-
   }
 }
 
@@ -131,12 +130,13 @@ function testChartWithJSON(tlc, type){ // type: 'intraday'
       }
     });
 
-    var initData = feed.splice(0,239);
-    //var initData = feed;
+    //var initData = feed.splice(0,239);
+    var initData = feed;
+    console.log('feed length:', feed.length);
     tlc.feedData(initData);
     tlc.draw();
 
-    drawBarsOneByOne();
+    //drawBarsOneByOne();
 
     function drawBarsOneByOne(){
       if(feed.length){
