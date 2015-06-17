@@ -125,7 +125,8 @@ TraderLightChart.CandleChart = (function(){
   Chart.prototype.draw = function(){
     if(!this.isReady) return;
 
-    if(this.data.length < this.maxVisiableBars) this._setXScale();
+    //if(this.data.length < this.maxVisiableBars) this._setXScale();
+    this._setXScale();
 
     this._bindData();
     //console.log('draw');

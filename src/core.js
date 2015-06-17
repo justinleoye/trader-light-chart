@@ -340,12 +340,18 @@ TraderLightChart.BaseChart = (function(){
   Chart.prototype._setTimeScaleDomain = function(){
     //console.log('_setTimeScaleDomain');
     var domain = techan.scale.plot.time(this.data).domain();
-    if(this.options.interval === '1'){
-      var timeScaleDomain = this._genTimeScaleDomain(domain);
-      this.timeScale.domain(timeScaleDomain);
-    }else{
-      this.timeScale.domain(domain);
-      this.timeScale.zoomable().domain(this._domainInVisiable());
+    var timeScaleDomain = this._genTimeScaleDomain(domain);
+    this.timeScale.domain(timeScaleDomain);
+    if(this.options.interval != '1'){
+      //console.log('zoom');
+      //console.log('_domainInVisiable:', this._domainInVisiable());
+      // TODO: fix later
+      var domainInVisiable = this._domainInVisiable();
+      if(domainInVisiable[0]==0){
+        this.timeScale.zoomable().domain([0, this.maxVisiableBars]);
+      }else{
+        this.timeScale.zoomable().domain(this._domainInVisiable());
+      }
     }
 
   };
@@ -440,6 +446,7 @@ TraderLightChart.BaseChart = (function(){
   };
 
   Chart.prototype._genTimeScaleDomain = function(initialDomain){
+    var _this = this;
     var domain = [];
     domain = domain.concat(initialDomain);
 
@@ -449,12 +456,21 @@ TraderLightChart.BaseChart = (function(){
       var d = createOffsetedDate(startDate, 1);
       domain.push(d);
     }
-    //return [domain[0], domain[domain.length-1]];
     return domain;
+
 
     function createOffsetedDate(date, offset){
       var d = moment(date);
-      return d.add(offset, 'm').toDate();
+      switch(_this.options.interval){
+        case '1':
+          return d.add(offset, 'm').toDate();
+        case 'D':
+          return d.add(offset, 'd').toDate();
+        case 'W':
+          return d.add(offset, 'w').toDate();
+        case 'M':
+          return d.add(offset, 'M').toDate();
+      }
     }
   };
   
