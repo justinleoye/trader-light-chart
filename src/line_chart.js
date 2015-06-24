@@ -47,18 +47,20 @@ TraderLightChart.LineChart = (function(){
     //console.log('_createAxis');
     if(!this.isReady) return;
 
-    this.xAxis = d3.svg.axis()
-      //.scale(this.xScale)
-      .scale(this.timeScale)
-      .orient("bottom");
+    //this.xAxis = d3.svg.axis()
+    //  .scale(this.xScale)
+    //  .orient("bottom");
     this.yAxisRight = d3.svg.axis()
       .scale(this.yScale)
       .orient("right");
     this.yAxisLeft = d3.svg.axis()
       .scale(this.yPercentScale)
-      //.orient("left")
       .orient("right")
       .tickFormat(d3.format('+.1%'));
+
+    this.timeAxis = d3.svg.axis()
+      .scale(this.timeScale)
+      .orient("bottom");
 
     //this.volumeAxis = d3.svg.axis()
     //  .scale(this.yScaleOfVolume)
@@ -104,20 +106,17 @@ TraderLightChart.LineChart = (function(){
   };
 
   Chart.prototype._conbineAxises = function(){
-    this.mainG.append('g')
-        .attr("class", "x axis");
+    //this.mainG.append('g')
+    //    .attr("class", "x axis");
 
     this.mainG.append('g')
         .attr("class", "y axis right")
-      //.append("text")
-      //  .attr("transform", "rotate(-90)")
-      //  .attr("y", 6)
-      //  .attr("dy", ".71em")
-      //  .style("text-anchor", "end")
-      //  .text("Price ($)");
 
     this.mainG.append('g')
         .attr("class", "y axis left")
+
+    this.mainG.append('g')
+        .attr("class", "time axis");
   };
 
   Chart.prototype.feedData = function(data){
@@ -184,9 +183,10 @@ TraderLightChart.LineChart = (function(){
     this._setTimeScaleDomain();
     this._setYScaleDomain();
 
-    this.mainG.select('g.x.axis').call(this.xAxis);
+    //this.mainG.select('g.x.axis').call(this.xAxis);
     this.mainG.select('g.y.axis.right').call(this.yAxisRight);
     this.mainG.select('g.y.axis.left').call(this.yAxisLeft);
+    this.mainG.select('g.time.axis').call(this.timeAxis);
     //this.mainG.select("g.volume.axis").call(this.volumeAxis);
 
   };

@@ -137,17 +137,18 @@ TraderLightChart.BaseChart = (function(){
     //console.log('_createAxis');
     if(!this.isReady) return;
 
-    this.xAxis = d3.svg.axis()
-      //.scale(this.xScale)
-      .scale(this.timeScale)
-      .orient("bottom");
+    //this.xAxis = d3.svg.axis()
+    //  .scale(this.xScale)
+    //  .orient("bottom");
     this.yAxisRight = d3.svg.axis()
       .scale(this.yScale)
       .orient("right");
     this.yAxisLeft = d3.svg.axis()
       .scale(this.yScale)
-      //.orient("left");
       .orient("right");
+    this.timeAxis = d3.svg.axis()
+      .scale(this.timeScale)
+      .orient("bottom");
     //this.volumeAxis = d3.svg.axis()
     //  .scale(this.yScaleOfVolume)
     //  .orient("right")
@@ -213,7 +214,7 @@ TraderLightChart.BaseChart = (function(){
 
     //console.log('timeAnnotationFormat:', timeAnnotationFormat);
     this.timeAnnotation = techan.plot.axisannotation()
-      .axis(this.xAxis)
+      .axis(this.timeAxis)
       .format(timeAnnotationFormat);
 
     this.ohlcAnnotationRight = techan.plot.axisannotation()
@@ -252,7 +253,7 @@ TraderLightChart.BaseChart = (function(){
     if(!this.isReady) return;
 
     this.crosshair = techan.plot.crosshair()
-      .xScale(this.xScale)
+      .xScale(this.timeScale)
       .yScale(this.yScale)
       .xAnnotation(this.timeAnnotation)
       //.yAnnotation([this.ohlcAnnotationRight, this.ohlcAnnotationLeft, this.volumeAnnotation]);
@@ -359,7 +360,7 @@ TraderLightChart.BaseChart = (function(){
   };
 
   Chart.prototype._setAxisesSize = function(){
-    this.mainG.select('g.x.axis')
+    this.mainG.select('g.time.axis')
         .attr("transform", "translate(0," + (this.containerHeight - this.margin.top - this.margin.bottom) + ")");
     this.mainG.select('g.y.axis.right')
         .attr("transform", "translate(" + this.xScale(1) + ",0)");
@@ -579,18 +580,20 @@ TraderLightChart.LineChart = (function(){
     //console.log('_createAxis');
     if(!this.isReady) return;
 
-    this.xAxis = d3.svg.axis()
-      //.scale(this.xScale)
-      .scale(this.timeScale)
-      .orient("bottom");
+    //this.xAxis = d3.svg.axis()
+    //  .scale(this.xScale)
+    //  .orient("bottom");
     this.yAxisRight = d3.svg.axis()
       .scale(this.yScale)
       .orient("right");
     this.yAxisLeft = d3.svg.axis()
       .scale(this.yPercentScale)
-      //.orient("left")
       .orient("right")
       .tickFormat(d3.format('+.1%'));
+
+    this.timeAxis = d3.svg.axis()
+      .scale(this.timeScale)
+      .orient("bottom");
 
     //this.volumeAxis = d3.svg.axis()
     //  .scale(this.yScaleOfVolume)
@@ -636,20 +639,17 @@ TraderLightChart.LineChart = (function(){
   };
 
   Chart.prototype._conbineAxises = function(){
-    this.mainG.append('g')
-        .attr("class", "x axis");
+    //this.mainG.append('g')
+    //    .attr("class", "x axis");
 
     this.mainG.append('g')
         .attr("class", "y axis right")
-      //.append("text")
-      //  .attr("transform", "rotate(-90)")
-      //  .attr("y", 6)
-      //  .attr("dy", ".71em")
-      //  .style("text-anchor", "end")
-      //  .text("Price ($)");
 
     this.mainG.append('g')
         .attr("class", "y axis left")
+
+    this.mainG.append('g')
+        .attr("class", "time axis");
   };
 
   Chart.prototype.feedData = function(data){
@@ -716,9 +716,10 @@ TraderLightChart.LineChart = (function(){
     this._setTimeScaleDomain();
     this._setYScaleDomain();
 
-    this.mainG.select('g.x.axis').call(this.xAxis);
+    //this.mainG.select('g.x.axis').call(this.xAxis);
     this.mainG.select('g.y.axis.right').call(this.yAxisRight);
     this.mainG.select('g.y.axis.left').call(this.yAxisLeft);
+    this.mainG.select('g.time.axis').call(this.timeAxis);
     //this.mainG.select("g.volume.axis").call(this.volumeAxis);
 
   };
@@ -763,6 +764,7 @@ TraderLightChart.CandleChart = (function(){
       .on("zoom", function(){
         _this.zoomed();
       });
+    this.xyZoom = d3.behavior.zoom();
     this.timeZoom = d3.behavior.zoom();
   };
 
@@ -803,20 +805,17 @@ TraderLightChart.CandleChart = (function(){
     //  .attr("class", "indicator sma ma-0")
     //  .attr("clip-path", "url(#ohlcClip)");
 
-    this.mainG.append('g')
-        .attr("class", "x axis");
+    //this.mainG.append('g')
+    //    .attr("class", "x axis");
 
     this.mainG.append('g')
         .attr("class", "y axis right")
-      //.append("text")
-      //  .attr("transform", "rotate(-90)")
-      //  .attr("y", 6)
-      //  .attr("dy", ".71em")
-      //  .style("text-anchor", "end")
-      //  .text("Price ($)");
 
     this.mainG.append('g')
         .attr("class", "y axis left")
+
+    this.mainG.append('g')
+        .attr("class", "time axis");
 
     //this.mainG.append("g")
     //    .attr("class", "line-close annotation up");
@@ -865,9 +864,10 @@ TraderLightChart.CandleChart = (function(){
     this._setYScaleDomain();
 
 
-    this.mainG.select('g.x.axis').call(this.xAxis);
+    //this.mainG.select('g.x.axis').call(this.xAxis);
     this.mainG.select('g.y.axis.right').call(this.yAxisRight);
     this.mainG.select('g.y.axis.left').call(this.yAxisLeft);
+    this.mainG.select('g.time.axis').call(this.timeAxis);
     //this.mainG.select("g.volume.axis").call(this.volumeAxis);
 
     this.mainG.select("g.candlestick").call(this.mainPlot);
@@ -876,25 +876,29 @@ TraderLightChart.CandleChart = (function(){
     this._drawStudies();
     this.mainG.select("g.volume").call(this.volume);
     this.mainG.select("g.crosshair.ohlc").call(this.crosshair).call(this.zoom);
+    //this.rect.call(this.zoom);
     this._drawSupstances();
 
     // Associate the zoom with the scale after a domain has been applied
     if(!this.zoomAssociated){
       //console.log('zoomAssociated');
-      //this.zoom.x(this.xScale.zoomable()).y(this.yScale);
-      this.zoom.x(this.xScale.zoomable()).y(this.yScale);
-      this.timeZoom.x(this.timeScale.zoomable());
+      this.xyZoom.x(this.xScale.zoomable().clamp(false)).y(this.yScale);
+      this.timeZoom.x(this.timeScale.zoomable().clamp(false));
       this.zoomAssociated = true;
     }
   };
 
   Chart.prototype.zoomed = function(rect){
     this.timeZoom.translate(this.zoom.translate());
+    this.timeZoom.scale(this.zoom.scale());
+    this.xyZoom.translate(this.zoom.translate());
+    this.xyZoom.scale(this.zoom.scale());
     //this.zoom.scale();
 
-    this.mainG.select('g.x.axis').call(this.xAxis);
+    //this.mainG.select('g.x.axis').call(this.xAxis);
     this.mainG.select('g.y.axis.right').call(this.yAxisRight);
     this.mainG.select('g.y.axis.left').call(this.yAxisLeft);
+    this.mainG.select('g.time.axis').call(this.timeAxis);
     //this.mainG.select("g.volume.axis").call(this.volumeAxis);
 
     this.mainG.select("g.candlestick").call(this.mainPlot.refresh);

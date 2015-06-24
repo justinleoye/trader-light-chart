@@ -135,17 +135,18 @@ TraderLightChart.BaseChart = (function(){
     //console.log('_createAxis');
     if(!this.isReady) return;
 
-    this.xAxis = d3.svg.axis()
-      //.scale(this.xScale)
-      .scale(this.timeScale)
-      .orient("bottom");
+    //this.xAxis = d3.svg.axis()
+    //  .scale(this.xScale)
+    //  .orient("bottom");
     this.yAxisRight = d3.svg.axis()
       .scale(this.yScale)
       .orient("right");
     this.yAxisLeft = d3.svg.axis()
       .scale(this.yScale)
-      //.orient("left");
       .orient("right");
+    this.timeAxis = d3.svg.axis()
+      .scale(this.timeScale)
+      .orient("bottom");
     //this.volumeAxis = d3.svg.axis()
     //  .scale(this.yScaleOfVolume)
     //  .orient("right")
@@ -211,7 +212,7 @@ TraderLightChart.BaseChart = (function(){
 
     //console.log('timeAnnotationFormat:', timeAnnotationFormat);
     this.timeAnnotation = techan.plot.axisannotation()
-      .axis(this.xAxis)
+      .axis(this.timeAxis)
       .format(timeAnnotationFormat);
 
     this.ohlcAnnotationRight = techan.plot.axisannotation()
@@ -250,7 +251,7 @@ TraderLightChart.BaseChart = (function(){
     if(!this.isReady) return;
 
     this.crosshair = techan.plot.crosshair()
-      .xScale(this.xScale)
+      .xScale(this.timeScale)
       .yScale(this.yScale)
       .xAnnotation(this.timeAnnotation)
       //.yAnnotation([this.ohlcAnnotationRight, this.ohlcAnnotationLeft, this.volumeAnnotation]);
@@ -357,7 +358,7 @@ TraderLightChart.BaseChart = (function(){
   };
 
   Chart.prototype._setAxisesSize = function(){
-    this.mainG.select('g.x.axis')
+    this.mainG.select('g.time.axis')
         .attr("transform", "translate(0," + (this.containerHeight - this.margin.top - this.margin.bottom) + ")");
     this.mainG.select('g.y.axis.right')
         .attr("transform", "translate(" + this.xScale(1) + ",0)");
