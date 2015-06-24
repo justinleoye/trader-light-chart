@@ -6,7 +6,6 @@ TraderLightChart.CandleChart = (function(){
     Chart.superClass.constructor.call(this, options);
 
     this._init();
-    this.studies = [];
   }
 
   TraderLightChart.core.classExtend(Chart, TraderLightChart.BaseChart);
@@ -77,26 +76,7 @@ TraderLightChart.CandleChart = (function(){
   };
 
   Chart.prototype.draw = function(){
-    if(!this.isReady) return;
-
-    this._bindData();
-    //console.log('draw');
-
-    this._setTimeScaleDomain();
-    this._setYScaleDomain();
-
-
-    this.mainG.select('g.y.axis.right').call(this.yAxisRight);
-    this.mainG.select('g.y.axis.left').call(this.yAxisLeft);
-    this.mainG.select('g.time.axis').call(this.timeAxis);
-    //this.mainG.select("g.volume.axis").call(this.volumeAxis);
-
-    this.mainG.select("g.candlestick").call(this.mainPlot);
-    //this.mainG.select("g.line-close.annotation").call(this.closeAnnotation);
-    this._drawStudies();
-    this.mainG.select("g.volume").call(this.volume);
-    this.mainG.select("g.crosshair.ohlc").call(this.crosshair).call(this.zoom);
-    this._drawSupstances();
+    Chart.superClass.draw.call(this);
 
     // Associate the zoom with the scale after a domain has been applied
     if(!this.zoomAssociated){
@@ -105,73 +85,31 @@ TraderLightChart.CandleChart = (function(){
       this.zoomAssociated = true;
     }
   };
+  Chart.prototype._drawMainPlot = function(){
+    this.mainG.select("g.candlestick").call(this.mainPlot);
+  };
+
+  Chart.prototype._drawCrosshair = function(){
+    this.mainG.select("g.crosshair.ohlc").call(this.crosshair).call(this.zoom);
+  };
 
   Chart.prototype.zoomed = function(rect){
     this.xyZoom.translate(this.zoom.translate());
     this.xyZoom.scale(this.zoom.scale());
 
-    //this.mainG.select('g.x.axis').call(this.xAxis);
-    this.mainG.select('g.y.axis.right').call(this.yAxisRight);
-    this.mainG.select('g.y.axis.left').call(this.yAxisLeft);
-    this.mainG.select('g.time.axis').call(this.timeAxis);
-    //this.mainG.select("g.volume.axis").call(this.volumeAxis);
+    this._drawAxises();
 
-    this.mainG.select("g.candlestick").call(this.mainPlot.refresh);
+    this._refreshMainPlot();
     //this.mainG.select("g.line-close.annotation").call(this.closeAnnotation.refresh);
     //this.mainG.select("g .sma.ma-0").call(this.sma.refresh);
-    this._zoomStudies();
-    this.mainG.select("g.volume").call(this.volume.refresh);
-    this.mainG.select("g.crosshair.ohlc").call(this.crosshair.refresh);
+    this._refreshStudies();
+    this._refreshVolume();
+    this._refreshCrosshair();
     this._refreshSupstances();
   };
 
-  Chart.prototype.addStudy = function(studyName, input, options){
-    var _this = this;
-    function addStudy(){
-      if(studyName!="Moving Average") return;
-      var study = techan.plot.sma()
-          .xScale(_this.timeScale)
-          .yScale(_this.yScale);
-      var calculator = techan.indicator.sma()
-          .period(input[0]);
-
-      var cnt = _this.studies.length;
-      var studyClass = "ma-"+cnt;
-      _this.ohlcSelection.append("g")
-        .attr("class", "indicator sma "+ studyClass)
-        .attr("clip-path", "url(#ohlcClip)");
-
-      var selector = _this.mainG.select("g .sma." + studyClass);
-      _this.studies.push([selector, study, calculator]);
-    }
-    this._pendingExecute(addStudy);
-  };
-
-  Chart.prototype._bindStudies = function(){
-    for(var i=0; i < this.studies.length; i++){
-      var selector = this.studies[i][0];
-      var study = this.studies[i][1];
-      var calculator = this.studies[i][2];
-      this._bindLineData(selector, calculator(this.data));
-    }
-  };
-
-  Chart.prototype._drawStudies = function(){
-    for(var i=0; i < this.studies.length; i++){
-      var selector = this.studies[i][0];
-      var study = this.studies[i][1];
-      var calculator = this.studies[i][2];
-      selector.call(study);
-    }
-  };
-
-  Chart.prototype._zoomStudies = function(){
-    for(var i=0; i < this.studies.length; i++){
-      var selector = this.studies[i][0];
-      var study = this.studies[i][1];
-      var calculator = this.studies[i][2];
-      selector.call(study.refresh);
-    }
+  Chart.prototype._refreshMainPlot = function(){
+    this.mainG.select("g.candlestick").call(this.mainPlot.refresh);
   };
 
   return Chart;

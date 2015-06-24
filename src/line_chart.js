@@ -76,14 +76,8 @@ TraderLightChart.LineChart = (function(){
     }
   };
 
-  Chart.prototype._bindData = function(){
-    //console.log('_bindData');
+  Chart.prototype._bindMainPlot = function(){
     this._bindLineData(this.mainG.select("g.line-close"), this.data);
-    //this.mainG.select("g.candlestick").datum(this.data);
-    var lastDatum = this.data[this.data.length-1];
-    //console.log('lastDatum:', lastDatum);
-    //this.mainG.select("g.line-close.annotation").datum([lastDatum]);
-    this.mainG.select("g.volume").datum(this.data);
   };
 
   Chart.prototype._setYScaleDomain = function(){
@@ -99,32 +93,8 @@ TraderLightChart.LineChart = (function(){
     this.yScaleOfVolume.domain(techan.scale.plot.volume(this._dataInVisiable(), this.accessor.v).domain());
   };
 
-  Chart.prototype.draw = function(){
-    if(!this.isReady) return;
-
-    this._bindData();
-    //console.log('draw');
-
-    this._drawAxises();
-
+  Chart.prototype._drawMainPlot = function(){
     this.mainG.select("g.line-close").call(this.mainPlot);
-    //this.mainG.select("g.candlestick").call(this.mainPlot);
-    //this.mainG.select("g.line-close.annotation").call(this.closeAnnotation);
-    this.mainG.select("g.volume").call(this.volume);
-    this.mainG.select("g.crosshair.ohlc").call(this.crosshair);
-    this._drawSupstances();
-  };
-
-  Chart.prototype._drawAxises = function(){
-
-    this._setTimeScaleDomain();
-    this._setYScaleDomain();
-
-    this.mainG.select('g.y.axis.right').call(this.yAxisRight);
-    this.mainG.select('g.y.axis.left').call(this.yAxisLeft);
-    this.mainG.select('g.time.axis').call(this.timeAxis);
-    //this.mainG.select("g.volume.axis").call(this.volumeAxis);
-
   };
 
   return Chart;

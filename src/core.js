@@ -82,6 +82,7 @@ TraderLightChart.BaseChart = (function(){
     this.canReInit = true;
     this.supstanceData = [];
     this.baseDatum = null;
+    this.studies = [];
   }
 
   // should override
@@ -414,12 +415,67 @@ TraderLightChart.BaseChart = (function(){
     }
   };
 
-  // should override
   Chart.prototype._bindData = function(){
+    //console.log('_bindData');
+    this._bindMainPlot();
+    //var lastDatum = this.data[this.data.length-1];
+    //console.log('lastDatum:', lastDatum);
+    //this.mainG.select("g.line-close.annotation").datum([lastDatum]);
+    this._bindStudies();
+    this.mainG.select("g.volume").datum(this.data);
   };
 
   // should override
+  Chart.prototype._bindMainPlot = function(){
+  };
+
   Chart.prototype.draw = function(){
+    if(!this.isReady) return;
+
+    this._bindData();
+    //console.log('draw');
+
+    this._setTimeScaleDomain();
+    this._setYScaleDomain();
+
+    this._drawAxises();
+    this._drawMainPlot();
+    //this.mainG.select("g.line-close.annotation").call(this.closeAnnotation);
+    this._drawStudies();
+    this._drawVolume();
+    this._drawCrosshair();
+    this._drawSupstances();
+  };
+
+  Chart.prototype._drawAxises = function(){
+    this.mainG.select('g.y.axis.right').call(this.yAxisRight);
+    this.mainG.select('g.y.axis.left').call(this.yAxisLeft);
+    this.mainG.select('g.time.axis').call(this.timeAxis);
+    //this.mainG.select("g.volume.axis").call(this.volumeAxis);
+  };
+
+  // should override
+  Chart.prototype._drawMainPlot = function(){
+  };
+
+  Chart.prototype._drawVolume = function(){
+    this.mainG.select("g.volume").call(this.volume);
+  };
+
+  Chart.prototype._drawCrosshair = function(){
+    this.mainG.select("g.crosshair.ohlc").call(this.crosshair);
+  };
+
+  // should override
+  Chart.prototype._refreshMainPlot = function(){
+  };
+
+  Chart.prototype._refreshVolume = function(){
+    this.mainG.select("g.volume").call(this.volume.refresh);
+  };
+
+  Chart.prototype._refreshCrosshair = function(){
+    this.mainG.select("g.crosshair.ohlc").call(this.crosshair.refresh);
   };
 
   Chart.prototype._dataInVisiable = function(){
@@ -552,6 +608,56 @@ TraderLightChart.BaseChart = (function(){
     this.feedData([bar]);
     this.draw();
   };
+
+  Chart.prototype.addStudy = function(studyName, input, options){
+    var _this = this;
+    function addStudy(){
+      if(studyName!="Moving Average") return;
+      var study = techan.plot.sma()
+          .xScale(_this.timeScale)
+          .yScale(_this.yScale);
+      var calculator = techan.indicator.sma()
+          .period(input[0]);
+
+      var cnt = _this.studies.length;
+      var studyClass = "ma-"+cnt;
+      _this.ohlcSelection.append("g")
+        .attr("class", "indicator sma "+ studyClass)
+        .attr("clip-path", "url(#ohlcClip)");
+
+      var selector = _this.mainG.select("g .sma." + studyClass);
+      _this.studies.push([selector, study, calculator]);
+    }
+    this._pendingExecute(addStudy);
+  };
+
+  Chart.prototype._bindStudies = function(){
+    for(var i=0; i < this.studies.length; i++){
+      var selector = this.studies[i][0];
+      var study = this.studies[i][1];
+      var calculator = this.studies[i][2];
+      this._bindLineData(selector, calculator(this.data));
+    }
+  };
+
+  Chart.prototype._drawStudies = function(){
+    for(var i=0; i < this.studies.length; i++){
+      var selector = this.studies[i][0];
+      var study = this.studies[i][1];
+      var calculator = this.studies[i][2];
+      selector.call(study);
+    }
+  };
+
+  Chart.prototype._refreshStudies = function(){
+    for(var i=0; i < this.studies.length; i++){
+      var selector = this.studies[i][0];
+      var study = this.studies[i][1];
+      var calculator = this.studies[i][2];
+      selector.call(study.refresh);
+    }
+  };
+
   Chart.prototype.reInit = function(){
     //console.log('reInit');
     if(!this.canReInit) return;
