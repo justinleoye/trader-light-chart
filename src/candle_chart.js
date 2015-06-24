@@ -59,14 +59,8 @@ TraderLightChart.CandleChart = (function(){
       .attr("clip-path", "url(#ohlcClip)");
   };
 
-  Chart.prototype._bindData = function(){
-    //console.log('_bindData');
+  Chart.prototype._bindMainPlot = function(){
     this.mainG.select("g.candlestick").datum(this.data);
-    var lastDatum = this.data[this.data.length-1];
-    //console.log('lastDatum:', lastDatum);
-    //this.mainG.select("g.line-close.annotation").datum([lastDatum]);
-    this._bindStudies();
-    this.mainG.select("g.volume").datum(this.data);
   };
 
   Chart.prototype._setYScaleDomain = function(){
