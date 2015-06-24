@@ -32,24 +32,18 @@ TraderLightChart.LineChart = (function(){
     if(!this.isReady) return;
 
     this.mainPlot = techan.plot.close()
-      .xScale(this.xScale)
+      .xScale(this.timeScale)
       .yScale(this.yScale);
 
     this.accessor = this.mainPlot.accessor();
 
     this.volume = techan.plot.volume()
       .accessor(techan.accessor.ohlc())
-      .xScale(this.xScale)
+      .xScale(this.timeScale)
       .yScale(this.yScaleOfVolume);
   };
 
-  Chart.prototype._createAxis = function(){
-    //console.log('_createAxis');
-    if(!this.isReady) return;
-
-    //this.xAxis = d3.svg.axis()
-    //  .scale(this.xScale)
-    //  .orient("bottom");
+  Chart.prototype._createYAxis = function(){
     this.yAxisRight = d3.svg.axis()
       .scale(this.yScale)
       .orient("right");
@@ -57,67 +51,14 @@ TraderLightChart.LineChart = (function(){
       .scale(this.yPercentScale)
       .orient("right")
       .tickFormat(d3.format('+.1%'));
-
-    this.timeAxis = d3.svg.axis()
-      .scale(this.timeScale)
-      .orient("bottom");
-
-    //this.volumeAxis = d3.svg.axis()
-    //  .scale(this.yScaleOfVolume)
-    //  .orient("right")
-    //  .ticks(3)
-    //  .tickFormat(d3.format(",.3s"));
   };
 
-  Chart.prototype._conbine = function(){
-    //console.log('_conbine');
-    if(!this.isReady) return;
-
-    var ohlcSelection = this.mainG.append("g")
-      .attr("class", "ohlc")
-      .attr("transform", "translate(0,0)");
-
-
-    ohlcSelection.append("g")
-      .attr("class", "volume")
-      .attr("clip-path", "url(#ohlcClip)");
-
-    this._conbineAxises();
-
-    ohlcSelection.append("g")
-      //.attr("class", "candlestick")
+  Chart.prototype._conbineMainPlot = function(){
+    this.ohlcSelection.append("g")
       .attr("class", "line-close")
       .attr("clip-path", "url(#ohlcClip)");
-
-    //this.mainG.append("g")
-    //    .attr("class", "line-close annotation up");
-
-    //this.mainG.append("g")
-    //    .attr("class", "volume axis");
-
-    this.mainG.append('g')
-        .attr("class", "crosshair ohlc");
-
-    this.mainG.append("g")
-            .attr("class", "supstances analysis")
-            .attr("clip-path", "url(#ohlcClip)");
-
-    this._afterConbine();
   };
 
-  Chart.prototype._conbineAxises = function(){
-    //this.mainG.append('g')
-    //    .attr("class", "x axis");
-
-    this.mainG.append('g')
-        .attr("class", "y axis right")
-
-    this.mainG.append('g')
-        .attr("class", "y axis left")
-
-    this.mainG.append('g')
-        .attr("class", "time axis");
-  };
 
   Chart.prototype.feedData = function(data){
     for(var i=0; i < data.length; i++){
@@ -161,9 +102,6 @@ TraderLightChart.LineChart = (function(){
   Chart.prototype.draw = function(){
     if(!this.isReady) return;
 
-    //if(this.data.length < this.maxVisiableBars) this._setXScale();
-    this._setXScale();
-
     this._bindData();
     //console.log('draw');
 
@@ -179,11 +117,9 @@ TraderLightChart.LineChart = (function(){
 
   Chart.prototype._drawAxises = function(){
 
-    this._setXScaleDomain();
     this._setTimeScaleDomain();
     this._setYScaleDomain();
 
-    //this.mainG.select('g.x.axis').call(this.xAxis);
     this.mainG.select('g.y.axis.right').call(this.yAxisRight);
     this.mainG.select('g.y.axis.left').call(this.yAxisLeft);
     this.mainG.select('g.time.axis').call(this.timeAxis);

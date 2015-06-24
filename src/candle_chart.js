@@ -35,7 +35,6 @@ TraderLightChart.CandleChart = (function(){
         _this.zoomed();
       });
     this.xyZoom = d3.behavior.zoom();
-    this.timeZoom = d3.behavior.zoom();
   };
 
   Chart.prototype._createMainPlot = function(){
@@ -44,63 +43,21 @@ TraderLightChart.CandleChart = (function(){
 
     //this.mainPlot = techan.plot.ohlc()
     this.mainPlot = techan.plot.candlestick()
-      .xScale(this.xScale)
+      .xScale(this.timeScale)
       .yScale(this.yScale);
 
     this.accessor = this.mainPlot.accessor();
 
     this.volume = techan.plot.volume()
       .accessor(techan.accessor.ohlc())
-      .xScale(this.xScale)
+      .xScale(this.timeScale)
       .yScale(this.yScaleOfVolume);
   };
 
-  Chart.prototype._conbine = function(){
-    //console.log('_conbine');
-    if(!this.isReady) return;
-
-    this.ohlcSelection = this.mainG.append("g")
-      .attr("class", "ohlc")
-      .attr("transform", "translate(0,0)");
-
-    this.ohlcSelection.append("g")
-      .attr("class", "volume")
-      .attr("clip-path", "url(#ohlcClip)");
-
+  Chart.prototype._conbineMainPlot = function(){
     this.ohlcSelection.append("g")
       .attr("class", "candlestick")
       .attr("clip-path", "url(#ohlcClip)");
-
-    //this.ohlcSelection.append("g")
-    //  .attr("class", "indicator sma ma-0")
-    //  .attr("clip-path", "url(#ohlcClip)");
-
-    //this.mainG.append('g')
-    //    .attr("class", "x axis");
-
-    this.mainG.append('g')
-        .attr("class", "y axis right")
-
-    this.mainG.append('g')
-        .attr("class", "y axis left")
-
-    this.mainG.append('g')
-        .attr("class", "time axis");
-
-    //this.mainG.append("g")
-    //    .attr("class", "line-close annotation up");
-
-    //this.mainG.append("g")
-    //    .attr("class", "volume axis");
-
-    this.mainG.append('g')
-        .attr("class", "crosshair ohlc");
-
-    this.mainG.append("g")
-            .attr("class", "supstances analysis")
-            .attr("clip-path", "url(#ohlcClip)");
-
-    this._afterConbine();
   };
 
   Chart.prototype._bindData = function(){
@@ -109,7 +66,6 @@ TraderLightChart.CandleChart = (function(){
     var lastDatum = this.data[this.data.length-1];
     //console.log('lastDatum:', lastDatum);
     //this.mainG.select("g.line-close.annotation").datum([lastDatum]);
-    //this._bindLineData(this.mainG.select("g.sma.ma-0"), this.smaCalculator(this.data));
     this._bindStudies();
     this.mainG.select("g.volume").datum(this.data);
   };
@@ -123,18 +79,13 @@ TraderLightChart.CandleChart = (function(){
   Chart.prototype.draw = function(){
     if(!this.isReady) return;
 
-    //if(this.data.length < this.maxVisiableBars) this._setXScale();
-    this._setXScale();
-
     this._bindData();
     //console.log('draw');
 
-    this._setXScaleDomain();
     this._setTimeScaleDomain();
     this._setYScaleDomain();
 
 
-    //this.mainG.select('g.x.axis').call(this.xAxis);
     this.mainG.select('g.y.axis.right').call(this.yAxisRight);
     this.mainG.select('g.y.axis.left').call(this.yAxisLeft);
     this.mainG.select('g.time.axis').call(this.timeAxis);
@@ -142,28 +93,22 @@ TraderLightChart.CandleChart = (function(){
 
     this.mainG.select("g.candlestick").call(this.mainPlot);
     //this.mainG.select("g.line-close.annotation").call(this.closeAnnotation);
-    //this.mainG.select("g .sma.ma-0").call(this.sma);
     this._drawStudies();
     this.mainG.select("g.volume").call(this.volume);
     this.mainG.select("g.crosshair.ohlc").call(this.crosshair).call(this.zoom);
-    //this.rect.call(this.zoom);
     this._drawSupstances();
 
     // Associate the zoom with the scale after a domain has been applied
     if(!this.zoomAssociated){
       //console.log('zoomAssociated');
-      this.xyZoom.x(this.xScale.zoomable().clamp(false)).y(this.yScale);
-      this.timeZoom.x(this.timeScale.zoomable().clamp(false));
+      this.xyZoom.x(this.timeScale.zoomable().clamp(false)).y(this.yScale);
       this.zoomAssociated = true;
     }
   };
 
   Chart.prototype.zoomed = function(rect){
-    this.timeZoom.translate(this.zoom.translate());
-    this.timeZoom.scale(this.zoom.scale());
     this.xyZoom.translate(this.zoom.translate());
     this.xyZoom.scale(this.zoom.scale());
-    //this.zoom.scale();
 
     //this.mainG.select('g.x.axis').call(this.xAxis);
     this.mainG.select('g.y.axis.right').call(this.yAxisRight);
@@ -185,7 +130,7 @@ TraderLightChart.CandleChart = (function(){
     function addStudy(){
       if(studyName!="Moving Average") return;
       var study = techan.plot.sma()
-          .xScale(_this.xScale)
+          .xScale(_this.timeScale)
           .yScale(_this.yScale);
       var calculator = techan.indicator.sma()
           .period(input[0]);
