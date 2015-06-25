@@ -381,10 +381,11 @@ TraderLightChart.BaseChart = (function(){
   };
 
   Chart.prototype._setTimeScaleDomain = function(){
-    //console.log('_setTimeScaleDomain');
+    console.log('_setTimeScaleDomain');
     var domain = techan.scale.plot.time(this.data).domain();
     var timeScaleDomain = this._genTimeScaleDomain(domain);
     this.timeScale.domain(timeScaleDomain);
+    console.log('this.timeScale:', this.timeScale);
     if(this.options.interval != '1'){
       //console.log('zoom');
       //console.log('_domainInVisiable:', this._domainInVisiable());
@@ -494,7 +495,7 @@ TraderLightChart.BaseChart = (function(){
   };
 
   Chart.prototype._bindLineData  = function(selection, data) {
-    //console.log('refreshIndicator');
+    console.log('refreshIndicator');
     var datum = selection.datum();
     if(!datum){ // first time bind data
         selection.datum(data);

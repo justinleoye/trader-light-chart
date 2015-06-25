@@ -1,8 +1,8 @@
 
 //test('D');
-//test('W');
+test('W');
 //test('M');
-testIntrady();
+//testIntrady();
 
 function test(interval){
   var lc = new TraderLightChart.LineChart({
