@@ -1,7 +1,7 @@
 {
   "name": "traderLightChart",
   "version": "0.0.0",
-  "main": "dist/traderLightChart.min.js",
+  "main": "dist/traderLightChart.js",
   "description": "a light chart for trader",
   "repository": {
     "type": "git",

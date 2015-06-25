@@ -1,7 +1,7 @@
 {
   "name": "traderLightChart",
   "version": "0.0.0",
-  "main": "dist/traderLightChart.min.js",
+  "main": "dist/traderLightChart.js",
   "ignore": [
     "**/.*",
     "node_modules",
