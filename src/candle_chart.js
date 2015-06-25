@@ -70,6 +70,7 @@ TraderLightChart.CandleChart = (function(){
   };
 
   Chart.prototype.draw = function(){
+    if(!this.isReady) return;
     Chart.superClass.draw.call(this);
 
     // Associate the zoom with the scale after a domain has been applied

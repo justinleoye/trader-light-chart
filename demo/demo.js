@@ -1,6 +1,6 @@
 
-//test('D');
-test('W');
+test('D');
+//test('W');
 //test('M');
 //testIntrady();
 
@@ -130,13 +130,13 @@ function testChartWithJSON(tlc, type){ // type: 'intraday'
       }
     });
 
-    //var initData = feed.splice(0,39);
-    var initData = feed;
+    var initData = feed.splice(0,39);
+    //var initData = feed;
     console.log('feed length:', feed.length);
     tlc.feedData(initData);
     tlc.draw();
 
-    //drawBarsOneByOne();
+    drawBarsOneByOne();
 
     function drawBarsOneByOne(){
       if(feed.length){
