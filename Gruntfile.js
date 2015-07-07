@@ -29,6 +29,7 @@ module.exports = function(grunt) {
         src: [
           'dist/css.min.js',
           'src/core.js',
+          'src/base_chart.js',
           'src/line_chart.js',
           'src/candle_chart.js',
         ],
