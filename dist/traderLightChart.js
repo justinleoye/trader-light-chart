@@ -72,6 +72,7 @@ TraderLightChart.BaseChart = (function(){
       container_id: 'trader_light_chart_container',
       interval: 'D', // '1', 'D', 'W', 'M', 'Y'
       maxVisiableBars: 120,
+      zoomable: true
     };
 
     _.extend(this.options, options)
@@ -85,6 +86,7 @@ TraderLightChart.BaseChart = (function(){
     this.supstanceData = [];
     this.baseDatum = null;
     this.studies = [];
+    this.zoomable = this.options.zoomable;
   }
 
   // should override
@@ -867,7 +869,9 @@ TraderLightChart.CandleChart = (function(){
     this.mainG.select("g.crosshair.ohlc").call(this.crosshair).call(this.zoom);
   };
 
-  Chart.prototype.zoomed = function(rect){
+  Chart.prototype.zoomed = function(){
+    if(!this.zoomable) return;
+
     this.xyZoom.translate(this.zoom.translate());
     this.xyZoom.scale(this.zoom.scale());
 
@@ -884,6 +888,11 @@ TraderLightChart.CandleChart = (function(){
 
   Chart.prototype._refreshMainPlot = function(){
     this.mainG.select("g.candlestick").call(this.mainPlot.refresh);
+  };
+
+  Chart.prototype.enableZoomable = function(zoomable){
+    if(typeof zoomable != 'boolean') return;
+    this.zoomable = zoomable;
   };
 
   return Chart;

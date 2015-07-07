@@ -1,17 +1,18 @@
 
-test('D');
+test('D', false);
 //test('W');
 //test('M');
 //testIntrady();
 
-function test(interval){
+function test(interval, zoomable){
   var lc = new TraderLightChart.LineChart({
         container_id: 'trader_line_chart_container',
-        interval: interval
+        interval: interval,
       });
   var cc = new TraderLightChart.CandleChart({
         container_id: 'trader_candle_chart_container',
-        interval: interval
+        interval: interval,
+        zoomable: zoomable
       });
 
   lc.addSupstance({price: 14.03});
