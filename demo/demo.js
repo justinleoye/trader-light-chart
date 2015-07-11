@@ -1,5 +1,5 @@
 
-test('D', false);
+test('D', true);
 //test('W');
 //test('M');
 //testIntrady();
@@ -17,6 +17,16 @@ function test(interval, zoomable){
 
   lc.addSupstance({price: 14.03});
   lc.addSupstance({price: 8.03});
+  lc.addTrendline({
+    start: {
+      time: '2014-05-23',
+      price: 10.0
+    },
+    end: {
+      time: '2014-06-30',
+      price: 12.5
+    }
+  });
 
   cc.addStudy('Moving Average', [5]);
   cc.addStudy('Moving Average', [10]);
@@ -26,6 +36,16 @@ function test(interval, zoomable){
   cc.addStudy('Moving Average', [250]);
   cc.addSupstance({price: 14.03});
   cc.addSupstance({price: 8.03});
+  cc.addTrendline({
+    start: {
+      time: '2014-05-23',
+      price: 10.0
+    },
+    end: {
+      time: '2014-06-30',
+      price: 12.5
+    }
+  });
 
   //testChartWithCSV(lc);
   //testChartWithCSV(cc);
@@ -63,6 +83,7 @@ function testIntrady(){
   lcIntraday.addSupstance({price: 17.03});
   ccIntraday.addSupstance({price: 20.03});
   ccIntraday.addSupstance({price: 17.03});
+
   lcIntraday.setBaseDatum({time: "2015-05-13T15:00:00+08:00", high: 20.03, open: 20.03, low: 17.03, close: 17.03, volume: 0});
 
   testChartWithJSON(lcIntraday,'intraday');
@@ -136,6 +157,7 @@ function testChartWithJSON(tlc, type){ // type: 'intraday'
     console.log('feed length:', feed.length);
     tlc.feedData(initData);
     tlc.draw();
+
 
     drawBarsOneByOne();
 

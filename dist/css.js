@@ -125,6 +125,21 @@ TraderLightChart.core = TraderLightChart.core || {};
 .trader-light-chart .dragging .supstance path {
   stroke: darkblue;
 }
+.trader-light-chart .trendline {
+  stroke: blue;
+  stroke-width: 0.8;
+}
+.trader-light-chart .interaction path,
+.trader-light-chart .interaction circle {
+  pointer-events: all;
+}
+.trader-light-chart .interaction .body {
+  cursor: move;
+}
+.trader-light-chart .interaction .start,
+.trader-light-chart .interaction .end {
+  cursor: nwse-resize;
+}
 
 
     ";

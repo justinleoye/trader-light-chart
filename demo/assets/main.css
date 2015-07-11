@@ -11,6 +11,9 @@
 
 /* === layout === */
 
+#container {
+    //display: none;
+}
 
 div.chart-contrainer{
     //width: 100%;

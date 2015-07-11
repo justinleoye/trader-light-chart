@@ -20,6 +20,7 @@ TraderLightChart.LineChart = (function(){
     this._createScale();
     this._createAxis();
     this._createMainPlot();
+    this._createTrendline();
     this._createAxisAnnotation();
     this._setAxisAnnotation();
     this._createSupstance();

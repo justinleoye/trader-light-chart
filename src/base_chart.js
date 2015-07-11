@@ -31,6 +31,7 @@ TraderLightChart.BaseChart = (function(){
     this.supstanceData = [];
     this.baseDatum = null;
     this.studies = [];
+    this.trendlineData = [];
     this.zoomable = this.options.zoomable;
   }
 
@@ -201,6 +202,12 @@ TraderLightChart.BaseChart = (function(){
       .yAnnotation([this.ohlcAnnotationRight, this.ohlcAnnotationLeft]);
   }
 
+  Chart.prototype._createTrendline = function(){
+    this.trendline = techan.plot.trendline()
+        .xScale(this.timeScale)
+        .yScale(this.yScale);
+  };
+
   Chart.prototype._initContainer = function(){
     //console.log('_initContainer');
     
@@ -271,6 +278,7 @@ TraderLightChart.BaseChart = (function(){
 
     this._conbineVolume();
     this._conbineMainPlot();
+    this._conbineTrendline();
     this._conbineAxises();
 
     //this.mainG.append("g")
@@ -294,13 +302,13 @@ TraderLightChart.BaseChart = (function(){
 
   Chart.prototype._conbineAxises = function(){
     this.mainG.append('g')
-        .attr("class", "y axis right")
+      .attr("class", "y axis right")
 
     this.mainG.append('g')
-        .attr("class", "y axis left")
+      .attr("class", "y axis left")
 
     this.mainG.append('g')
-        .attr("class", "time axis");
+      .attr("class", "time axis");
 
     //this.mainG.append("g")
     //    .attr("class", "volume axis");
@@ -308,13 +316,18 @@ TraderLightChart.BaseChart = (function(){
 
   Chart.prototype._conbineCrosshair = function(){
     this.mainG.append('g')
-        .attr("class", "crosshair ohlc");
+      .attr("class", "crosshair ohlc");
   };
 
   Chart.prototype._conbineSupstances = function(){
     this.mainG.append("g")
-            .attr("class", "supstances analysis")
-            .attr("clip-path", "url(#ohlcClip)");
+      .attr("class", "supstances analysis")
+      .attr("clip-path", "url(#ohlcClip)");
+  };
+
+  Chart.prototype._conbineTrendline = function(){
+    this.mainG.append("g")
+      .attr("class", "trendlines");
   };
 
   Chart.prototype._afterConbine = function(){
@@ -369,6 +382,7 @@ TraderLightChart.BaseChart = (function(){
     //console.log('lastDatum:', lastDatum);
     //this.mainG.select("g.line-close.annotation").datum([lastDatum]);
     this._bindStudies();
+    this._bindTrendline();
     this.mainG.select("g.volume").datum(this.data);
   };
 
@@ -392,6 +406,7 @@ TraderLightChart.BaseChart = (function(){
     this._drawVolume();
     this._drawCrosshair();
     this._drawSupstances();
+    this._drawTrendline();
   };
 
   Chart.prototype._drawAxises = function(){
@@ -556,6 +571,7 @@ TraderLightChart.BaseChart = (function(){
     this.draw();
   };
 
+  //////////////// study ////////////////////////
   Chart.prototype.addStudy = function(studyName, input, options){
     var _this = this;
     function addStudy(){
@@ -604,6 +620,49 @@ TraderLightChart.BaseChart = (function(){
       selector.call(study.refresh);
     }
   };
+
+  //////////////// end of study ////////////////////////
+
+  //////////////// trendline ////////////////////////
+
+  Chart.prototype.addTrendlines = function(data){
+    var _this = this;
+    function addTrendlines(){
+      _.each(data, function(datum){
+        var d = _this._pretreatTrendlineDatum(datum)
+        _this.trendlineData.push(d);
+      });
+    }
+
+    addTrendlines();
+  };
+
+  Chart.prototype.addTrendline = function(datum){
+    this.addTrendlines([datum]);
+  };
+
+  Chart.prototype._bindTrendline = function(){
+    this.mainG.select("g.trendlines").datum(this.trendlineData);
+  };
+
+  Chart.prototype._drawTrendline = function(){
+    this.mainG.select("g.trendlines").call(this.trendline);
+  };
+
+  Chart.prototype._pretreatTrendlineDatum = function(d){
+    return {
+      start: {
+        date: moment(d.start.time || d.start.date).toDate(),
+        value: d.start.price || d.start.value
+      },
+      end: {
+        date: moment(d.end.time || d.end.date).toDate(),
+        value: d.end.price || d.end.value
+      }
+    };
+  };
+
+  //////////////// end of trendline ////////////////////////
 
   Chart.prototype.reInit = function(){
     //console.log('reInit');

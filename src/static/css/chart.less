@@ -147,4 +147,21 @@
         stroke: darkblue;
     }
 
+    .trendline {
+        stroke: blue;
+        stroke-width: 0.8;
+    }
+
+    .interaction path, .interaction circle {
+        pointer-events: all;
+    }
+
+    .interaction .body {
+        cursor: move;
+    }
+
+    .interaction .start, .interaction .end {
+        cursor: nwse-resize;
+    }
+
 }
