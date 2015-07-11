@@ -104,6 +104,7 @@ TraderLightChart.CandleChart = (function(){
     this._refreshVolume();
     this._refreshCrosshair();
     this._refreshSupstances();
+    this._refreshTrendline();
   };
 
   Chart.prototype._refreshMainPlot = function(){

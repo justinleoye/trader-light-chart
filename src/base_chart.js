@@ -649,6 +649,10 @@ TraderLightChart.BaseChart = (function(){
     this.mainG.select("g.trendlines").call(this.trendline);
   };
 
+  Chart.prototype._refreshTrendline = function(){
+    this.mainG.select("g.trendlines").call(this.trendline.refresh);
+  };
+
   Chart.prototype._pretreatTrendlineDatum = function(d){
     return {
       start: {
