@@ -12,7 +12,6 @@ TraderLightChart.CandleChart = (function(){
 
   Chart.prototype._init = function(){
     //console.log('_init');
-    this.zoomAssociated = false;
 
     this._initContainer();
     this._initMainSvg();
@@ -75,11 +74,7 @@ TraderLightChart.CandleChart = (function(){
     Chart.superClass.draw.call(this);
 
     // Associate the zoom with the scale after a domain has been applied
-    if(!this.zoomAssociated){
-      //console.log('zoomAssociated');
-      this.xyZoom.x(this.timeScale.zoomable().clamp(false)).y(this.yScale);
-      this.zoomAssociated = true;
-    }
+    this._setXyZoom();
   };
   Chart.prototype._drawMainPlot = function(){
     this.mainG.select("g.candlestick").call(this.mainPlot);
@@ -90,11 +85,14 @@ TraderLightChart.CandleChart = (function(){
   };
 
   Chart.prototype.zoomed = function(){
-    if(!this.zoomable) return;
 
-    this.xyZoom.translate(this.zoom.translate());
-    this.xyZoom.scale(this.zoom.scale());
+    var tran = this.zoom.translate();
+    console.log('tran:',tran);
+    this._setRightOffset(this._widthToBarOffset(tran[0]));
+    if(this.zoomable)
+      this.xyZoom.scale(this.zoom.scale());
 
+    this._setYScaleDomain();
     this._drawAxises();
 
     this._refreshMainPlot();

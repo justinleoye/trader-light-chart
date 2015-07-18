@@ -23,6 +23,7 @@ TraderLightChart.BaseChart = (function(){
     _.extend(this.options, options)
 
     this.maxVisiableBars = this.options.maxVisiableBars; // TODO: calculate it
+    this._initRightOffset();
 
     this.data = [];
     this.pending = [];
@@ -441,16 +442,21 @@ TraderLightChart.BaseChart = (function(){
   };
 
   Chart.prototype._dataInVisiable = function(){
+    console.log('_dataInVisiable');
     var domain = this._domainInVisiable();
     return this.data.slice(domain[0], domain[1]);
   };
 
   Chart.prototype._domainInVisiable = function(){
     if(this.maxVisiableBars > this.data.length){
-      return [0,this.data.length];
+      var d0 = 0 - this._rightOffset;
     }else{
-      return [this.data.length - this.maxVisiableBars,this.data.length];
+      var d0 = this.data.length - this.maxVisiableBars - this._rightOffset;
     }
+    var d1 = this.data.length - this._rightOffset;
+    if(d0 < 0) d0 = 0;
+    if(d1 > this.data.length) d1 = this.data.length;
+    return [d0,d1];
   };
 
   Chart.prototype._bindLineData  = function(selection, data) {
@@ -677,6 +683,41 @@ TraderLightChart.BaseChart = (function(){
 
   Chart.prototype.isSmallSize = function(){
     return this.containerWidth <= this.standardSize.small
+  };
+
+  //////////////// zoom and translate //////////////
+  Chart.prototype._setXyZoom = function(){
+    this.xyZoom.x(this.timeScale.zoomable().clamp(false)).y(this.yScale);
+    this._initRightOffset();
+  }
+
+  //////////////// bars physical info //////////////
+  Chart.prototype._barWidth = function(){
+    return this.containerWidth / this.maxVisiableBars;
+  };
+
+  Chart.prototype._widthToBarOffset = function(width){
+    var barCnt = width / this._barWidth();
+    if(barCnt >= 0)
+      return Math.ceil(barCnt);
+    else
+      return Math.floor(barCnt);
+  };
+
+  Chart.prototype._initRightOffset = function(){
+    this._rightOffset = 0;
+  };
+
+  Chart.prototype._getRightOffset = function(){
+    return this._rightOffset;
+  };
+
+
+  Chart.prototype._setRightOffset = function(offset){
+    this._rightOffset = offset;
+
+    var tranX = offset * this._barWidth();
+    this.xyZoom.translate([tranX,0]);
   };
 
   return Chart;
