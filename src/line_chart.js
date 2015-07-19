@@ -48,10 +48,16 @@ TraderLightChart.LineChart = (function(){
     this.yAxisRight = d3.svg.axis()
       .scale(this.yScale)
       .orient("right");
-    this.yAxisLeft = d3.svg.axis()
-      .scale(this.yPercentScale)
-      .orient("right")
-      .tickFormat(d3.format('+.1%'));
+    if(this.options.interval == '1'){
+      this.yAxisLeft = d3.svg.axis()
+        .scale(this.yPercentScale)
+        .orient("right")
+        .tickFormat(d3.format('+.1%'));
+    }else{
+      this.yAxisLeft = d3.svg.axis()
+        .scale(this.yScale)
+        .orient("right");
+    }
   };
 
   Chart.prototype._conbineMainPlot = function(){
@@ -84,14 +90,18 @@ TraderLightChart.LineChart = (function(){
   Chart.prototype._setYScaleDomain = function(){
     // Update y scale min max, only on viewable zoomable.domain()
     var yDomain = techan.scale.plot.ohlc(this._dataInVisiable()).domain();
-    yDomain = this.symmetrizeYScaleDomain(yDomain);
-    //console.log('yDomain:', yDomain);
+    if(this.options.interval == '1')
+      yDomain = this.symmetrizeYScaleDomain(yDomain);
     this.yScale.domain(yDomain);
+    if(this.options.interval == '1') this._setYPercentScaleDomain();
+    this.yScaleOfVolume.domain(techan.scale.plot.volume(this._dataInVisiable(), this.accessor.v).domain());
+  };
+
+  Chart.prototype._setYPercentScaleDomain = function(){
     var percentDomain = techan.scale.plot.percent(this.yScale, this.accessor(this.getBaseDatum())).domain();
     percentDomain = this.symmetrizePercentDomain(percentDomain);
     //console.log('percentDomain:', percentDomain);
     this.yPercentScale.domain(percentDomain);
-    this.yScaleOfVolume.domain(techan.scale.plot.volume(this._dataInVisiable(), this.accessor.v).domain());
   };
 
   Chart.prototype._drawMainPlot = function(){
