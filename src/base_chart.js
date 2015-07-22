@@ -5,8 +5,13 @@ TraderLightChart.BaseChart = (function(){
     this.margin = {
       top: 0,
       bottom: 30,
-      left: 1,
-      right: 1
+      left: 0,
+      right: 10
+    };
+
+    this.padding = {
+      right: 5,
+      left: 5
     };
 
     this.standardSize = {
@@ -16,7 +21,7 @@ TraderLightChart.BaseChart = (function(){
     this.options = {
       container_id: 'trader_light_chart_container',
       interval: 'D', // '1', 'D', 'W', 'M', 'Y'
-      maxVisiableBars: 120,
+      maxVisiableBars: 100,
       zoomable: true
     };
 
@@ -61,7 +66,7 @@ TraderLightChart.BaseChart = (function(){
 
   Chart.prototype._setScales = function(){
     //this._initSetXScale();
-    this.timeScale.range([0, this.containerWidth - this.margin.left - this.margin.right]);
+    this.timeScale.range([this.padding.left, this.containerWidth - this.margin.left - this.margin.right - this.padding.right]);
     this.yScale.range([this.containerHeight - this.margin.top - this.margin.bottom, 0]);
     this.yPercentScale.range([this.containerHeight - this.margin.top - this.margin.bottom, 0]);
     this.yScaleOfVolume.range([this.yScale(0), this.yScale(0.4)]);
@@ -187,7 +192,7 @@ TraderLightChart.BaseChart = (function(){
       .translate([0, this.containerHeight - this.margin.top - this.margin.bottom]);
 
     this.ohlcAnnotationRight
-      .translate([this.timeScale(1), 0]);
+      .translate([this.timeScale(1) + this.margin.right, 0]);
     this.closeAnnotation
       .translate([this.timeScale(1), 0]);
   };
@@ -362,7 +367,7 @@ TraderLightChart.BaseChart = (function(){
     this.mainG.select('g.time.axis')
         .attr("transform", "translate(0," + (this.containerHeight - this.margin.top - this.margin.bottom) + ")");
     this.mainG.select('g.y.axis.right')
-        .attr("transform", "translate(" + this.timeScale(1) + ",0)");
+        .attr("transform", "translate(" + (this.timeScale(1) + this.margin.right) + ",0)");
     this.mainG.select('g.y.axis.left')
         .attr("transform", "translate(0,0)");
   }; 
@@ -693,7 +698,7 @@ TraderLightChart.BaseChart = (function(){
 
   //////////////// bars physical info //////////////
   Chart.prototype._barWidth = function(){
-    return this.containerWidth / this.maxVisiableBars;
+    return (this.containerWidth - this.margin.left - this.margin.right - this.padding.left - this.padding.right) / this.maxVisiableBars;
   };
 
   Chart.prototype._widthToBarOffset = function(width){

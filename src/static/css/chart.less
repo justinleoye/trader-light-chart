@@ -13,7 +13,7 @@
     .axis line {
         fill: none;
         stroke: #DEDEDE;
-        shape-rendering: crispEdges;
+        //shape-rendering: crispEdges;
     }
 
     .axis g.tick text{
@@ -28,24 +28,25 @@
 
     path.candle {
         stroke: #000000;
-        shape-rendering: crispEdges;
     }
 
     path.candle.body {
         stroke-width: 0;
-        shape-rendering: crispEdges;
+        shape-rendering: auto;
     }
 
     path.candle.up {
         fill: #d75442;
         stroke: #d75442;
-        shape-rendering: crispEdges;
     }
 
     path.candle.down {
         fill: #6ba583;
         stroke: #6ba583;
-        shape-rendering: crispEdges;
+    }
+
+    line.candle.body {
+        shape-rendering: auto;
     }
 
     path.ohlc {
@@ -93,7 +94,7 @@
     path.volume {
         fill: #AAAAAA;
         opacity: 0.5;
-        shape-rendering: crispEdges;
+        shape-rendering: auto;
     }
 
     path.volume.up {

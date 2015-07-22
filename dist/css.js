@@ -19,7 +19,6 @@ TraderLightChart.core = TraderLightChart.core || {};
 .trader-light-chart .axis line {
   fill: none;
   stroke: #DEDEDE;
-  shape-rendering: crispEdges;
 }
 .trader-light-chart .axis g.tick text {
   stroke: #808080;
@@ -31,21 +30,21 @@ TraderLightChart.core = TraderLightChart.core || {};
 }
 .trader-light-chart path.candle {
   stroke: #000000;
-  shape-rendering: crispEdges;
 }
 .trader-light-chart path.candle.body {
   stroke-width: 0;
-  shape-rendering: crispEdges;
+  shape-rendering: auto;
 }
 .trader-light-chart path.candle.up {
   fill: #d75442;
   stroke: #d75442;
-  shape-rendering: crispEdges;
 }
 .trader-light-chart path.candle.down {
   fill: #6ba583;
   stroke: #6ba583;
-  shape-rendering: crispEdges;
+}
+.trader-light-chart line.candle.body {
+  shape-rendering: auto;
 }
 .trader-light-chart path.ohlc {
   stroke: #000000;
@@ -82,7 +81,7 @@ TraderLightChart.core = TraderLightChart.core || {};
 .trader-light-chart path.volume {
   fill: #AAAAAA;
   opacity: 0.5;
-  shape-rendering: crispEdges;
+  shape-rendering: auto;
 }
 .trader-light-chart path.volume.up {
   fill: #FF0000;

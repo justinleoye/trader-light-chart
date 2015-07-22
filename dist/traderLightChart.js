@@ -1,4 +1,4 @@
-var TraderLightChart=TraderLightChart||{};TraderLightChart.core=TraderLightChart.core||{},function(a){a.CHART_GLOABLE_CSS="\n\n\n.trader-light-chart {\n  border: 1px solid #DEDEDE;\n  font-size: 0.5rem;\n  overflow: hidden;\n}\n.trader-light-chart path.line {\n  fill: none;\n  stroke: #000000;\n  stroke-width: 1;\n}\n.trader-light-chart .axis path,\n.trader-light-chart .axis line {\n  fill: none;\n  stroke: #DEDEDE;\n  shape-rendering: crispEdges;\n}\n.trader-light-chart .axis g.tick text {\n  stroke: #808080;\n  stroke-width: 0.3;\n}\n.trader-light-chart path {\n  fill: none;\n  stroke-width: 1;\n}\n.trader-light-chart path.candle {\n  stroke: #000000;\n  shape-rendering: crispEdges;\n}\n.trader-light-chart path.candle.body {\n  stroke-width: 0;\n  shape-rendering: crispEdges;\n}\n.trader-light-chart path.candle.up {\n  fill: #d75442;\n  stroke: #d75442;\n  shape-rendering: crispEdges;\n}\n.trader-light-chart path.candle.down {\n  fill: #6ba583;\n  stroke: #6ba583;\n  shape-rendering: crispEdges;\n}\n.trader-light-chart path.ohlc {\n  stroke: #000000;\n  stroke-width: 1;\n}\n.trader-light-chart path.ohlc.up {\n  stroke: #d75442;\n}\n.trader-light-chart path.ohlc.down {\n  stroke: #6ba583;\n}\n.trader-light-chart .line-close.annotation.up path {\n  font-size: 0.5rem;\n  fill: #00AA00;\n}\n.trader-light-chart .ma-0 path.line {\n  stroke: #000000;\n}\n.trader-light-chart .ma-1 path.line {\n  stroke: #2679CB;\n}\n.trader-light-chart .ma-2 path.line {\n  stroke: #FA110F;\n}\n.trader-light-chart .ma-3 path.line {\n  stroke: #00A800;\n}\n.trader-light-chart .ma-4 path.line {\n  stroke: #C0C0C0;\n}\n.trader-light-chart .ma-5 path.line {\n  stroke: #0000FF;\n}\n.trader-light-chart path.volume {\n  fill: #AAAAAA;\n  opacity: 0.5;\n  shape-rendering: crispEdges;\n}\n.trader-light-chart path.volume.up {\n  fill: #FF0000;\n}\n.trader-light-chart path.volume.down {\n  fill: #00AA00;\n}\n.trader-light-chart .crosshair {\n  cursor: crosshair;\n}\n.trader-light-chart .crosshair path.wire {\n  stroke: #DDDDDD;\n  stroke-dasharray: 1, 1;\n}\n.trader-light-chart .crosshair .axisannotation path {\n  fill: #DDDDDD;\n}\n.trader-light-chart .analysis path,\n.trader-light-chart .analysis circle {\n  stroke: #7E7E7E;\n  stroke-width: 0.8;\n}\n.trader-light-chart .interaction path,\n.trader-light-chart .interaction circle {\n  pointer-events: all;\n}\n.trader-light-chart .interaction .body {\n  cursor: move;\n}\n.trader-light-chart .supstance path {\n  stroke-dasharray: 2, 2;\n}\n.trader-light-chart .supstances .interaction path {\n  pointer-events: none;\n  cursor: ns-resize;\n}\n.trader-light-chart .mouseover .supstance path {\n  stroke-width: 1.5;\n}\n.trader-light-chart .dragging .supstance path {\n  stroke: darkblue;\n}\n.trader-light-chart .trendline {\n  stroke: blue;\n  stroke-width: 0.8;\n}\n.trader-light-chart .interaction path,\n.trader-light-chart .interaction circle {\n  pointer-events: all;\n}\n.trader-light-chart .interaction .body {\n  cursor: move;\n}\n.trader-light-chart .interaction .start,\n.trader-light-chart .interaction .end {\n  cursor: nwse-resize;\n}\n\n\n    "}(TraderLightChart.core);
+var TraderLightChart=TraderLightChart||{};TraderLightChart.core=TraderLightChart.core||{},function(a){a.CHART_GLOABLE_CSS="\n\n\n.trader-light-chart {\n  border: 1px solid #DEDEDE;\n  font-size: 0.5rem;\n  overflow: hidden;\n}\n.trader-light-chart path.line {\n  fill: none;\n  stroke: #000000;\n  stroke-width: 1;\n}\n.trader-light-chart .axis path,\n.trader-light-chart .axis line {\n  fill: none;\n  stroke: #DEDEDE;\n}\n.trader-light-chart .axis g.tick text {\n  stroke: #808080;\n  stroke-width: 0.3;\n}\n.trader-light-chart path {\n  fill: none;\n  stroke-width: 1;\n}\n.trader-light-chart path.candle {\n  stroke: #000000;\n}\n.trader-light-chart path.candle.body {\n  stroke-width: 0;\n  shape-rendering: auto;\n}\n.trader-light-chart path.candle.up {\n  fill: #d75442;\n  stroke: #d75442;\n}\n.trader-light-chart path.candle.down {\n  fill: #6ba583;\n  stroke: #6ba583;\n}\n.trader-light-chart line.candle.body {\n  shape-rendering: auto;\n}\n.trader-light-chart path.ohlc {\n  stroke: #000000;\n  stroke-width: 1;\n}\n.trader-light-chart path.ohlc.up {\n  stroke: #d75442;\n}\n.trader-light-chart path.ohlc.down {\n  stroke: #6ba583;\n}\n.trader-light-chart .line-close.annotation.up path {\n  font-size: 0.5rem;\n  fill: #00AA00;\n}\n.trader-light-chart .ma-0 path.line {\n  stroke: #000000;\n}\n.trader-light-chart .ma-1 path.line {\n  stroke: #2679CB;\n}\n.trader-light-chart .ma-2 path.line {\n  stroke: #FA110F;\n}\n.trader-light-chart .ma-3 path.line {\n  stroke: #00A800;\n}\n.trader-light-chart .ma-4 path.line {\n  stroke: #C0C0C0;\n}\n.trader-light-chart .ma-5 path.line {\n  stroke: #0000FF;\n}\n.trader-light-chart path.volume {\n  fill: #AAAAAA;\n  opacity: 0.5;\n  shape-rendering: auto;\n}\n.trader-light-chart path.volume.up {\n  fill: #FF0000;\n}\n.trader-light-chart path.volume.down {\n  fill: #00AA00;\n}\n.trader-light-chart .crosshair {\n  cursor: crosshair;\n}\n.trader-light-chart .crosshair path.wire {\n  stroke: #DDDDDD;\n  stroke-dasharray: 1, 1;\n}\n.trader-light-chart .crosshair .axisannotation path {\n  fill: #DDDDDD;\n}\n.trader-light-chart .analysis path,\n.trader-light-chart .analysis circle {\n  stroke: #7E7E7E;\n  stroke-width: 0.8;\n}\n.trader-light-chart .interaction path,\n.trader-light-chart .interaction circle {\n  pointer-events: all;\n}\n.trader-light-chart .interaction .body {\n  cursor: move;\n}\n.trader-light-chart .supstance path {\n  stroke-dasharray: 2, 2;\n}\n.trader-light-chart .supstances .interaction path {\n  pointer-events: none;\n  cursor: ns-resize;\n}\n.trader-light-chart .mouseover .supstance path {\n  stroke-width: 1.5;\n}\n.trader-light-chart .dragging .supstance path {\n  stroke: darkblue;\n}\n.trader-light-chart .trendline {\n  stroke: blue;\n  stroke-width: 0.8;\n}\n.trader-light-chart .interaction path,\n.trader-light-chart .interaction circle {\n  pointer-events: all;\n}\n.trader-light-chart .interaction .body {\n  cursor: move;\n}\n.trader-light-chart .interaction .start,\n.trader-light-chart .interaction .end {\n  cursor: nwse-resize;\n}\n\n\n    "}(TraderLightChart.core);
 
 var TraderLightChart = TraderLightChart || {};
 TraderLightChart.core = TraderLightChart.core || {};
@@ -63,8 +63,13 @@ TraderLightChart.BaseChart = (function(){
     this.margin = {
       top: 0,
       bottom: 30,
-      left: 1,
-      right: 1
+      left: 0,
+      right: 10
+    };
+
+    this.padding = {
+      right: 5,
+      left: 5
     };
 
     this.standardSize = {
@@ -74,7 +79,7 @@ TraderLightChart.BaseChart = (function(){
     this.options = {
       container_id: 'trader_light_chart_container',
       interval: 'D', // '1', 'D', 'W', 'M', 'Y'
-      maxVisiableBars: 120,
+      maxVisiableBars: 100,
       zoomable: true
     };
 
@@ -119,7 +124,7 @@ TraderLightChart.BaseChart = (function(){
 
   Chart.prototype._setScales = function(){
     //this._initSetXScale();
-    this.timeScale.range([0, this.containerWidth - this.margin.left - this.margin.right]);
+    this.timeScale.range([this.padding.left, this.containerWidth - this.margin.left - this.margin.right - this.padding.right]);
     this.yScale.range([this.containerHeight - this.margin.top - this.margin.bottom, 0]);
     this.yPercentScale.range([this.containerHeight - this.margin.top - this.margin.bottom, 0]);
     this.yScaleOfVolume.range([this.yScale(0), this.yScale(0.4)]);
@@ -245,7 +250,7 @@ TraderLightChart.BaseChart = (function(){
       .translate([0, this.containerHeight - this.margin.top - this.margin.bottom]);
 
     this.ohlcAnnotationRight
-      .translate([this.timeScale(1), 0]);
+      .translate([this.timeScale(1) + this.margin.right, 0]);
     this.closeAnnotation
       .translate([this.timeScale(1), 0]);
   };
@@ -420,7 +425,7 @@ TraderLightChart.BaseChart = (function(){
     this.mainG.select('g.time.axis')
         .attr("transform", "translate(0," + (this.containerHeight - this.margin.top - this.margin.bottom) + ")");
     this.mainG.select('g.y.axis.right')
-        .attr("transform", "translate(" + this.timeScale(1) + ",0)");
+        .attr("transform", "translate(" + (this.timeScale(1) + this.margin.right) + ",0)");
     this.mainG.select('g.y.axis.left')
         .attr("transform", "translate(0,0)");
   }; 
@@ -751,7 +756,7 @@ TraderLightChart.BaseChart = (function(){
 
   //////////////// bars physical info //////////////
   Chart.prototype._barWidth = function(){
-    return this.containerWidth / this.maxVisiableBars;
+    return (this.containerWidth - this.margin.left - this.margin.right - this.padding.left - this.padding.right) / this.maxVisiableBars;
   };
 
   Chart.prototype._widthToBarOffset = function(width){

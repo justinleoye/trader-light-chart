@@ -152,8 +152,8 @@ function testChartWithJSON(tlc, type){ // type: 'intraday'
       }
     });
 
-    var initData = feed.splice(0, 230);
-    //var initData = feed.splice(0, 1000000);
+    //var initData = feed.splice(0, 30);
+    var initData = feed.splice(0, 1000000);
     console.log('feed length:', feed.length);
     tlc.feedData(initData);
     tlc.draw();
