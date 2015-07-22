@@ -252,9 +252,9 @@ TraderLightChart.BaseChart = (function(){
       .translate([0, this.containerHeight - this.margin.top - this.margin.bottom]);
 
     this.ohlcAnnotationRight
-      .translate([this.timeScale(1) + this.margin.right, 0]);
+      .translate([this.timeScale(1) + this.margin.right + this.padding.right, 0]);
     this.closeAnnotation
-      .translate([this.timeScale(1), 0]);
+      .translate([this.timeScale(1) + this.margin.right + this.padding.right, 0]);
   };
 
   Chart.prototype._createCrossHair = function(){
@@ -427,7 +427,7 @@ TraderLightChart.BaseChart = (function(){
     this.mainG.select('g.time.axis')
         .attr("transform", "translate(0," + (this.containerHeight - this.margin.top - this.margin.bottom) + ")");
     this.mainG.select('g.y.axis.right')
-        .attr("transform", "translate(" + (this.timeScale(1) + this.margin.right) + ",0)");
+        .attr("transform", "translate(" + (this.timeScale(1) + this.margin.right + this.padding.right) + ",0)");
     this.mainG.select('g.y.axis.left')
         .attr("transform", "translate(0,0)");
   }; 
