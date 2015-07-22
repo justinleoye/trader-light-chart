@@ -1,10 +1,10 @@
 
-test('D', false);
+test('D', {zoomable: false, movable: false});
 //test('W');
 //test('M');
 //testIntrady();
 
-function test(interval, zoomable){
+function test(interval, options){
   var lc = new TraderLightChart.LineChart({
         container_id: 'trader_line_chart_container',
         interval: interval,
@@ -12,7 +12,8 @@ function test(interval, zoomable){
   var cc = new TraderLightChart.CandleChart({
         container_id: 'trader_candle_chart_container',
         interval: interval,
-        zoomable: zoomable
+        zoomable: options.zoomable,
+        movable: options.movable
       });
 
   lc.addSupstance({price: 14.03});

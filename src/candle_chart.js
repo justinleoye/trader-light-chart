@@ -81,14 +81,19 @@ TraderLightChart.CandleChart = (function(){
   };
 
   Chart.prototype._drawCrosshair = function(){
-    this.mainG.select("g.crosshair.ohlc").call(this.crosshair).call(this.zoom);
+    if(this.zoomable || this.movable){
+      this.mainG.select("g.crosshair.ohlc").call(this.crosshair).call(this.zoom);
+    }
+    else
+      Chart.superClass._drawCrosshair.call(this);
   };
 
   Chart.prototype.zoomed = function(){
 
     var tran = this.zoom.translate();
     console.log('tran:',tran);
-    this._setRightOffset(this._widthToBarOffset(tran[0]));
+    if(this.movable)
+      this._setRightOffset(this._widthToBarOffset(tran[0]));
     if(this.zoomable)
       this.xyZoom.scale(this.zoom.scale());
 
@@ -112,6 +117,11 @@ TraderLightChart.CandleChart = (function(){
   Chart.prototype.enableZoomable = function(zoomable){
     if(typeof zoomable != 'boolean') return;
     this.zoomable = zoomable;
+  };
+
+  Chart.prototype.enableMovable = function(movable){
+    if(typeof movable != 'boolean') return;
+    this.movable = movable;
   };
 
   return Chart;

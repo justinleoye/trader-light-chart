@@ -22,7 +22,8 @@ TraderLightChart.BaseChart = (function(){
       container_id: 'trader_light_chart_container',
       interval: 'D', // '1', 'D', 'W', 'M', 'Y'
       maxVisiableBars: 100,
-      zoomable: true
+      zoomable: true,
+      movable: true
     };
 
     _.extend(this.options, options)
@@ -39,6 +40,7 @@ TraderLightChart.BaseChart = (function(){
     this.studies = [];
     this.trendlineData = [];
     this.zoomable = this.options.zoomable;
+    this.movable = this.options.movable;
   }
 
   // should override
