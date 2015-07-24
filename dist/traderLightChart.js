@@ -507,7 +507,7 @@ TraderLightChart.BaseChart = (function(){
   };
 
   Chart.prototype._dataInVisiable = function(){
-    console.log('_dataInVisiable');
+    //console.log('_dataInVisiable');
     var domain = this._domainInVisiable();
     return this.data.slice(domain[0], domain[1]);
   };
@@ -515,12 +515,22 @@ TraderLightChart.BaseChart = (function(){
   Chart.prototype._domainInVisiable = function(){
     if(this.maxVisiableBars > this.data.length){
       var d0 = 0 - this._rightOffset;
+      if(this._rightOffset <= this.maxVisiableBars - this.data.length){
+        var d1 = this.data.length;
+      }else{
+        var d1 = this.data.length - (this._rightOffset - (this.maxVisiableBars - this.data.length));
+      }
     }else{
       var d0 = this.data.length - this.maxVisiableBars - this._rightOffset;
+      if(this._rightOffset < 0){
+        var d1 = this.data.length;
+      }else{
+        var d1 = this.data.length - this._rightOffset;
+      }
     }
-    var d1 = this.data.length - this._rightOffset;
     if(d0 < 0) d0 = 0;
     if(d1 > this.data.length) d1 = this.data.length;
+    //console.log('_dataInVisiable:' + d0 + ', ', + d1);
     return [d0,d1];
   };
 
@@ -779,10 +789,37 @@ TraderLightChart.BaseChart = (function(){
 
 
   Chart.prototype._setRightOffset = function(offset){
+    //console.log('offset:', offset);
+    var minVisibleBars = 3;
+
+    var max = Math.max(this.maxVisiableBars, this.data.length);
+    var min = Math.min(this.maxVisiableBars, this.data.length);
+
+    if(offset < 0){
+      var maxOffset = - (min - minVisibleBars);
+      maxOffset = maxOffset <= 0 ? maxOffset : 0;
+    }else{
+      var maxOffset = max - minVisibleBars;
+    }
+    offset = Math.abs(offset) > Math.abs(maxOffset) ? maxOffset : offset;
+
     this._rightOffset = offset;
 
     var tranX = offset * this._barWidth();
+
     this.xyZoom.translate([tranX,0]);
+  };
+
+  Chart.prototype._setMaxVisiableBars = function(scale){
+    if(scale < 0.1 || scale > 5) return;
+    this.maxVisiableBars = Math.floor(this.maxVisiableBars * scale);
+  };
+
+  Chart.prototype._scaleChart = function(scale, offset){
+    if(scale < 0.1 || scale > 5) return;
+    this._setMaxVisiableBars(scale);
+    this.xyZoom.scale(scale);
+    //this._setRightOffset(offset);
   };
 
   return Chart;
@@ -997,11 +1034,16 @@ TraderLightChart.CandleChart = (function(){
   Chart.prototype.zoomed = function(){
 
     var tran = this.zoom.translate();
-    console.log('tran:',tran);
+    //console.log('tran:',tran);
+    var offset =  this._widthToBarOffset(tran[0]);
     if(this.movable)
-      this._setRightOffset(this._widthToBarOffset(tran[0]));
-    if(this.zoomable)
-      this.xyZoom.scale(this.zoom.scale());
+      this._setRightOffset(offset);
+
+    // FIXME: bug of scale
+    //var scal = this.zoom.scale();
+    //console.log('scal:', scal);
+    //if(this.zoomable)
+      //this._scaleChart(scal, offset);
 
     this._setYScaleDomain();
     this._drawAxises();

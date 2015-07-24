@@ -91,11 +91,16 @@ TraderLightChart.CandleChart = (function(){
   Chart.prototype.zoomed = function(){
 
     var tran = this.zoom.translate();
-    console.log('tran:',tran);
+    //console.log('tran:',tran);
+    var offset =  this._widthToBarOffset(tran[0]);
     if(this.movable)
-      this._setRightOffset(this._widthToBarOffset(tran[0]));
-    if(this.zoomable)
-      this.xyZoom.scale(this.zoom.scale());
+      this._setRightOffset(offset);
+
+    // FIXME: bug of scale
+    //var scal = this.zoom.scale();
+    //console.log('scal:', scal);
+    //if(this.zoomable)
+      //this._scaleChart(scal, offset);
 
     this._setYScaleDomain();
     this._drawAxises();
