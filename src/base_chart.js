@@ -23,7 +23,8 @@ TraderLightChart.BaseChart = (function(){
       interval: 'D', // '1', 'D', 'W', 'M', 'Y'
       maxVisiableBars: 100,
       zoomable: true,
-      movable: true
+      movable: true,
+      suspended: false 
     };
 
     _.extend(this.options, options)
@@ -401,6 +402,9 @@ TraderLightChart.BaseChart = (function(){
   Chart.prototype.draw = function(){
     if(!this.isReady) return;
 
+    if(this.options.interval === '1' && this.options.suspended)
+      this._setSuspendedMode();
+
     this._bindData();
     //console.log('draw');
 
@@ -762,6 +766,12 @@ TraderLightChart.BaseChart = (function(){
     this._setMaxVisiableBars(scale);
     this.xyZoom.scale(scale);
     //this._setRightOffset(offset);
+  };
+
+  // stock suspended
+  Chart.prototype._setSuspendedMode = function(){
+    var datum = this.getBaseDatum();
+    this.data = [datum];
   };
 
   return Chart;

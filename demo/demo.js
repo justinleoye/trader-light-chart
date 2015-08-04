@@ -1,8 +1,8 @@
 
-test('D', {zoomable: true, movable: true});
+//test('D', {zoomable: true, movable: true});
 //test('W');
 //test('M');
-//testIntrady();
+testIntrady();
 
 function test(interval, options){
   var lc = new TraderLightChart.LineChart({
@@ -67,16 +67,19 @@ function test(interval, options){
   }
 }
 
+
 function testIntrady(){
   var lcIntraday = new TraderLightChart.LineChart({
         container_id: 'trader_line_chart_container',
         interval: '1',
+        suspended: true,
         maxVisiableBars: 240,
       });
 
   var ccIntraday = new TraderLightChart.CandleChart({
         container_id: 'trader_candle_chart_container',
         interval: '1',
+        suspended: true,
         maxVisiableBars: 240,
       });
 
@@ -86,6 +89,7 @@ function testIntrady(){
   ccIntraday.addSupstance({price: 17.03});
 
   lcIntraday.setBaseDatum({time: "2015-05-13T15:00:00+08:00", high: 20.03, open: 20.03, low: 17.03, close: 17.03, volume: 0});
+  ccIntraday.setBaseDatum({time: "2015-05-13T15:00:00+08:00", high: 20.03, open: 20.03, low: 17.03, close: 17.03, volume: 0});
 
   testChartWithJSON(lcIntraday,'intraday');
   testChartWithJSON(ccIntraday, 'intraday');
@@ -156,7 +160,7 @@ function testChartWithJSON(tlc, type){ // type: 'intraday'
     var initData = feed.splice(0, 230);
     //var initData = feed.splice(0, 1000000);
     console.log('feed length:', feed.length);
-    tlc.feedData(initData);
+    //tlc.feedData(initData);
     tlc.draw();
 
 
