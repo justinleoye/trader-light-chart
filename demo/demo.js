@@ -67,6 +67,7 @@ function test(interval, options){
   }
 }
 
+var lcIntradayDebug, ccIntradayDebug;
 
 function testIntrady(){
   var lcIntraday = new TraderLightChart.LineChart({
@@ -80,6 +81,10 @@ function testIntrady(){
         interval: '1',
         maxVisiableBars: 240,
       });
+
+
+  lcIntradayDebug = lcIntraday;
+  ccIntradayDebug = ccIntraday;
 
   lcIntraday.addSupstance({price: 20.03});
   lcIntraday.addSupstance({price: 17.03});
@@ -165,7 +170,7 @@ function testChartWithJSON(tlc, type){ // type: 'intraday'
     tlc.draw();
 
 
-    drawBarsOneByOne();
+    //drawBarsOneByOne();
 
     function drawBarsOneByOne(){
       if(feed.length){

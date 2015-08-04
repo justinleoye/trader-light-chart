@@ -914,6 +914,8 @@ TraderLightChart.LineChart = (function(){
 
 
   Chart.prototype.feedData = function(data){
+    if(this.options.interval === '1' && this.options.suspended)
+      return;
     for(var i=0; i < data.length; i++){
       var datum = this._pretreatData(data[i]);
       // TODO: isIntraday()
