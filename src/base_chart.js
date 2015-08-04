@@ -771,6 +771,7 @@ TraderLightChart.BaseChart = (function(){
   // stock suspended
   Chart.prototype._setSuspendedMode = function(){
     var datum = this.getBaseDatum();
+    datum.volume = 0;
     this.data = [datum];
   };
 
