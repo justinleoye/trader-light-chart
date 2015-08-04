@@ -72,14 +72,12 @@ function testIntrady(){
   var lcIntraday = new TraderLightChart.LineChart({
         container_id: 'trader_line_chart_container',
         interval: '1',
-        suspended: true,
         maxVisiableBars: 240,
       });
 
   var ccIntraday = new TraderLightChart.CandleChart({
         container_id: 'trader_candle_chart_container',
         interval: '1',
-        suspended: true,
         maxVisiableBars: 240,
       });
 
@@ -87,6 +85,9 @@ function testIntrady(){
   lcIntraday.addSupstance({price: 17.03});
   ccIntraday.addSupstance({price: 20.03});
   ccIntraday.addSupstance({price: 17.03});
+
+  lcIntraday.setSuspended(true);
+  ccIntraday.setSuspended(true);
 
   lcIntraday.setBaseDatum({time: "2015-05-13T15:00:00+08:00", high: 20.03, open: 20.03, low: 17.03, close: 17.03, volume: 0});
   ccIntraday.setBaseDatum({time: "2015-05-13T15:00:00+08:00", high: 20.03, open: 20.03, low: 17.03, close: 17.03, volume: 0});

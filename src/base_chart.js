@@ -774,6 +774,10 @@ TraderLightChart.BaseChart = (function(){
     this.data = [datum];
   };
 
+  Chart.prototype.setSuspended = function(suspended){
+    this.options.suspended = suspended || false;
+  };
+
   return Chart;
 })();
 
