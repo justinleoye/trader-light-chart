@@ -377,6 +377,8 @@ TraderLightChart.BaseChart = (function(){
 
   Chart.prototype.feedData = function(data){
     //console.log('feedData');
+    if(this.options.interval === '1' && this.options.suspended)
+      return;
     for(var i=0; i < data.length; i++){
       var datum = this._pretreatData(data[i]);
       if(this.data.length>0 && datum.date < this.data[this.data.length-1].date) continue;
